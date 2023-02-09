@@ -7,7 +7,7 @@ class ApiKeyAuthFilter(
     private val headerName:String
 ) : AbstractPreAuthenticatedProcessingFilter() {
     override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any {
-        return request?.getHeader(headerName) ?: "NO-HEADER"
+        return request?.getHeader(headerName) ?: ""
     }
 
     override fun getPreAuthenticatedCredentials(request: HttpServletRequest?): Any? {

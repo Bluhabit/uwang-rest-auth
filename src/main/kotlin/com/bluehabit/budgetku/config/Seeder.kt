@@ -12,10 +12,10 @@ import com.bluehabit.budgetku.data.user.LevelUser.USER
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
-import java.util.*
 
 @Component
 class Seeder(
@@ -77,57 +77,92 @@ class Seeder(
                 updatedAt = date
             )
         )
-        permissionRepository.saveAll(
-            permissions
-        )
-
-        val permission = permissionRepository.findAll()
-
-        val roleId = "26ff6c62-a447-4e7f-941e-e3c866bd69bf"
-        val role = Role(
-            id = roleId,
-            roleName = "SUPER_ADMIN",
-            roleDescription = "Khusus buat Super Admin",
-            createdAt = date,
-            updatedAt = date
-        )
-        val saved = roleRepository.save(role)
-        roleRepository.save(
-            saved.copy(
-                permissions = permission.toList(),
-            )
-        )
-
 
         val encoder = BCryptPasswordEncoder(16)
         val result: String = encoder.encode("12345678")
         val email = "admin@bluehabit.com"
-        val user = User(
-            userId = "26ff6c62-a447-4e7f-941e-e3c866bd69bc",
-            userEmail = email,
-            userPassword = result,
-            userFullName = "Admin blue habit",
-            userLevel = USER,
-            userAuthProvider = BASIC,
-            userDateOfBirth = date,
-            userCountryCode = "id",
-            userPhoneNumber = "4567890",
-            createdAt = date,
-            updatedAt = date,
-        )
-        if (userRepository.findByUserEmail(email) == null) {
-            val savedUser = userRepository.save(user)
-            userRepository.save(
-                savedUser.copy(
-                    userRoles = listOf(saved)
-                )
+        val email2 = "trian@bluehabit.com"
+
+        permissionRepository.saveAll(permissions)
+
+        val permission = permissionRepository.findAll()
+
+
+        if (roleRepository.findByRoleName("SUPER_ADMIN") == null) {
+            val role = Role(
+                roleId = "26ff6c62-a447-4e7f-941e-e3c866bd69bl",
+                roleName = "SUPER_ADMIN",
+                roleDescription = "Khusus buat Super Admin",
+                createdAt = date,
+                updatedAt = date
             )
+            val savedRole = roleRepository.save(role)
+            roleRepository.save(
+                savedRole.copy(permissions = permission.toList())
+            )
+
+            if (userRepository.findByUserEmail(email) == null) {
+                val user = User(
+                    userId = "26ff6c62-a447-4e7f-941e-e3c866bd69bc",
+                    userEmail = email,
+                    userPassword = result,
+                    userFullName = "Admin blue habit",
+                    userLevel = USER,
+                    userAuthProvider = BASIC,
+                    userDateOfBirth = date,
+                    userCountryCode = "id",
+                    userPhoneNumber = "4567890",
+                    createdAt = date,
+                    updatedAt = date,
+                )
+                val savedUser = userRepository.save(user)
+                userRepository.save(
+                    savedUser.copy(
+                        userRoles = listOf(savedRole)
+                    )
+                )
+            }
         }
-        if (apiKeyRepository.findTopByValue("asabVsutafcJsbaKTFt") == null) {
+        if (roleRepository.findByRoleName("USER") == null) {
+            val role2 = Role(
+                roleId = "26ff6c62-a447-4e7f-941e-e3c866bd69bf",
+                roleName = "USER",
+                roleDescription = "Khusus buat User",
+                createdAt = date,
+                updatedAt = date
+            )
+            val savedRole2 = roleRepository.save(
+                role2
+            )
+
+            if (userRepository.findByUserEmail(email2) == null) {
+                val user2 = User(
+                    userId = "26ff6c62-a447-4e7f-941e-e3c866bd69bg",
+                    userEmail = email2,
+                    userPassword = result,
+                    userFullName = "Admin blue habit",
+                    userLevel = USER,
+                    userAuthProvider = BASIC,
+                    userDateOfBirth = date,
+                    userCountryCode = "id",
+                    userPhoneNumber = "45678945678",
+                    createdAt = date,
+                    updatedAt = date,
+                )
+                val savedUser2 = userRepository.save(user2)
+                userRepository.save(
+                    savedUser2.copy(
+                        userRoles = listOf(savedRole2)
+                    )
+                )
+            }
+        }
+
+        if (apiKeyRepository.findTopByValue("jkLBU8LMXAiklTSAHDABhsahxt5sgag") == null) {
             apiKeyRepository.save(
                 ApiKey(
-                    id = 456789,
-                    value = "asabVsutafcJsbaKTFt",
+                    id = "26ff6c62-a447-4e7f-941e-e3c866bd69bn",
+                    value = "jkLBU8LMXAiklTSAHDABhsahxt5sgag",
                     createdAt = date,
                     updatedAt = date
                 )

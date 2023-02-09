@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.multipart.MaxUploadSizeExceededException
 import java.text.ParseException
+import javax.persistence.NonUniqueResultException
 import javax.validation.ConstraintViolationException
 
 /**
@@ -33,11 +34,11 @@ class ErrorHandlerController {
         value = [ConstraintViolationException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST,
+        BAD_REQUEST,
     )
     fun validationError(
-        error:ConstraintViolationException
-    )= BaseResponse<List<Any>>(
+        error: ConstraintViolationException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
@@ -47,11 +48,11 @@ class ErrorHandlerController {
         value = [BadRequestException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun badRequest(
         error: BadRequestException
-    )= BaseResponse<List<Any>>(
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString()
@@ -65,7 +66,7 @@ class ErrorHandlerController {
     )
     fun dataNotFound(
         error: DataNotFoundException
-    )= BaseResponse<List<Any>>(
+    ) = BaseResponse<List<Any>>(
         code = NOT_FOUND.value(),
         data = listOf(),
         message = error.message.toString()
@@ -79,7 +80,7 @@ class ErrorHandlerController {
     )
     fun unAuthorized(
         error: UnAuthorizedException
-    )= BaseResponse<List<Any>>(
+    ) = BaseResponse<List<Any>>(
         code = UNAUTHORIZED.value(),
         data = listOf(),
         message = error.message.toString(),
@@ -89,11 +90,11 @@ class ErrorHandlerController {
         value = [HttpMediaTypeNotSupportedException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun mediaTypeNotSupported(
-        error:HttpMediaTypeNotSupportedException
-    )= BaseResponse<List<Any>>(
+        error: HttpMediaTypeNotSupportedException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = "${error.message}, Supported type = ${error.supportedMediaTypes}",
@@ -103,11 +104,11 @@ class ErrorHandlerController {
         value = [HttpMessageNotReadableException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun mediaTypeJsonInvalid(
-        error:HttpMessageNotReadableException
-    )= BaseResponse<List<Any>>(
+        error: HttpMessageNotReadableException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = "Data given not valid",
@@ -120,8 +121,8 @@ class ErrorHandlerController {
         HttpStatus.METHOD_NOT_ALLOWED
     )
     fun methodNotAllowed(
-        error:HttpRequestMethodNotSupportedException
-    )= BaseResponse<List<Any>>(
+        error: HttpRequestMethodNotSupportedException
+    ) = BaseResponse<List<Any>>(
         code = METHOD_NOT_ALLOWED.value(),
         data = listOf(),
         message = "${error.message}",
@@ -131,11 +132,11 @@ class ErrorHandlerController {
         value = [MaxUploadSizeExceededException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun maximumFileUpload(
-        error:MaxUploadSizeExceededException
-    )= BaseResponse<List<Any>>(
+        error: MaxUploadSizeExceededException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString()
@@ -145,11 +146,11 @@ class ErrorHandlerController {
         value = [DataIntegrityViolationException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun sqlError(
-        error:DataIntegrityViolationException
-    )= BaseResponse<List<Any>>(
+        error: DataIntegrityViolationException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = "${error.mostSpecificCause.message}"
@@ -159,11 +160,11 @@ class ErrorHandlerController {
         value = [DataException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun sqlError(
-        error:DataException
-    )= BaseResponse<List<Any>>(
+        error: DataException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
@@ -173,11 +174,11 @@ class ErrorHandlerController {
         value = [org.hibernate.exception.ConstraintViolationException::class],
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun sqlError(
-        error:org.hibernate.exception.ConstraintViolationException
-    )= BaseResponse<List<Any>>(
+        error: org.hibernate.exception.ConstraintViolationException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
@@ -187,11 +188,11 @@ class ErrorHandlerController {
         value = [DuplicateException::class],
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun sqlError(
-        error:DuplicateException
-    )= BaseResponse<List<Any>>(
+        error: DuplicateException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
@@ -201,9 +202,9 @@ class ErrorHandlerController {
         value = [NullPointerException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
-    fun nullPointer(e:NullPointerException)=
+    fun nullPointer(e: NullPointerException) =
         BaseResponse<List<Any>>(
             code = BAD_REQUEST.value(),
             data = listOf(),
@@ -214,11 +215,25 @@ class ErrorHandlerController {
         value = [ParseException::class]
     )
     @ResponseStatus(
-        HttpStatus.BAD_REQUEST
+        BAD_REQUEST
     )
     fun formatException(
-        e:ParseException
-    )= BaseResponse<List<Any>>(
+        e: ParseException
+    ) = BaseResponse<List<Any>>(
+        code = BAD_REQUEST.value(),
+        data = listOf(),
+        message = e.message.toString(),
+    )
+
+    @ExceptionHandler(
+        value = [NonUniqueResultException::class]
+    )
+    @ResponseStatus(
+        BAD_REQUEST
+    )
+    fun NonUniqueResult(
+        e: NonUniqueResultException
+    ) = BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = e.message.toString(),

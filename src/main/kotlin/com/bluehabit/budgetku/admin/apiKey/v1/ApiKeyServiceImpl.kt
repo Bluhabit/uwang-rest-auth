@@ -4,7 +4,10 @@ import com.bluehabit.budgetku.data.user.UserRepository
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
+import com.bluehabit.budgetku.common.model.PagingDataResponse
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -20,20 +23,48 @@ class ApiKeyServiceImpl(
     private val userRepository: UserRepository
 ) {
 
+    fun getAllApiKeys(pageable: Pageable): BaseResponse<PagingDataResponse<ApiKeyResponse>> {
 
-    fun generateApiKey(
-    ): BaseResponse<ApiKeyResponse> {
-        val email = SecurityContextHolder.getContext().authentication.principal.toString();
+        val email = SecurityContextHolder.getContext().authentication.principal.toString()
+        if (email.isEmpty()) {
+            throw UnAuthorizedException("[98] You don't have access!")
+        }
+
+        if (userRepository
+                .findByUserEmail(email) == null
+        ) {
+            throw UnAuthorizedException("[98] You don't have permission")
+        }
+
+        val allApiKeys = apiKeyRepository.findAll(pageable)
+
+        return BaseResponse(
+            code = OK.value(),
+            data = PagingDataResponse(
+                page = allApiKeys.number,
+                size = allApiKeys.size,
+                totalData = allApiKeys.totalElements,
+                totalPages = allApiKeys.totalPages,
+                items = allApiKeys.content.map {
+                    it.toResponse()
+                }
+            ),
+            message = "Data api keys"
+        )
+    }
+
+    fun generateApiKey(): BaseResponse<ApiKeyResponse> {
+        val email = SecurityContextHolder.getContext().authentication.principal.toString()
         if (email.isBlank()) {
             throw UnAuthorizedException("[98] You don't have access!")
         }
-        val user = userRepository
+        userRepository
             .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
         val date = Date().time
         val generateValue = ""
 
         val apiKey = ApiKey(
-            id = date,
+            id = null,
             value = generateValue,
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()

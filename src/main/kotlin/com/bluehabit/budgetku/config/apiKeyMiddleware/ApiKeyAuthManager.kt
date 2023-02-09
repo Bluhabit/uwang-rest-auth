@@ -12,14 +12,19 @@ class ApiKeyAuthManager(
     override fun authenticate(authentication: Authentication?): Authentication {
 
         val apiKey = authentication?.principal as String
+        if(apiKey.isEmpty()){
+            throw UnAuthorizedException(
+                "Application is not permitted for use this resource"
+            )
+        }
         val find = apiKeyRepository.findTopByValue(apiKey)
         if (find == null) {
             throw UnAuthorizedException(
                 "Application is not permitted for use this resource"
             )
         } else {
-            authentication.isAuthenticated = true
-            return authentication
+            authentication?.isAuthenticated = true
+            return authentication!!
         }
     }
 

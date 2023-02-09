@@ -1,8 +1,11 @@
 package com.bluehabit.budgetku.admin.apiKey.v1
 
+import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
@@ -12,15 +15,19 @@ import javax.persistence.Table
 )
 data class ApiKey(
     @Id
-    val id: Long?=null,
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    val id: String?=null,
 
-
-    @Column(name = "value")
+    @Column
     val value: String,
 
-    @Column(name = "created_at")
+    @Column
     val createdAt: OffsetDateTime,
 
-    @Column(name = "updated_at")
+    @Column
     val updatedAt: OffsetDateTime
 )

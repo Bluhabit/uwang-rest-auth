@@ -22,7 +22,7 @@ data class Role(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    var id: String? = null,
+    var roleId: String? = null,
     @Column(nullable = false)
     var roleName: String? = null,
     @Column(nullable = false)

@@ -1,6 +1,8 @@
 package com.bluehabit.budgetku.admin.apiKey.v1
 
+import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -13,6 +15,14 @@ import org.springframework.web.bind.annotation.RestController
 class ApiKeyController(
     private val apiKeyService: ApiKeyServiceImpl
 ) {
+    @GetMapping(
+        value = ["/api-keys"],
+        produces = ["application/json"]
+    )
+    suspend fun getAllApiKeys(pageable: Pageable) =
+        apiKeyService.getAllApiKeys(pageable)
+
+
     @PostMapping(
         value = ["/api-key"],
         produces = ["application/json"]

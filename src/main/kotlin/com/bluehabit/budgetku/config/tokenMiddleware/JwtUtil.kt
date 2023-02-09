@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTCreationException
 import com.auth0.jwt.exceptions.JWTDecodeException
 import com.auth0.jwt.exceptions.JWTVerificationException
+import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
@@ -32,13 +33,13 @@ class JwtUtil {
     @Throws(JWTVerificationException::class)
     fun validateTokenAndRetrieveSubject(
         token: String
-    ): String = JWT.require(Algorithm.HMAC512(secret))
-        .withSubject("User detail")
-        .withIssuer(issuer)
-        .build()
-        .verify(token)
-        .getClaim("email")
-        .asString()
+    ): String {
+
+        val decode = JWT.decode(token).getClaim("email").asString()
+
+
+        return decode
+    }
     @Throws(JWTDecodeException::class)
-    fun isJwtExpired(token: String) = JWT.decode(token).expiresAt.before(Date())
+    fun isJwtExpired(token: String) = JWT.decode(token).expiresAt.before(Date(OffsetDateTime.now().toEpochSecond()))
 }

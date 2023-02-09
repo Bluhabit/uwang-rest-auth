@@ -29,24 +29,22 @@ class UserService(
         }
         val user = userRepository
             .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-        if (user.userLevel == DEV) {
-            val getData = userRepository
-                .findAll(pageable)
 
-            return BaseResponse(
-                code = OK.value(),
-                data = PagingDataResponse(
-                    page = getData.number,
-                    size = getData.size,
-                    totalPages = getData.totalPages,
-                    totalData = getData.totalElements,
-                    items = getData.content.map { it.toResponse() }
-                ),
-                message = "Data all users"
-            )
-        }
+        val getData = userRepository
+            .findAll(pageable)
 
-        throw UnAuthorizedException("You don't have permission")
+        return BaseResponse(
+            code = OK.value(),
+            data = PagingDataResponse(
+                page = getData.number,
+                size = getData.size,
+                totalPages = getData.totalPages,
+                totalData = getData.totalElements,
+                items = getData.content.map { it.toResponse() }
+            ),
+            message = "Data all users"
+        )
+
 
     }
 

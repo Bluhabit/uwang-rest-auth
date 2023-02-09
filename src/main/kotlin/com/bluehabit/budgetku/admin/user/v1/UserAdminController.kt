@@ -26,7 +26,6 @@ class UserAdminController(
         produces = ["application/json"]
     )
     fun getListUser(
-        @RequestBody body: CreateUserRequest,
         pageable: Pageable
     ) = userService.getListUsers(pageable)
     @PostMapping(

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
 data class ApiKeyResponse(
-    val id: Long?=null,
+    val id: String?=null,
     val apiKey: String,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime

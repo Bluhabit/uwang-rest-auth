@@ -22,12 +22,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class TokenSecurity(
     private val jwtFilterChainExceptionHandler: JWTFilterChainExceptionHandler,
     private val userDetailsService: UserDetailsService
-):WebSecurityConfigurerAdapter(){
+) : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
 
         val corsOrigin = "*"
-
 
         http
             .csrf()
@@ -37,27 +36,25 @@ class TokenSecurity(
             .cors()
             .and()
             .authorizeRequests()
-            .antMatchers("/api/v1/admin/auth/sign-in").permitAll()
-            .antMatchers("/api/v1/admin/**")
-            .hasAnyRole("USER")
-            .antMatchers("/api/v1/auth/**").permitAll()
-            .antMatchers("/api/v1/**")
-            .hasAnyRole("USER")
+            .antMatchers(
+                "/api/v1/admin/auth/sign-in",
+                "/api/v1/auth/sign-in-email"
+            ).permitAll()
+            .antMatchers(
+                "/api/v1/**",
+            )
+            .authenticated()
             .and()
             .userDetailsService(userDetailsService)
             .exceptionHandling()
-            .authenticationEntryPoint{
-                req,res,ex->
-                res.sendError(HttpStatus.UNAUTHORIZED.value(),ex.message)
-            }
+            .authenticationEntryPoint { req, res, ex -> res.sendError(HttpStatus.UNAUTHORIZED.value(), ex.message) }
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
 
-
         http
-            .addFilterBefore(jwtFilterChainExceptionHandler,UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtFilterChainExceptionHandler, UsernamePasswordAuthenticationFilter::class.java)
 
         http.cors()
             .configurationSource(corsConfigurationSource(corsOrigin))
@@ -66,7 +63,7 @@ class TokenSecurity(
 
 
     @Bean
-    fun passwordEncoder():PasswordEncoder{
+    fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
 
