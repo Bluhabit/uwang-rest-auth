@@ -35,6 +35,5 @@ fun UserRequest.toEntity() = User(
     password = password!!,
     levelUser=levelUser!!,
     createdAt = OffsetDateTime.now(),
-    updatedAt = OffsetDateTime.now(),
-    hospital = null
+    updatedAt = OffsetDateTime.now()
 )

@@ -4,7 +4,6 @@ import com.aliyun.oss.common.auth.InvalidCredentialsException
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
-import com.bluehabit.budgetku.common.exception.STATUS
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.model.BaseResponse
 import org.hibernate.exception.DataException

@@ -4,15 +4,16 @@ import com.bluehabit.budgetku.common.ValidationUtil
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
-import com.bluehabit.budgetku.common.exception.STATUS
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.config.admin.JwtUtil
+import com.bluehabit.budgetku.model.AuthBaseResponse
 import com.bluehabit.budgetku.model.BaseResponse
 import com.bluehabit.budgetku.model.LevelUser
 import com.bluehabit.budgetku.model.PagingDataResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -30,7 +31,7 @@ class AuthServiceImpl(
 
      fun getListUsers(
         pageable: Pageable
-    ): BaseResponse<PagingDataResponse<UserResponse>, Any, Any> {
+    ): BaseResponse<PagingDataResponse<UserResponse>> {
         val email = SecurityContextHolder.getContext().authentication.principal.toString();
         if(email.isBlank()){
             throw UnAuthorizedException("[98] You don't have access!")
@@ -42,13 +43,12 @@ class AuthServiceImpl(
                 .findAll(pageable)
 
             return BaseResponse(
-                status = STATUS.OK,
-                code = HttpStatus.OK.value(),
+                code = OK.value(),
                 data = PagingDataResponse(
                     page = getData.number,
                     size = getData.size,
                     totalPages = getData.totalPages,
-                    totalElements = getData.totalElements,
+                    totalData = getData.totalElements,
                     items = getData.content.map { it.toResponse() }
                 ),
                 message = "Data all users"
@@ -61,7 +61,7 @@ class AuthServiceImpl(
 
      fun signIn(
         body: LoginRequest
-    ): BaseResponse<UserResponse, Any, Any> {
+    ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(body)
 
         val encoder = BCryptPasswordEncoder(16)
@@ -77,9 +77,8 @@ class AuthServiceImpl(
         val token = jwtUtil.generateToken(login.email)
 
 
-        return BaseResponse(
-            status = STATUS.OK,
-            code = HttpStatus.OK.value(),
+        return AuthBaseResponse(
+            code = OK.value(),
             data = login.toResponse(),
             message = "Sign in success!",
             token = token
@@ -89,7 +88,7 @@ class AuthServiceImpl(
 
      fun addNewUser(
         body: UserRequest
-    ): BaseResponse<UserResponse?, Any, Any> {
+    ): BaseResponse<UserResponse?> {
         validationUtil.validate(body)
         val exist = userRepository.exist(body.email!!)
         if(exist){
@@ -100,8 +99,7 @@ class AuthServiceImpl(
         val user = userRepository.save(body.toEntity().copy(password = result))
 
         return BaseResponse(
-            status = STATUS.OK,
-            code = HttpStatus.OK.value(),
+            code = OK.value(),
             data = user.toResponse(),
             message = "Success"
         )
@@ -109,7 +107,7 @@ class AuthServiceImpl(
     }
 
 
-     fun resetPassword(body: ResetPasswordRequest): BaseResponse<UserResponse, Any, Any> {
+     fun resetPassword(body: ResetPasswordRequest): BaseResponse<UserResponse> {
         validationUtil.validate(body)
 
         val findUser = userRepository.findByIdOrNull(body.userId) ?: throw DataNotFoundException("Cannot find user!")
@@ -123,8 +121,7 @@ class AuthServiceImpl(
         ))
 
         return BaseResponse(
-            status = STATUS.OK,
-            code=HttpStatus.OK.value(),
+            code=OK.value(),
             data = saved.toResponse(),
             message = "Success edit password"
         )
@@ -132,7 +129,7 @@ class AuthServiceImpl(
 
     fun deleteUser(
         userId: Long
-    ): BaseResponse<UserResponse?, Any, Any> {
+    ): BaseResponse<UserResponse?> {
         val findUserOrNull = userRepository
             .findByIdOrNull(userId) ?: throw DataNotFoundException("Cannot delete,user doesn't exist or has been remove")
 
@@ -141,8 +138,7 @@ class AuthServiceImpl(
             .deleteById(userId)
 
         return BaseResponse(
-            status = STATUS.OK,
-            code = HttpStatus.OK.value(),
+            code = OK.value(),
             data = findUserOrNull.toResponse(),
             message ="Success delete user $userId"
         )

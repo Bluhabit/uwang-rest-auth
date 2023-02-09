@@ -2,7 +2,6 @@ package com.bluehabit.budgetku.admin.api_key
 
 import com.bluehabit.budgetku.admin.auth.UserRepository
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
-import com.bluehabit.budgetku.common.exception.STATUS
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.model.BaseResponse
 import org.springframework.data.repository.findByIdOrNull
@@ -23,15 +22,13 @@ class ApiKeyServiceImpl(
 
 
     fun generateApiKey(
-    ): BaseResponse<ApiKeyResponse, Any, Any> {
+    ): BaseResponse<ApiKeyResponse> {
         val email = SecurityContextHolder.getContext().authentication.principal.toString();
         if (email.isBlank()) {
             throw UnAuthorizedException("[98] You don't have access!")
         }
         val user = userRepository
             .findByEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-        val hospital = user.hospital ?: throw UnAuthorizedException("[99] You don't have permission")
-
         val date = Date().time
         val generateValue = ""
 
@@ -46,7 +43,6 @@ class ApiKeyServiceImpl(
             .save(apiKey)
 
         return BaseResponse(
-            status = STATUS.OK,
             code = HttpStatus.OK.value(),
             data = savedData.toResponse(),
             message = "Success generate new api key"
@@ -55,14 +51,13 @@ class ApiKeyServiceImpl(
 
     fun deleteApiKey(
         apikeyId: Long
-    ): BaseResponse<ApiKeyResponse, Any, Any> {
+    ): BaseResponse<ApiKeyResponse> {
         val email = SecurityContextHolder.getContext().authentication.principal.toString();
         if (email.isBlank()) {
             throw UnAuthorizedException("[98] You don't have access!")
         }
         val user = userRepository
             .findByEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-        val hospital = user.hospital ?: throw UnAuthorizedException("[99] You don't have permission")
 
         val findApiKeyOrNull = apiKeyRepository
             .findByIdOrNull(apikeyId) ?: throw DataNotFoundException("Cannot find api key with id $apikeyId")
@@ -72,7 +67,6 @@ class ApiKeyServiceImpl(
             .deleteById(apikeyId)
 
         return BaseResponse(
-            status = STATUS.OK,
             code = HttpStatus.OK.value(),
             data = findApiKeyOrNull.toResponse(),
             message = "Success delete api key with id $apikeyId"
