@@ -28,17 +28,17 @@ class AuthServiceImpl(
 
 
         val login = userRepository
-            .findByEmail(
+            .findByUserEmail(
                 body.email!!
             ) ?: throw UnAuthorizedException("Username or password didn't match to any account!")
 
         if (!encoder.matches(
                 body.password,
-                login.password
+                login.userPassword
             )
         ) throw UnAuthorizedException("Username or password didn't match to any account!")
 
-        val token = jwtUtil.generateToken(login.email)
+        val token = jwtUtil.generateToken(login.userEmail)
 
 
         return AuthBaseResponse(

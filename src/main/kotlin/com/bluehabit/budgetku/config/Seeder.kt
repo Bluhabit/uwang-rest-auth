@@ -2,9 +2,11 @@ package com.bluehabit.budgetku.config
 
 import com.bluehabit.budgetku.admin.apiKey.v1.ApiKey
 import com.bluehabit.budgetku.admin.apiKey.v1.ApiKeyRepository
+import com.bluehabit.budgetku.user.LevelUser
 import com.bluehabit.budgetku.user.User
 import com.bluehabit.budgetku.user.UserRepository
-import com.bluehabit.budgetku.common.model.LevelUser.DEV
+import com.bluehabit.budgetku.user.LevelUser.DEV
+import com.bluehabit.budgetku.user.UserAuthProvider.BASIC
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -21,14 +23,19 @@ class Seeder(
         val date = Date().time
         val offset = OffsetDateTime.now()
 
-        if (userRepository.findByEmail("admin@bluehabit.com") == null) {
+        if (userRepository.findByUserEmail("admin@bluehabit.com") == null) {
             val encoder = BCryptPasswordEncoder(16)
             val result: String = encoder.encode("12345678")
             val user = User(
-                id = date,
-                email = "admin@bluehabit.com",
-                password = result,
-                levelUser = DEV,
+                userId = null,
+                userEmail = "admin@bluehabit.com",
+                userPassword = result,
+                userFullName="Admin blue habit",
+                userLevel= LevelUser.USER,
+                userAuthProvider=BASIC,
+                userDateOfBirth=offset,
+                userCountryCode="id",
+                userPhoneNumber="4567890",
                 createdAt = offset,
                 updatedAt = offset,
             )

@@ -1,12 +1,14 @@
 package com.bluehabit.budgetku.user
 
-import com.bluehabit.budgetku.common.model.LevelUser
+import org.hibernate.annotations.GenericGenerator
+import java.security.AuthProvider
 import java.time.OffsetDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 
@@ -14,18 +16,38 @@ import javax.persistence.Table
 @Table(name = "tb_user")
 data class User(
     @Id
-    @GeneratedValue
-    var id: Long?=null,
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    var userId: String? = null,
+
+    @Column
+    var userFullName: String,
+
+    @Column
+    var userDateOfBirth: OffsetDateTime,
 
     @Column(unique = true)
-    var email: String,
+    var userEmail: String,
+
+    @Column(unique = true)
+    var userPhoneNumber: String,
+
+    @Column
+    var userCountryCode: String,
+
+    @Column
+    var userPassword: String,
 
     @Enumerated(value = EnumType.STRING)
     @Column
-    var levelUser: LevelUser,
+    var userLevel: LevelUser,
 
+    @Enumerated(value = EnumType.STRING)
     @Column
-    var password: String,
+    var userAuthProvider: UserAuthProvider,
 
     @Column
     var createdAt: OffsetDateTime,

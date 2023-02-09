@@ -28,7 +28,7 @@ class ApiKeyServiceImpl(
             throw UnAuthorizedException("[98] You don't have access!")
         }
         val user = userRepository
-            .findByEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
+            .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
         val date = Date().time
         val generateValue = ""
 
@@ -57,7 +57,7 @@ class ApiKeyServiceImpl(
             throw UnAuthorizedException("[98] You don't have access!")
         }
         val user = userRepository
-            .findByEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
+            .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
 
         val findApiKeyOrNull = apiKeyRepository
             .findByIdOrNull(apikeyId) ?: throw DataNotFoundException("Cannot find api key with id $apikeyId")

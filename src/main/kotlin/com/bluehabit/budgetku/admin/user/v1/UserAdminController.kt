@@ -1,7 +1,7 @@
 package com.bluehabit.budgetku.admin.user.v1
 
 import com.bluehabit.budgetku.user.ResetPasswordRequest
-import com.bluehabit.budgetku.user.UserRequest
+import com.bluehabit.budgetku.user.CreateUserRequest
 import com.bluehabit.budgetku.user.UserService
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -26,7 +26,7 @@ class UserAdminController(
         produces = ["application/json"]
     )
     fun getListUser(
-        @RequestBody body: UserRequest,
+        @RequestBody body: CreateUserRequest,
         pageable: Pageable
     ) = userService.getListUsers(pageable)
     @PostMapping(
@@ -35,7 +35,7 @@ class UserAdminController(
         consumes = ["application/json"]
     )
     fun createUser(
-        @RequestBody body: UserRequest
+        @RequestBody body: CreateUserRequest
     ) = userService.addNewUser(body)
 
     @PutMapping(

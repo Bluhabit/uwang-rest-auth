@@ -33,17 +33,17 @@ class AuthAdminServiceImpl(
 
 
         val login = userRepository
-            .findByEmail(
+            .findByUserEmail(
                 body.email!!
             ) ?: throw UnAuthorizedException("Username or password didn't match to any account!")
 
         if (!encoder.matches(
                 body.password,
-                login.password
+                login.userPassword
             )
         ) throw UnAuthorizedException("Username or password didn't match to any account!")
 
-        val token = jwtUtil.generateToken(login.email)
+        val token = jwtUtil.generateToken(login.userEmail)
 
 
         return AuthBaseResponse(
@@ -57,11 +57,11 @@ class AuthAdminServiceImpl(
 
     override fun loadUserByUsername(username: String?): UserDetails {
         val user = userRepository
-            .findByEmail(username!!) ?: throw UnAuthorizedException("token no valid or doesn't exist")
+            .findByUserEmail(username!!) ?: throw UnAuthorizedException("token no valid or doesn't exist")
 
         return User(
             username,
-            user.password,
+            user.userPassword,
             Collections.singletonList(
                 SimpleGrantedAuthority("ROLE_USER")
             )

@@ -18,7 +18,7 @@ class JWTFilterChainExceptionHandler(
     private val jwtUtil: JwtUtil,
     @Qualifier("handlerExceptionResolver")
     private val resolver: HandlerExceptionResolver
-) : OncePerRequestFilter(){
+) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -26,14 +26,18 @@ class JWTFilterChainExceptionHandler(
     ) {
         try {
             val header = request.getHeader("Authorization")
-            if(header != null &&
-                header.isNotBlank()){
+            if (header != null &&
+                header.isNotBlank()
+            ) {
 
-                val jwt = header.replace("Bearer ","")
-                if(jwt.isBlank()) {
-                    throw UnAuthorizedException("Token not provided 1")
+                val jwt = header.replace("Bearer ", "")
+                if (jwt.isBlank()) {
+                    throw UnAuthorizedException("No token provided")
                 }
 
+                if (jwtUtil.isJwtExpired(jwt)) {
+                    throw UnAuthorizedException("Token is not valid or expired")
+                }
                 val email = jwtUtil.validateTokenAndRetrieveSubject(jwt)
 
                 val user = userDetailsService
@@ -46,12 +50,12 @@ class JWTFilterChainExceptionHandler(
                 )
                 SecurityContextHolder.getContext().authentication = userNameAuth
                 filterChain.doFilter(request, response)
-            }else{
+            } else {
                 filterChain.doFilter(request, response)
             }
 
-        }catch (e:Exception){
-            resolver.resolveException(request,response,null,e)
+        } catch (e: Exception) {
+            resolver.resolveException(request, response, null, e)
         }
     }
 

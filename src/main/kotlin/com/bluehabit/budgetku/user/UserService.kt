@@ -6,7 +6,6 @@ import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
-import com.bluehabit.budgetku.common.model.LevelUser
 import com.bluehabit.budgetku.common.model.PagingDataResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -28,8 +27,8 @@ class UserService(
             throw UnAuthorizedException("[98] You don't have access!")
         }
         val user = userRepository
-            .findByEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-        if (user.levelUser == LevelUser.DEV) {
+            .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
+        if (user.userLevel == LevelUser.DEV) {
             val getData = userRepository
                 .findAll(pageable)
 
@@ -51,16 +50,16 @@ class UserService(
     }
 
     fun addNewUser(
-        body: UserRequest
+        body: CreateUserRequest
     ): BaseResponse<UserResponse?> {
         validationUtil.validate(body)
-        val exist = userRepository.exist(body.email!!)
+        val exist = userRepository.exist(body.userEmail!!)
         if (exist) {
             throw DuplicateException("Email already taken!")
         }
         val encoder = BCryptPasswordEncoder(16)
-        val result: String = encoder.encode(body.password)
-        val user = userRepository.save(body.toEntity().copy(password = result))
+        val result: String = encoder.encode(body.userPassword)
+        val user = userRepository.save(body.toEntity().copy(userPassword = result))
 
         return BaseResponse(
             code = OK.value(),
@@ -77,12 +76,12 @@ class UserService(
         val findUser = userRepository.findByIdOrNull(body.userId) ?: throw DataNotFoundException("Cannot find user!")
 
         val encoder = BCryptPasswordEncoder(16)
-        if (!encoder.matches(body.currentPassword, findUser.password)) {
+        if (!encoder.matches(body.currentPassword, findUser.userPassword)) {
             throw BadRequestException("Current password didn't match!")
         }
         val saved = userRepository.save(
             findUser.copy(
-                password = encoder.encode(body.newPassword)
+                userPassword = encoder.encode(body.newPassword)
             )
         )
 
