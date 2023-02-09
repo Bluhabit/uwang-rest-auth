@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.admin.auth.v1
+package com.bluehabit.budgetku.user
 
 import com.bluehabit.budgetku.common.model.LevelUser
 import java.time.OffsetDateTime

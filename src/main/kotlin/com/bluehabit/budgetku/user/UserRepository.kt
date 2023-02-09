@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.admin.auth.v1
+package com.bluehabit.budgetku.user
 
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository

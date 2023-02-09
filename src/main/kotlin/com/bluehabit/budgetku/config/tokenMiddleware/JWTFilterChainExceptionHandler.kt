@@ -1,6 +1,6 @@
-package com.bluehabit.budgetku.config.adminMiddleware
+package com.bluehabit.budgetku.config.tokenMiddleware
 
-import com.bluehabit.budgetku.admin.auth.v1.AuthServiceImpl
+import com.bluehabit.budgetku.admin.auth.v1.AuthAdminServiceImpl
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class JWTFilterChainExceptionHandler(
-    private val userDetailsService: AuthServiceImpl,
+    private val userDetailsService: AuthAdminServiceImpl,
     private val jwtUtil: JwtUtil,
     @Qualifier("handlerExceptionResolver")
     private val resolver: HandlerExceptionResolver
@@ -46,16 +46,13 @@ class JWTFilterChainExceptionHandler(
                 )
                 SecurityContextHolder.getContext().authentication = userNameAuth
                 filterChain.doFilter(request, response)
-
             }else{
-
                 filterChain.doFilter(request, response)
             }
 
         }catch (e:Exception){
             resolver.resolveException(request,response,null,e)
         }
-
     }
 
 }

@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.config.adminMiddleware
+package com.bluehabit.budgetku.config.tokenMiddleware
 
 
 import com.auth0.jwt.JWT

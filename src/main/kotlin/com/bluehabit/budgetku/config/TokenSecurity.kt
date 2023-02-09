@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.config
 
-import com.bluehabit.budgetku.config.adminMiddleware.JWTFilterChainExceptionHandler
+import com.bluehabit.budgetku.config.tokenMiddleware.JWTFilterChainExceptionHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -19,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class AdminSecurity(
+class TokenSecurity(
     private val jwtFilterChainExceptionHandler: JWTFilterChainExceptionHandler,
     private val userDetailsService: UserDetailsService
 ):WebSecurityConfigurerAdapter(){
@@ -37,8 +37,11 @@ class AdminSecurity(
             .cors()
             .and()
             .authorizeRequests()
-            .antMatchers("/api/v1/admin/sign-in").permitAll()
+            .antMatchers("/api/v1/admin/auth/sign-in").permitAll()
             .antMatchers("/api/v1/admin/**")
+            .hasAnyRole("USER")
+            .antMatchers("/api/v1/auth/**").permitAll()
+            .antMatchers("/api/v1/**")
             .hasAnyRole("USER")
             .and()
             .userDetailsService(userDetailsService)
