@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.config.api_key
+package com.bluehabit.budgetku.config.apiKeyMiddleware
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component

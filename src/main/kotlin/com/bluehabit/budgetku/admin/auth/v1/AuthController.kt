@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.admin.auth
+package com.bluehabit.budgetku.admin.auth.v1
 
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -7,14 +7,18 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping(
+    value = ["/api/v1/admin/auth"]
+)
 class AuthController(
     private val authService: AuthService
 ) {
     @GetMapping(
-        value = ["api/admin/users"],
+        value = ["/users"],
         produces = ["application/json"]
     )
     fun getListUser(
@@ -22,7 +26,7 @@ class AuthController(
     ) = authService.getListUsers(pageable)
 
     @PostMapping(
-        value = ["api/admin/sign-in"],
+        value = ["/sign-in"],
         produces = ["application/json"],
         consumes = ["application/json"]
     )
@@ -31,7 +35,7 @@ class AuthController(
     ) = authService.signIn(body)
 
     @PostMapping(
-        value = ["api/admin/user"],
+        value = ["/user"],
         produces = ["application/json"],
         consumes = ["application/json"]
     )
@@ -41,7 +45,7 @@ class AuthController(
 
 
     @PutMapping(
-        value = ["api/admin/user/reset-password"],
+        value = ["/user/reset-password"],
         produces = ["application/json"],
         consumes = ["application/json"]
     )
@@ -50,7 +54,7 @@ class AuthController(
     ) = authService.resetPassword(body)
 
     @DeleteMapping(
-        value = ["api/admin/user/{user_id}"],
+        value = ["/user/{user_id}"],
         produces = ["application/json"]
     )
     fun deleteUser(

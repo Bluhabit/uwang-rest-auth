@@ -5,11 +5,14 @@ import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
-import com.bluehabit.budgetku.model.BaseResponse
+import com.bluehabit.budgetku.common.model.BaseResponse
 import org.hibernate.exception.DataException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
@@ -49,7 +52,7 @@ class ErrorHandlerController {
     fun badRequest(
         error: BadRequestException
     )= BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString()
     )
@@ -63,7 +66,7 @@ class ErrorHandlerController {
     fun dataNotFound(
         error: DataNotFoundException
     )= BaseResponse<List<Any>>(
-        code = HttpStatus.NOT_FOUND.value(),
+        code = NOT_FOUND.value(),
         data = listOf(),
         message = error.message.toString()
     )
@@ -77,7 +80,7 @@ class ErrorHandlerController {
     fun unAuthorized(
         error: UnAuthorizedException
     )= BaseResponse<List<Any>>(
-        code = HttpStatus.UNAUTHORIZED.value(),
+        code = UNAUTHORIZED.value(),
         data = listOf(),
         message = error.message.toString(),
     )
@@ -91,7 +94,7 @@ class ErrorHandlerController {
     fun mediaTypeNotSupported(
         error:HttpMediaTypeNotSupportedException
     )= BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = "${error.message}, Supported type = ${error.supportedMediaTypes}",
     )
@@ -105,7 +108,7 @@ class ErrorHandlerController {
     fun mediaTypeJsonInvalid(
         error:HttpMessageNotReadableException
     )= BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = "Data given not valid",
     )
@@ -119,7 +122,7 @@ class ErrorHandlerController {
     fun methodNotAllowed(
         error:HttpRequestMethodNotSupportedException
     )= BaseResponse<List<Any>>(
-        code = HttpStatus.METHOD_NOT_ALLOWED.value(),
+        code = METHOD_NOT_ALLOWED.value(),
         data = listOf(),
         message = "${error.message}",
     )
@@ -133,7 +136,7 @@ class ErrorHandlerController {
     fun maximumFileUpload(
         error:MaxUploadSizeExceededException
     )= BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString()
     )
@@ -146,8 +149,8 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:DataIntegrityViolationException
-    )=BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+    )= BaseResponse<List<Any>>(
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = "${error.mostSpecificCause.message}"
     )
@@ -160,8 +163,8 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:DataException
-    )=BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+    )= BaseResponse<List<Any>>(
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
     )
@@ -174,8 +177,8 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:org.hibernate.exception.ConstraintViolationException
-    )=BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+    )= BaseResponse<List<Any>>(
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
     )
@@ -188,8 +191,8 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:DuplicateException
-    )=BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+    )= BaseResponse<List<Any>>(
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
     )
@@ -202,7 +205,7 @@ class ErrorHandlerController {
     )
     fun nullPointer(e:NullPointerException)=
         BaseResponse<List<Any>>(
-            code = HttpStatus.BAD_REQUEST.value(),
+            code = BAD_REQUEST.value(),
             data = listOf(),
             message = e.message.toString()
         )
@@ -215,8 +218,8 @@ class ErrorHandlerController {
     )
     fun formatException(
         e:ParseException
-    )=BaseResponse<List<Any>>(
-        code = HttpStatus.BAD_REQUEST.value(),
+    )= BaseResponse<List<Any>>(
+        code = BAD_REQUEST.value(),
         data = listOf(),
         message = e.message.toString(),
     )

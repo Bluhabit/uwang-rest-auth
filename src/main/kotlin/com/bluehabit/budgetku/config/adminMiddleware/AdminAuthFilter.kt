@@ -1,18 +1,16 @@
-package com.bluehabit.budgetku.config.api_key
+package com.bluehabit.budgetku.config.adminMiddleware
 
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
 import javax.servlet.http.HttpServletRequest
 
-class ApiKeyAuthFilter(
+class AdminAuthFilter (
     private val headerName:String
-) : AbstractPreAuthenticatedProcessingFilter() {
-    override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any {
-        return request?.getHeader(headerName) ?: "NO-HEADER"
+): AbstractPreAuthenticatedProcessingFilter(){
+    override fun getPreAuthenticatedPrincipal(request: HttpServletRequest?): Any? {
+        return request?.getHeader(headerName) ?: ""
     }
 
     override fun getPreAuthenticatedCredentials(request: HttpServletRequest?): Any? {
-       return null
+        return null
     }
-
-
 }

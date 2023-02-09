@@ -1,11 +1,12 @@
-package com.bluehabit.budgetku.admin.api_key
+package com.bluehabit.budgetku.admin.apiKey.v1
 
-import com.bluehabit.budgetku.admin.auth.UserRepository
+import com.bluehabit.budgetku.admin.auth.v1.UserRepository
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
-import com.bluehabit.budgetku.model.BaseResponse
+import com.bluehabit.budgetku.common.model.BaseResponse
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
@@ -43,7 +44,7 @@ class ApiKeyServiceImpl(
             .save(apiKey)
 
         return BaseResponse(
-            code = HttpStatus.OK.value(),
+            code = OK.value(),
             data = savedData.toResponse(),
             message = "Success generate new api key"
         )
@@ -67,7 +68,7 @@ class ApiKeyServiceImpl(
             .deleteById(apikeyId)
 
         return BaseResponse(
-            code = HttpStatus.OK.value(),
+            code = OK.value(),
             data = findApiKeyOrNull.toResponse(),
             message = "Success delete api key with id $apikeyId"
         )

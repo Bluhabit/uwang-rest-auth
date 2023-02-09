@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.model
+package com.bluehabit.budgetku.common.model
 
 data class PagingDataResponse<OUTPUT>(
     var page:Int,

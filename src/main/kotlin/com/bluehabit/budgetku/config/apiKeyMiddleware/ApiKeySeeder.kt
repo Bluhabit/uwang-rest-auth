@@ -1,9 +1,9 @@
-package com.bluehabit.budgetku.config.api_key
+package com.bluehabit.budgetku.config.apiKeyMiddleware
 
-import com.bluehabit.budgetku.admin.api_key.ApiKeyRepository
-import com.bluehabit.budgetku.admin.auth.User
-import com.bluehabit.budgetku.admin.auth.UserRepository
-import com.bluehabit.budgetku.model.LevelUser
+import com.bluehabit.budgetku.admin.apiKey.v1.ApiKeyRepository
+import com.bluehabit.budgetku.admin.auth.v1.User
+import com.bluehabit.budgetku.admin.auth.v1.UserRepository
+import com.bluehabit.budgetku.common.model.LevelUser.DEV
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -28,7 +28,7 @@ class ApiKeySeeder(
                 id = date,
                 email = "admin@cexup.com",
                 password = result,
-                levelUser = LevelUser.DEV,
+                levelUser = DEV,
                 createdAt = offset,
                 updatedAt = offset,
             )

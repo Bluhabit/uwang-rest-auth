@@ -1,6 +1,6 @@
-package com.bluehabit.budgetku.admin.auth
+package com.bluehabit.budgetku.admin.auth.v1
 
-import com.bluehabit.budgetku.model.LevelUser
+import com.bluehabit.budgetku.common.model.LevelUser
 import java.time.OffsetDateTime
 import javax.persistence.Column
 import javax.persistence.Entity

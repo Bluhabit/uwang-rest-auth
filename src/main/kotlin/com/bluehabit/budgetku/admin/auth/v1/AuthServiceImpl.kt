@@ -1,15 +1,15 @@
-package com.bluehabit.budgetku.admin.auth
+package com.bluehabit.budgetku.admin.auth.v1
 
 import com.bluehabit.budgetku.common.ValidationUtil
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
-import com.bluehabit.budgetku.config.admin.JwtUtil
-import com.bluehabit.budgetku.model.AuthBaseResponse
-import com.bluehabit.budgetku.model.BaseResponse
-import com.bluehabit.budgetku.model.LevelUser
-import com.bluehabit.budgetku.model.PagingDataResponse
+import com.bluehabit.budgetku.config.adminMiddleware.JwtUtil
+import com.bluehabit.budgetku.common.model.AuthBaseResponse
+import com.bluehabit.budgetku.common.model.BaseResponse
+import com.bluehabit.budgetku.common.model.LevelUser
+import com.bluehabit.budgetku.common.model.PagingDataResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus.OK

@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.admin.api_key
+package com.bluehabit.budgetku.admin.apiKey.v1
 
 import java.time.OffsetDateTime
 import javax.persistence.Column

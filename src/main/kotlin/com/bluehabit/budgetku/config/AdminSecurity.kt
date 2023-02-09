@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.config
 
-import com.bluehabit.budgetku.config.admin.JWTFilterChainExceptionHandler
+import com.bluehabit.budgetku.config.adminMiddleware.JWTFilterChainExceptionHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -37,8 +37,8 @@ class AdminSecurity(
             .cors()
             .and()
             .authorizeRequests()
-            .antMatchers("/api/admin/sign-in").permitAll()
-            .antMatchers("/api/admin/**")
+            .antMatchers("/api/v1/admin/sign-in").permitAll()
+            .antMatchers("/api/v1/admin/**")
             .hasAnyRole("USER")
             .and()
             .userDetailsService(userDetailsService)

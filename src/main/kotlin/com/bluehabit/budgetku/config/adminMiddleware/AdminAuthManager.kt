@@ -1,6 +1,6 @@
-package com.bluehabit.budgetku.config.admin
+package com.bluehabit.budgetku.config.adminMiddleware
 
-import com.bluehabit.budgetku.admin.auth.UserRepository
+import com.bluehabit.budgetku.admin.auth.v1.UserRepository
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager

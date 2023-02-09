@@ -1,25 +1,27 @@
-package com.bluehabit.budgetku.admin.api_key
+package com.bluehabit.budgetku.admin.apiKey.v1
 
-import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping(
+    value = ["/api/v1/admin"]
+)
 class ApiKeyController(
     private val apiKeyService: ApiKeyServiceImpl
 ) {
     @PostMapping(
-        value = ["api/admin/api-key"],
+        value = ["/api-key"],
         produces = ["application/json"]
     )
     fun generateToken(
     )=apiKeyService.generateApiKey()
 
     @DeleteMapping(
-        value = ["api/admin/api-key/{api_key_id}"],
+        value = ["/api-key/{api_key_id}"],
         produces = ["application/json"]
     )
     fun deleteCredential(

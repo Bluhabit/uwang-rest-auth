@@ -1,7 +1,7 @@
-package com.bluehabit.budgetku.admin.api_key
+package com.bluehabit.budgetku.admin.apiKey.v1
 
 
-import com.bluehabit.budgetku.model.PagingDataResponse
+import com.bluehabit.budgetku.common.model.PagingDataResponse
 import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 

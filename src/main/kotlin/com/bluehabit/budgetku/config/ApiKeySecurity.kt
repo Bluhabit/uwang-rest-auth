@@ -1,9 +1,9 @@
 package com.bluehabit.budgetku.config
 
-import com.bluehabit.budgetku.admin.api_key.ApiKeyRepository
-import com.bluehabit.budgetku.config.api_key.ApiKeyAuthFilter
-import com.bluehabit.budgetku.config.api_key.ApiKeyAuthManager
-import com.bluehabit.budgetku.config.api_key.ApiKeyFilterChainExceptionHandler
+import com.bluehabit.budgetku.admin.apiKey.v1.ApiKeyRepository
+import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyAuthFilter
+import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyAuthManager
+import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyFilterChainExceptionHandler
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
