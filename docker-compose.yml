@@ -1,0 +1,27 @@
+version: '3.5'
+
+services:
+  rest_api_medical_record:
+    container_name: "rest-api-medical-record"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8000:8000
+    expose:
+      - 8000
+    networks:
+      - app
+  postgres:
+    image: postgres:14.3
+    environment:
+      POSTGRES_USER: <YOUR PG USER>
+      POSTGRES_PASSWORD: <YOUR PG PASWORD>
+      POSTGRES_DB: <YOUR PG DATABABASE PASSWORD>
+    ports:
+      - "3306:5432"
+    restart: always
+
+networks:
+  app:
+    external: true
