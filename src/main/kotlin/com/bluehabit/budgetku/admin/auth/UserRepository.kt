@@ -9,8 +9,6 @@ interface UserRepository : PagingAndSortingRepository<User, Long> {
         email:String,
     ):Boolean
 
-    fun findByEmailAndPassword(email: String, password: String): User?
-
     fun findByEmail(email: String): User?
 
 

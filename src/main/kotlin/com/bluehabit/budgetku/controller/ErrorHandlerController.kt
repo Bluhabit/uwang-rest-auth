@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.controller
 
-import com.aliyun.oss.common.auth.InvalidCredentialsException
+
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
@@ -34,12 +34,10 @@ class ErrorHandlerController {
     )
     fun validationError(
         error:ConstraintViolationException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )= BaseResponse<List<Any>>(
         code = BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
-        errorCode = 1
     )
 
     @ExceptionHandler(
@@ -50,12 +48,10 @@ class ErrorHandlerController {
     )
     fun badRequest(
         error: BadRequestException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )= BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
-        message = error.message.toString(),
-        errorCode = 2
+        message = error.message.toString()
     )
 
     @ExceptionHandler(
@@ -66,12 +62,10 @@ class ErrorHandlerController {
     )
     fun dataNotFound(
         error: DataNotFoundException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.NOT_FOUND,
+    )= BaseResponse<List<Any>>(
         code = HttpStatus.NOT_FOUND.value(),
         data = listOf(),
-        message = error.message.toString(),
-        errorCode = 3
+        message = error.message.toString()
     )
 
     @ExceptionHandler(
@@ -82,12 +76,10 @@ class ErrorHandlerController {
     )
     fun unAuthorized(
         error: UnAuthorizedException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.UNAUTHORIZED,
+    )= BaseResponse<List<Any>>(
         code = HttpStatus.UNAUTHORIZED.value(),
         data = listOf(),
         message = error.message.toString(),
-        errorCode = 4
     )
 
     @ExceptionHandler(
@@ -98,12 +90,10 @@ class ErrorHandlerController {
     )
     fun mediaTypeNotSupported(
         error:HttpMediaTypeNotSupportedException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )= BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
         message = "${error.message}, Supported type = ${error.supportedMediaTypes}",
-        errorCode = 5
     )
 
     @ExceptionHandler(
@@ -114,12 +104,10 @@ class ErrorHandlerController {
     )
     fun mediaTypeJsonInvalid(
         error:HttpMessageNotReadableException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )= BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
         message = "Data given not valid",
-        errorCode = 6
     )
 
     @ExceptionHandler(
@@ -130,12 +118,10 @@ class ErrorHandlerController {
     )
     fun methodNotAllowed(
         error:HttpRequestMethodNotSupportedException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.NOT_FOUND,
+    )= BaseResponse<List<Any>>(
         code = HttpStatus.METHOD_NOT_ALLOWED.value(),
         data = listOf(),
         message = "${error.message}",
-        errorCode = 7
     )
 
     @ExceptionHandler(
@@ -146,28 +132,10 @@ class ErrorHandlerController {
     )
     fun maximumFileUpload(
         error:MaxUploadSizeExceededException
-    )= BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )= BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
-        message = error.message.toString(),
-        errorCode = 8
-    )
-
-    @ExceptionHandler(
-        value = [InvalidCredentialsException::class]
-    )
-    @ResponseStatus(
-        HttpStatus.BAD_REQUEST
-    )
-    fun ossUnAuthorized(
-        error:InvalidCredentialsException
-    )=BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
-        code = HttpStatus.BAD_REQUEST.value(),
-        data = listOf(),
-        message = error.message.toString(),
-        errorCode = 9
+        message = error.message.toString()
     )
 
     @ExceptionHandler(
@@ -178,12 +146,10 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:DataIntegrityViolationException
-    )=BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )=BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
-        message = "${error.mostSpecificCause.message}",
-        errorCode = 10
+        message = "${error.mostSpecificCause.message}"
     )
 
     @ExceptionHandler(
@@ -194,12 +160,10 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:DataException
-    )=BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )=BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
-        errorCode = 11
     )
 
     @ExceptionHandler(
@@ -210,12 +174,10 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:org.hibernate.exception.ConstraintViolationException
-    )=BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )=BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
-        errorCode = 12
     )
 
     @ExceptionHandler(
@@ -226,12 +188,10 @@ class ErrorHandlerController {
     )
     fun sqlError(
         error:DuplicateException
-    )=BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )=BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
         message = error.message.toString(),
-        errorCode = 13
     )
 
     @ExceptionHandler(
@@ -241,12 +201,10 @@ class ErrorHandlerController {
         HttpStatus.BAD_REQUEST
     )
     fun nullPointer(e:NullPointerException)=
-        BaseResponse<List<Any>,Any,Any>(
-            status = STATUS.BAD_REQUEST,
+        BaseResponse<List<Any>>(
             code = HttpStatus.BAD_REQUEST.value(),
             data = listOf(),
-            message = e.message.toString(),
-            errorCode = 14
+            message = e.message.toString()
         )
 
     @ExceptionHandler(
@@ -257,11 +215,9 @@ class ErrorHandlerController {
     )
     fun formatException(
         e:ParseException
-    )=BaseResponse<List<Any>,Any,Any>(
-        status = STATUS.BAD_REQUEST,
+    )=BaseResponse<List<Any>>(
         code = HttpStatus.BAD_REQUEST.value(),
         data = listOf(),
         message = e.message.toString(),
-        errorCode = 15
     )
 }

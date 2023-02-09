@@ -11,7 +11,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "tb_user_api_medical_record")
+@Table(name = "tb_user")
 data class User(
     @Id
     @GeneratedValue
@@ -19,7 +19,6 @@ data class User(
 
     @Column(unique = true)
     var email: String,
-
 
     @Enumerated(value = EnumType.STRING)
     @Column

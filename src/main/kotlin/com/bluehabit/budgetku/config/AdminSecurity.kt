@@ -26,7 +26,6 @@ class AdminSecurity(
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
 
-
         val corsOrigin = "*"
 
 

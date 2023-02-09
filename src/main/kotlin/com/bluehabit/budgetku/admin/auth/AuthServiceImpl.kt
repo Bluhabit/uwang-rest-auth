@@ -12,7 +12,6 @@ import com.bluehabit.budgetku.model.LevelUser
 import com.bluehabit.budgetku.model.PagingDataResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
@@ -27,18 +26,18 @@ class AuthServiceImpl(
     private val userRepository: UserRepository,
     private val validationUtil: ValidationUtil,
     private val jwtUtil: JwtUtil
-): UserDetailsService {
+) : AuthService, UserDetailsService {
 
-     fun getListUsers(
+    override fun getListUsers(
         pageable: Pageable
     ): BaseResponse<PagingDataResponse<UserResponse>> {
         val email = SecurityContextHolder.getContext().authentication.principal.toString();
-        if(email.isBlank()){
+        if (email.isBlank()) {
             throw UnAuthorizedException("[98] You don't have access!")
         }
         val user = userRepository
             .findByEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-        if(user.levelUser == LevelUser.DEV) {
+        if (user.levelUser == LevelUser.DEV) {
             val getData = userRepository
                 .findAll(pageable)
 
@@ -59,7 +58,7 @@ class AuthServiceImpl(
 
     }
 
-     fun signIn(
+    override fun signIn(
         body: LoginRequest
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(body)
@@ -72,7 +71,11 @@ class AuthServiceImpl(
                 body.email!!
             ) ?: throw UnAuthorizedException("Username or password didn't match to any account!")
 
-        if(!encoder.matches(body.password,login.password)) throw UnAuthorizedException("Username or password didn't match to any account!")
+        if (!encoder.matches(
+                body.password,
+                login.password
+            )
+        ) throw UnAuthorizedException("Username or password didn't match to any account!")
 
         val token = jwtUtil.generateToken(login.email)
 
@@ -86,12 +89,12 @@ class AuthServiceImpl(
 
     }
 
-     fun addNewUser(
+    override fun addNewUser(
         body: UserRequest
     ): BaseResponse<UserResponse?> {
         validationUtil.validate(body)
         val exist = userRepository.exist(body.email!!)
-        if(exist){
+        if (exist) {
             throw DuplicateException("Email already taken!")
         }
         val encoder = BCryptPasswordEncoder(16)
@@ -107,31 +110,34 @@ class AuthServiceImpl(
     }
 
 
-     fun resetPassword(body: ResetPasswordRequest): BaseResponse<UserResponse> {
+    override fun resetPassword(body: ResetPasswordRequest): BaseResponse<UserResponse> {
         validationUtil.validate(body)
 
         val findUser = userRepository.findByIdOrNull(body.userId) ?: throw DataNotFoundException("Cannot find user!")
 
         val encoder = BCryptPasswordEncoder(16)
-        if(!encoder.matches(body.currentPassword,findUser.password)){
+        if (!encoder.matches(body.currentPassword, findUser.password)) {
             throw BadRequestException("Current password didn't match!")
         }
-       val saved = userRepository.save(findUser.copy(
-            password = encoder.encode(body.newPassword)
-        ))
+        val saved = userRepository.save(
+            findUser.copy(
+                password = encoder.encode(body.newPassword)
+            )
+        )
 
         return BaseResponse(
-            code=OK.value(),
+            code = OK.value(),
             data = saved.toResponse(),
             message = "Success edit password"
         )
     }
 
-    fun deleteUser(
+    override fun deleteUser(
         userId: Long
     ): BaseResponse<UserResponse?> {
         val findUserOrNull = userRepository
-            .findByIdOrNull(userId) ?: throw DataNotFoundException("Cannot delete,user doesn't exist or has been remove")
+            .findByIdOrNull(userId)
+            ?: throw DataNotFoundException("Cannot delete,user doesn't exist or has been remove")
 
 
         userRepository
@@ -140,7 +146,7 @@ class AuthServiceImpl(
         return BaseResponse(
             code = OK.value(),
             data = findUserOrNull.toResponse(),
-            message ="Success delete user $userId"
+            message = "Success delete user $userId"
         )
     }
 

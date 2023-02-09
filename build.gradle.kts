@@ -31,9 +31,10 @@ dependencies {
 
 	implementation("com.auth0:java-jwt:3.18.2")
 
+	implementation("com.google.code.gson:gson:2.8.5")
+
 	implementation("org.postgresql:postgresql:42.3.1")
 	implementation("junit:junit:4.13.2")
-	implementation("com.aliyun.oss:aliyun-sdk-oss:3.13.2")
 	implementation("javax.activation:activation:1.1.1")
 	implementation("javax.xml.bind:jaxb-api:2.3.1")
 	implementation("org.glassfish.jaxb:jaxb-runtime:2.3.3")

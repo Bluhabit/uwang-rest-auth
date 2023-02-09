@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class AuthController(
-    private val authService: AuthServiceImpl
+    private val authService: AuthService
 ) {
     @GetMapping(
         value = ["api/admin/users"],
