@@ -1,8 +1,8 @@
 package com.bluehabit.budgetku.admin.user.v1
 
-import com.bluehabit.budgetku.user.ResetPasswordRequest
-import com.bluehabit.budgetku.user.CreateUserRequest
-import com.bluehabit.budgetku.user.UserService
+import com.bluehabit.budgetku.data.user.ResetPasswordRequest
+import com.bluehabit.budgetku.data.user.CreateUserRequest
+import com.bluehabit.budgetku.data.user.UserService
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping

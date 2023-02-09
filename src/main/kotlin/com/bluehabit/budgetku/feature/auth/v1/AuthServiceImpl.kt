@@ -4,10 +4,10 @@ import com.bluehabit.budgetku.common.ValidationUtil
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
-import com.bluehabit.budgetku.user.LoginRequest
-import com.bluehabit.budgetku.user.UserRepository
-import com.bluehabit.budgetku.user.UserResponse
-import com.bluehabit.budgetku.user.toResponse
+import com.bluehabit.budgetku.data.user.LoginRequest
+import com.bluehabit.budgetku.data.user.UserRepository
+import com.bluehabit.budgetku.data.user.UserResponse
+import com.bluehabit.budgetku.data.user.toResponse
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service

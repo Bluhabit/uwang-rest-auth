@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.feature.auth.v1
 
-import com.bluehabit.budgetku.user.LoginRequest
+import com.bluehabit.budgetku.data.user.LoginRequest
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping

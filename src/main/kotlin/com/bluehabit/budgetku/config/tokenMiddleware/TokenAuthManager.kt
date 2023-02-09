@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.config.tokenMiddleware
 
-import com.bluehabit.budgetku.user.UserRepository
+import com.bluehabit.budgetku.data.user.UserRepository
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager

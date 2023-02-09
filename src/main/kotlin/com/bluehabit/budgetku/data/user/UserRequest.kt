@@ -1,6 +1,5 @@
-package com.bluehabit.budgetku.user
+package com.bluehabit.budgetku.data.user
 
-import com.bluehabit.budgetku.user.UserAuthProvider.BASIC
 import java.time.OffsetDateTime
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull

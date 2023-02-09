@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.admin.apiKey.v1
 
-import com.bluehabit.budgetku.user.UserRepository
+import com.bluehabit.budgetku.data.user.UserRepository
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse

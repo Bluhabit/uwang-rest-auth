@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.user
+package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.common.ValidationUtil
 import com.bluehabit.budgetku.common.exception.BadRequestException
@@ -7,6 +7,7 @@ import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.PagingDataResponse
+import com.bluehabit.budgetku.data.user.LevelUser.DEV
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus.OK
@@ -28,7 +29,7 @@ class UserService(
         }
         val user = userRepository
             .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-        if (user.userLevel == LevelUser.DEV) {
+        if (user.userLevel == DEV) {
             val getData = userRepository
                 .findAll(pageable)
 
