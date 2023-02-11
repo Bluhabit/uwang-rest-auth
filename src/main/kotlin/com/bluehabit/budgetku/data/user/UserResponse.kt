@@ -6,7 +6,9 @@ import com.bluehabit.budgetku.data.apiKey.ApiKeyResponse
 import com.bluehabit.budgetku.data.apiKey.toResponse
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionReponse
+import com.bluehabit.budgetku.data.permission.toResponse
 import com.bluehabit.budgetku.data.role.RoleResponse
+import com.bluehabit.budgetku.data.role.toResponse
 import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
@@ -37,22 +39,9 @@ fun User.toResponse(): UserResponse {
 
     val role = userRoles.map {
         permission += it.permissions.map { p ->
-            PermissionReponse(
-                id = p.id,
-                permissionName = p.permissionName,
-                permissionGroup = p.permissionGroup,
-                permissionType = p.permissionType,
-                createdAt = createdAt,
-                updatedAt = updatedAt
-            )
+            p.toResponse()
         }
-        RoleResponse(
-            roleName = it.roleName,
-            roleDescription = it.roleDescription,
-            roleId = it.roleId,
-            createdAt = createdAt,
-            updatedAt = updatedAt
-        )
+        it.toResponse()
     }
 
     return UserResponse(

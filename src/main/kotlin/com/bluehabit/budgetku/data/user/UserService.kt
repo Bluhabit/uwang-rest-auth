@@ -1,5 +1,6 @@
 package com.bluehabit.budgetku.data.user
 
+import com.bluehabit.budgetku.common.Constants
 import com.bluehabit.budgetku.common.Constants.Permission.HYPEN_READ
 import com.bluehabit.budgetku.common.Constants.Permission.USER_PERMISSION
 import com.bluehabit.budgetku.common.ValidationUtil
@@ -35,18 +36,17 @@ class UserService(
     private val validationUtil: ValidationUtil,
     private val jwtUtil: JwtUtil
 ) : UserDetailsService {
+    private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
     //region admin
     fun signIn(
         body: LoginRequest
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(body)
 
-        val encoder = BCryptPasswordEncoder(16)
-
         val login = userRepository.findByUserEmail(body.email!!)
             ?: throw UnAuthorizedException("Username or password didn't match to any account!")
 
-        if (!encoder.matches(body.password, login.userPassword))
+        if (!bcrypt.matches(body.password, login.userPassword))
             throw UnAuthorizedException("Username or password didn't match to any account!")
 
         val findRoleSuper = roleRepository
@@ -79,7 +79,6 @@ class UserService(
         )
 
     }
-
     //end region
 
     //region user auth
@@ -88,15 +87,12 @@ class UserService(
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(body)
 
-        val encoder = BCryptPasswordEncoder(16)
-
-
         val login = userRepository
             .findByUserEmail(
                 body.email!!
             ) ?: throw UnAuthorizedException("Username or password didn't match to any account!")
 
-        if (!encoder.matches(
+        if (!bcrypt.matches(
                 body.password,
                 login.userPassword
             )
@@ -147,8 +143,7 @@ class UserService(
         val exist = userRepository.exist(body.userEmail!!)
         if (exist) throw DuplicateException("Email already taken!")
 
-        val encoder = BCryptPasswordEncoder(16)
-        val result: String = encoder.encode(body.userPassword)
+        val result: String = bcrypt.encode(body.userPassword)
         val user = userRepository.save(body.toEntity().copy(userPassword = result))
 
         return baseResponse {
@@ -164,14 +159,13 @@ class UserService(
 
         val findUser = userRepository.findByIdOrNull(body.userId) ?: throw DataNotFoundException("Cannot find user!")
 
-        val encoder = BCryptPasswordEncoder(16)
-        if (!encoder.matches(body.currentPassword, findUser.userPassword)) throw BadRequestException(
+        if (!bcrypt.matches(body.currentPassword, findUser.userPassword)) throw BadRequestException(
             "Current password didn't match!"
         )
 
         val saved = userRepository.save(
             findUser.copy(
-                userPassword = encoder.encode(body.newPassword)
+                userPassword = bcrypt.encode(body.newPassword)
             )
         )
 

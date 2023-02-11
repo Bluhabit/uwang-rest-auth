@@ -11,4 +11,7 @@ object Constants {
         const val HYPEN_WRITE = ".WRITE"
         const val WRITE = "WRITE"
     }
+    object BCrypt{
+        const val STRENGTH = 16
+    }
 }
