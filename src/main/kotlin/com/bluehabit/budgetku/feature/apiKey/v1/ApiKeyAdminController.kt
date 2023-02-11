@@ -1,5 +1,6 @@
-package com.bluehabit.budgetku.admin.apiKey.v1
+package com.bluehabit.budgetku.feature.apiKey.v1
 
+import com.bluehabit.budgetku.data.apiKey.ApiKeyServiceImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping(
     value = ["/api/v1/admin"]
 )
-class ApiKeyController(
+class ApiKeyAdminController(
     private val apiKeyService: ApiKeyServiceImpl
 ) {
     @GetMapping(

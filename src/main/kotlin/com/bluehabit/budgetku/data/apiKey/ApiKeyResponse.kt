@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.admin.apiKey.v1
+package com.bluehabit.budgetku.data.apiKey
 
 
 import com.bluehabit.budgetku.common.model.PagingDataResponse

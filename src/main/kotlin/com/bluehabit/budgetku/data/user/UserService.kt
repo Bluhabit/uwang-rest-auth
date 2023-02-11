@@ -7,20 +7,111 @@ import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
+import com.bluehabit.budgetku.common.isAllowed
+import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.PagingDataResponse
+import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
+import com.bluehabit.budgetku.data.role.RoleRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus.OK
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val validationUtil: ValidationUtil
-) {
+    private val roleRepository: RoleRepository,
+    private val validationUtil: ValidationUtil,
+    private val jwtUtil: JwtUtil
+) : UserDetailsService {
+    //region admin
+    fun signIn(
+        body: LoginRequest
+    ): AuthBaseResponse<UserResponse> {
+        validationUtil.validate(body)
+
+        val encoder = BCryptPasswordEncoder(16)
+
+        val login = userRepository.findByUserEmail(body.email!!)
+            ?: throw UnAuthorizedException("Username or password didn't match to any account!")
+
+        if (!encoder.matches(body.password, login.userPassword))
+            throw UnAuthorizedException("Username or password didn't match to any account!")
+
+        val findRoleSuper = roleRepository
+            .findByRoleName("SUPER_ADMIN")
+
+        if (!login.userRoles.contains(findRoleSuper)) throw UnAuthorizedException("User doesn't have access")
+
+        val token = jwtUtil.generateToken(login.userEmail)
+
+        return AuthBaseResponse(
+            code = OK.value(),
+            data = login.toResponse(),
+            message = "Sign in success!",
+            token = token
+        )
+
+    }
+
+    @Transactional
+    override fun loadUserByUsername(username: String): UserDetails? {
+
+        val user = userRepository
+            .findByUserEmail(username) ?: return null
+        return User(
+            username,
+            user.userPassword,
+            user.userRoles.map {
+                SimpleGrantedAuthority(it.roleName)
+            }
+        )
+
+    }
+
+    //end region
+
+    //region user auth
+    fun signInWithEmailAndPassword(
+        body: LoginRequest
+    ): AuthBaseResponse<UserResponse> {
+        validationUtil.validate(body)
+
+        val encoder = BCryptPasswordEncoder(16)
+
+
+        val login = userRepository
+            .findByUserEmail(
+                body.email!!
+            ) ?: throw UnAuthorizedException("Username or password didn't match to any account!")
+
+        if (!encoder.matches(
+                body.password,
+                login.userPassword
+            )
+        ) throw UnAuthorizedException("Username or password didn't match to any account!")
+
+        val token = jwtUtil.generateToken(login.userEmail)
+
+
+        return AuthBaseResponse(
+            code = OK.value(),
+            data = login.toResponse(),
+            message = "Sign in success!",
+            token = token
+        )
+
+    }
+
+    //
     fun getListUsers(
         pageable: Pageable
     ): BaseResponse<PagingDataResponse<UserResponse>> {
@@ -31,8 +122,7 @@ class UserService(
         val user = userRepository
             .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
 
-        if (!validationUtil.isAllowed(
-                permissions = user.getListPermission(),
+        if (!user.getListPermission().isAllowed(
                 to = listOf(
                     USER_PERMISSION.plus(HYPEN_READ)
                 )
@@ -58,7 +148,7 @@ class UserService(
     }
 
     fun addNewUser(
-        body: CreateUserRequest
+        body: CreateNewUserRequest
     ): BaseResponse<UserResponse?> {
         validationUtil.validate(body)
         val exist = userRepository.exist(body.userEmail!!)

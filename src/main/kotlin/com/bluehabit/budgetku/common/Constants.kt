@@ -10,6 +10,5 @@ object Constants {
         const val READ = "READ"
         const val HYPEN_WRITE = ".WRITE"
         const val WRITE = "WRITE"
-
     }
 }

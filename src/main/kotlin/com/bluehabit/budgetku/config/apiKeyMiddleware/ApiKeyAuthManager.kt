@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.config.apiKeyMiddleware
 
-import com.bluehabit.budgetku.admin.apiKey.v1.ApiKeyRepository
+import com.bluehabit.budgetku.data.apiKey.ApiKeyRepository
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication

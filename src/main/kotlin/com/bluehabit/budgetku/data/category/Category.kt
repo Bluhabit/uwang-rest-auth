@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.admin.apiKey.v1
+package com.bluehabit.budgetku.data.category
 
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
@@ -11,23 +11,23 @@ import javax.persistence.Table
 
 @Entity
 @Table(
-    name = "tb_api_key"
+    name = "tb_category"
 )
-data class ApiKey(
+data class Category(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    val id: String?=null,
-
+    var categoryId: String? = null,
     @Column
-    val value: String,
-
+    var categoryName: String,
     @Column
-    val createdAt: OffsetDateTime,
-
+    var categorySlug: String,
     @Column
-    val updatedAt: OffsetDateTime
+    var createdAt: OffsetDateTime? = null,
+    @Column
+    var updatedAt: OffsetDateTime? = null
+
 )

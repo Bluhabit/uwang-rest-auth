@@ -11,7 +11,7 @@ data class LoginRequest(
     var password:String?
 )
 
-data class CreateUserRequest(
+data class CreateNewUserRequest(
     @field:NotBlank
     var userCountryCode:String?,
     @field:NotBlank
@@ -36,7 +36,7 @@ data class ResetPasswordRequest(
     @field:NotBlank
     var newPassword:String
 )
-fun CreateUserRequest.toEntity() = User(
+fun CreateNewUserRequest.toEntity() = User(
     userId = null,
     userEmail = userEmail!!,
     userPassword = userPassword!!,

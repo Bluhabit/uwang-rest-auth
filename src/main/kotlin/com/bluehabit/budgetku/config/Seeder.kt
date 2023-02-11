@@ -1,7 +1,7 @@
 package com.bluehabit.budgetku.config
 
-import com.bluehabit.budgetku.admin.apiKey.v1.ApiKey
-import com.bluehabit.budgetku.admin.apiKey.v1.ApiKeyRepository
+import com.bluehabit.budgetku.data.apiKey.ApiKey
+import com.bluehabit.budgetku.data.apiKey.ApiKeyRepository
 import com.bluehabit.budgetku.common.Constants
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionRepository

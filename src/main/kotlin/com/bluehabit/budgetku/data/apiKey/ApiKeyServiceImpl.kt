@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.admin.apiKey.v1
+package com.bluehabit.budgetku.data.apiKey
 
 import com.bluehabit.budgetku.data.user.UserRepository
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
@@ -7,7 +7,6 @@ import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.PagingDataResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service

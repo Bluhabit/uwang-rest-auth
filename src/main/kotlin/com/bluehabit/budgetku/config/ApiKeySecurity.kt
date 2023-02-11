@@ -1,6 +1,6 @@
 package com.bluehabit.budgetku.config
 
-import com.bluehabit.budgetku.admin.apiKey.v1.ApiKeyRepository
+import com.bluehabit.budgetku.data.apiKey.ApiKeyRepository
 import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyAuthFilter
 import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyAuthManager
 import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyFilterChainExceptionHandler
