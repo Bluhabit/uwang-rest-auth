@@ -135,13 +135,7 @@ class UserService(
 
         return baseResponse {
             code = OK.value()
-            data = pagingResponse {
-                page = getData.number
-                size = getData.size
-                items = getData.toListResponse()
-                totalPages = getData.totalPages
-                totalData = getData.totalElements
-            }
+            data = getData.toResponse()
             message = ""
         }
     }

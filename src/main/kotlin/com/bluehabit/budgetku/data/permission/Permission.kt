@@ -21,7 +21,7 @@ data class Permission(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    var id:String? = null,
+    var permissionId:String? = null,
     @Column(nullable = false)
     var permissionName:String? = null,
     @Column(nullable = false)

@@ -1,5 +1,9 @@
 package com.bluehabit.budgetku.data.user
 
+import com.bluehabit.budgetku.common.model.pagingResponse
+import com.bluehabit.budgetku.data.apiKey.ApiKey
+import com.bluehabit.budgetku.data.apiKey.ApiKeyResponse
+import com.bluehabit.budgetku.data.apiKey.toResponse
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionReponse
 import com.bluehabit.budgetku.data.role.RoleResponse
@@ -66,4 +70,10 @@ fun User.toResponse(): UserResponse {
     )
 }
 
-fun Page<User>.toListResponse()=content.map { it.toResponse() }
+fun Page<User>.toResponse() = pagingResponse<UserResponse> {
+    page = number
+    currentSize = size
+    items = content.map { it.toResponse() }
+    totalData = totalElements
+    totalPagesCount = totalPages
+}

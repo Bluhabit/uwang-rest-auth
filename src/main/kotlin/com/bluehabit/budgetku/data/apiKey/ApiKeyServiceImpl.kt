@@ -41,9 +41,9 @@ class ApiKeyServiceImpl(
             code = OK.value(),
             data = PagingDataResponse(
                 page = allApiKeys.number,
-                size = allApiKeys.size,
+                currentSize = allApiKeys.size,
                 totalData = allApiKeys.totalElements,
-                totalPages = allApiKeys.totalPages,
+                totalPagesCount = allApiKeys.totalPages,
                 items = allApiKeys.content.map {
                     it.toResponse()
                 }

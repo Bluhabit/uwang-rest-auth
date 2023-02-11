@@ -1,7 +1,7 @@
 package com.bluehabit.budgetku.data.apiKey
 
 
-import com.bluehabit.budgetku.common.model.PagingDataResponse
+import com.bluehabit.budgetku.common.model.pagingResponse
 import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
@@ -19,10 +19,10 @@ fun ApiKey.toResponse() = ApiKeyResponse(
     updatedAt
 )
 
-fun Page<ApiKey>.toResponse() = PagingDataResponse(
-    page = number,
-    size=size,
-    items = content.map { it.toResponse() },
-    totalData = totalElements,
-    totalPages = totalPages
-)
+fun Page<ApiKey>.toResponse() = pagingResponse<ApiKeyResponse> {
+    page = number
+    currentSize = size
+    items = content.map { it.toResponse() }
+    totalData = totalElements
+    totalPagesCount = totalPages
+}

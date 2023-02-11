@@ -36,13 +36,7 @@ class WalletService(
 
         return baseResponse {
             code = OK.value()
-            data = pagingResponse {
-                page = findWalletByUser.number
-                size = findWalletByUser.size
-                items = findWalletByUser.toListResponse()
-                totalData = findWalletByUser.totalElements
-                totalPages = findWalletByUser.totalPages
-            }
+            data = findWalletByUser.toResponse()
             message = "Success"
         }
 
