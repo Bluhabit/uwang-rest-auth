@@ -51,6 +51,6 @@ class UserAdminController(
         produces = ["application/json"]
     )
     fun deleteUser(
-        @PathVariable("user_id") userId: Long
+        @PathVariable("user_id") userId: String
     ) = userService.deleteUser(userId)
 }

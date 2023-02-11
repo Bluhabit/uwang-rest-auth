@@ -3,6 +3,7 @@ package com.bluehabit.budgetku.data.user
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionReponse
 import com.bluehabit.budgetku.data.role.RoleResponse
+import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
 
@@ -22,12 +23,7 @@ data class UserResponse(
 
 fun User.getListPermission(): List<Permission> {
     val permission = mutableListOf<Permission>()
-
-    userRoles.map {
-        permission += it.permissions.map { p ->
-            p
-        }
-    }
+    userRoles.forEach{ permission += it.permissions.map {result-> result } }
     return permission.toList()
 }
 
@@ -69,3 +65,5 @@ fun User.toResponse(): UserResponse {
         updatedAt = updatedAt
     )
 }
+
+fun Page<User>.toListResponse()=content.map { it.toResponse() }

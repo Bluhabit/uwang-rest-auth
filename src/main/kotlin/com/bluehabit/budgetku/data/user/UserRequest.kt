@@ -30,7 +30,7 @@ data class CreateNewUserRequest(
 
 data class ResetPasswordRequest(
     @field:NotNull
-    var userId:Long,
+    var userId:String,
     @field:NotBlank
     var currentPassword:String,
     @field:NotBlank

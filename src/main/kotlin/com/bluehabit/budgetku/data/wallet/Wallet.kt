@@ -1,7 +1,8 @@
 package com.bluehabit.budgetku.data.wallet
 
+import com.bluehabit.budgetku.data.user.User
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.annotations.GenericGenerator
-import org.springframework.security.core.userdetails.User
 import java.time.OffsetDateTime
 import javax.persistence.CascadeType.REFRESH
 import javax.persistence.Column
@@ -31,7 +32,7 @@ data class Wallet(
     var walletSourceName: String,
     @Column
     var walletBalance: Long,
-    @Column
+    @JsonIgnore
     @ManyToOne(
         cascade = [REFRESH],
         fetch = LAZY

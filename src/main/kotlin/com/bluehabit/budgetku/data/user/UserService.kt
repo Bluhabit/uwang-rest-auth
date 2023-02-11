@@ -11,6 +11,9 @@ import com.bluehabit.budgetku.common.isAllowed
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.PagingDataResponse
+import com.bluehabit.budgetku.common.model.baseAuthResponse
+import com.bluehabit.budgetku.common.model.baseResponse
+import com.bluehabit.budgetku.common.model.pagingResponse
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.data.role.RoleRepository
 import org.springframework.data.domain.Pageable
@@ -51,14 +54,14 @@ class UserService(
 
         if (!login.userRoles.contains(findRoleSuper)) throw UnAuthorizedException("User doesn't have access")
 
-        val token = jwtUtil.generateToken(login.userEmail)
+        val generatedToken = jwtUtil.generateToken(login.userEmail)
 
-        return AuthBaseResponse(
-            code = OK.value(),
-            data = login.toResponse(),
-            message = "Sign in success!",
-            token = token
-        )
+        return baseAuthResponse {
+            code = OK.value()
+            data = login.toResponse()
+            message = "Sign In Success!"
+            token = generatedToken
+        }
 
     }
 
@@ -99,15 +102,15 @@ class UserService(
             )
         ) throw UnAuthorizedException("Username or password didn't match to any account!")
 
-        val token = jwtUtil.generateToken(login.userEmail)
+        val generatedToken = jwtUtil.generateToken(login.userEmail)
 
 
-        return AuthBaseResponse(
-            code = OK.value(),
-            data = login.toResponse(),
-            message = "Sign in success!",
-            token = token
-        )
+        return baseAuthResponse {
+            code = OK.value()
+            data = login.toResponse()
+            message = "Sign In Success!"
+            token = generatedToken
+        }
 
     }
 
@@ -116,11 +119,10 @@ class UserService(
         pageable: Pageable
     ): BaseResponse<PagingDataResponse<UserResponse>> {
         val email = SecurityContextHolder.getContext().authentication.principal.toString();
-        if (email.isBlank()) {
-            throw UnAuthorizedException("[98] You don't have access!")
-        }
-        val user = userRepository
-            .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
+        if (email.isEmpty()) throw UnAuthorizedException("[98] You don't have access!")
+
+        val user =
+            userRepository.findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
 
         if (!user.getListPermission().isAllowed(
                 to = listOf(
@@ -129,22 +131,19 @@ class UserService(
             )
         ) throw UnAuthorizedException("User not allowed use this operations")
 
-        val getData = userRepository
-            .findAll(pageable)
+        val getData = userRepository.findAll(pageable)
 
-        return BaseResponse(
-            code = OK.value(),
-            data = PagingDataResponse(
-                page = getData.number,
-                size = getData.size,
-                totalPages = getData.totalPages,
-                totalData = getData.totalElements,
-                items = getData.content.map { it.toResponse() }
-            ),
-            message = "Data all users"
-        )
-
-
+        return baseResponse {
+            code = OK.value()
+            data = pagingResponse {
+                page = getData.number
+                size = getData.size
+                items = getData.toListResponse()
+                totalPages = getData.totalPages
+                totalData = getData.totalElements
+            }
+            message = ""
+        }
     }
 
     fun addNewUser(
@@ -152,19 +151,17 @@ class UserService(
     ): BaseResponse<UserResponse?> {
         validationUtil.validate(body)
         val exist = userRepository.exist(body.userEmail!!)
-        if (exist) {
-            throw DuplicateException("Email already taken!")
-        }
+        if (exist) throw DuplicateException("Email already taken!")
+
         val encoder = BCryptPasswordEncoder(16)
         val result: String = encoder.encode(body.userPassword)
         val user = userRepository.save(body.toEntity().copy(userPassword = result))
 
-        return BaseResponse(
-            code = OK.value(),
-            data = user.toResponse(),
-            message = "Success"
-        )
-
+        return baseResponse {
+            code = OK.value()
+            data = user.toResponse()
+            message = ""
+        }
     }
 
 
@@ -174,38 +171,36 @@ class UserService(
         val findUser = userRepository.findByIdOrNull(body.userId) ?: throw DataNotFoundException("Cannot find user!")
 
         val encoder = BCryptPasswordEncoder(16)
-        if (!encoder.matches(body.currentPassword, findUser.userPassword)) {
-            throw BadRequestException("Current password didn't match!")
-        }
+        if (!encoder.matches(body.currentPassword, findUser.userPassword)) throw BadRequestException(
+            "Current password didn't match!"
+        )
+
         val saved = userRepository.save(
             findUser.copy(
                 userPassword = encoder.encode(body.newPassword)
             )
         )
 
-        return BaseResponse(
-            code = OK.value(),
-            data = saved.toResponse(),
-            message = "Success edit password"
-        )
+        return baseResponse {
+            code = OK.value()
+            data = saved.toResponse()
+            message = ""
+        }
     }
 
     fun deleteUser(
-        userId: Long
+        userId: String
     ): BaseResponse<UserResponse?> {
-        val findUserOrNull = userRepository
-            .findByIdOrNull(userId)
+        val findUserOrNull = userRepository.findByIdOrNull(userId)
             ?: throw DataNotFoundException("Cannot delete,user doesn't exist or has been remove")
 
+        userRepository.deleteById(userId)
 
-        userRepository
-            .deleteById(userId)
-
-        return BaseResponse(
-            code = OK.value(),
-            data = findUserOrNull.toResponse(),
-            message = "Success delete user $userId"
-        )
+        return baseResponse {
+            code = OK.value()
+            data = findUserOrNull.toResponse()
+            message = ""
+        }
     }
 
 
