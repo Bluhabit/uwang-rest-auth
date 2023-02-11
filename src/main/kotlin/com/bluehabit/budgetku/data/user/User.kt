@@ -21,7 +21,7 @@ import javax.persistence.Table
 @Table(name = "tb_user")
 data class User(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
+//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
@@ -48,11 +48,14 @@ data class User(
 
     @Enumerated(value = EnumType.STRING)
     @Column
-    var userLevel: LevelUser,
+    var userAuthProvider: UserAuthProvider = UserAuthProvider.BASIC,
 
     @Enumerated(value = EnumType.STRING)
     @Column
-    var userAuthProvider: UserAuthProvider,
+    var userStatus: UserStatus = UserStatus.NONACTIVE,
+
+    @Column
+    var userAuthTokenProvider:String,
 
     @ManyToMany(
         fetch = FetchType.LAZY,

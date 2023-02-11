@@ -1,40 +1,57 @@
 package com.bluehabit.budgetku.data.user
 
+import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionReponse
 import com.bluehabit.budgetku.data.role.RoleResponse
 import java.time.OffsetDateTime
 
 
 data class UserResponse(
-    var userId: String?=null,
-    var userFullName:String,
-    var userCountryCode:String,
-    var userDateOfBirth:String,
+    var userId: String? = null,
+    var userFullName: String,
+    var userCountryCode: String,
+    var userDateOfBirth: String,
     var userEmail: String,
-    var userLevel: LevelUser,
     var userAuthProvider: UserAuthProvider,
-    var userPermission:List<PermissionReponse>,
-    var userRoles:List<RoleResponse>,
+    var userStatus: UserStatus,
+    var userPermission: List<PermissionReponse>,
+    var userRoles: List<RoleResponse>,
     var createdAt: OffsetDateTime,
     var updatedAt: OffsetDateTime,
 )
 
-fun User.toResponse():UserResponse {
+fun User.getListPermission(): List<Permission> {
+    val permission = mutableListOf<Permission>()
+
+    userRoles.map {
+        permission += it.permissions.map { p ->
+            p
+        }
+    }
+    return permission.toList()
+}
+
+
+fun User.toResponse(): UserResponse {
     val permission = mutableListOf<PermissionReponse>()
 
     val role = userRoles.map {
-        permission += it.permissions.map { p->
+        permission += it.permissions.map { p ->
             PermissionReponse(
                 id = p.id,
                 permissionName = p.permissionName,
                 permissionGroup = p.permissionGroup,
-                permissionType = p.permissionType
+                permissionType = p.permissionType,
+                createdAt = createdAt,
+                updatedAt = updatedAt
             )
         }
         RoleResponse(
             roleName = it.roleName,
             roleDescription = it.roleDescription,
-            roleId = it.roleId
+            roleId = it.roleId,
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 
@@ -43,10 +60,10 @@ fun User.toResponse():UserResponse {
         userFullName = userFullName,
         userEmail = userEmail,
         userAuthProvider = userAuthProvider,
+        userStatus = userStatus,
         userCountryCode = userCountryCode,
         userDateOfBirth = userDateOfBirth.toString(),
-        userLevel = userLevel,
-        userPermission =permission,
+        userPermission = permission,
         userRoles = role,
         createdAt = createdAt,
         updatedAt = updatedAt

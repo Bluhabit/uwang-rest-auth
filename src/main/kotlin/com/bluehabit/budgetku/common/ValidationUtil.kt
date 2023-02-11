@@ -1,6 +1,7 @@
 package com.bluehabit.budgetku.common
 
 import com.bluehabit.budgetku.common.exception.BadRequestException
+import com.bluehabit.budgetku.data.permission.Permission
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 import javax.validation.ConstraintViolationException
@@ -18,8 +19,8 @@ class ValidationUtil(
         }
     }
 
-    fun validateDate(start:Long,end:Long){
-        if(start>end){
+    fun validateDate(start: Long, end: Long) {
+        if (start > end) {
             throw BadRequestException("not allowed start date more than end date")
         }
 
@@ -28,34 +29,36 @@ class ValidationUtil(
             .toDays(differenceInTime)
                 % 365)
 
-        if(differenceInDays > 3){
+        if (differenceInDays > 3) {
             throw BadRequestException("Maks date range only allow for 3 days")
         }
 
     }
 
-    fun isValid(any: Any):Boolean{
+    fun isValid(any: Any): Boolean {
         val result = validator.validate(any)
         return result.size == 0
     }
 
-    fun isValidWithMessage(any:Any):Pair<Boolean,String>{
+    fun isValidWithMessage(any: Any): Pair<Boolean, String> {
         return try {
             val result = validator.validate(any)
 
             Pair(
                 result.size == 0,
-                result.map {  "${it.propertyPath.lastOrNull()?.name} ${it.message}" }.toString()
+                result.map { "${it.propertyPath.lastOrNull()?.name} ${it.message}" }.toString()
             )
-        }catch (e:Exception){
+        } catch (e: Exception) {
 
             Pair(
                 false,
                 e.message.toString()
             )
         }
-
     }
 
+}
 
+fun List<Permission>.isAllowed( to: List<String>): Boolean {
+    return this.map { "${it.permissionName}.${it.permissionGroup}" }.containsAll(to)
 }

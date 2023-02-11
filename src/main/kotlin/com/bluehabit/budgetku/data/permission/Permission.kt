@@ -16,7 +16,7 @@ import javax.persistence.Temporal
 )
 data class Permission(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"

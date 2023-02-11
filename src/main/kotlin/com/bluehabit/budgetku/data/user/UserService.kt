@@ -1,5 +1,7 @@
 package com.bluehabit.budgetku.data.user
 
+import com.bluehabit.budgetku.common.Constants.Permission.HYPEN_READ
+import com.bluehabit.budgetku.common.Constants.Permission.USER_PERMISSION
 import com.bluehabit.budgetku.common.ValidationUtil
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
@@ -7,7 +9,6 @@ import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.PagingDataResponse
-import com.bluehabit.budgetku.data.user.LevelUser.DEV
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus.OK
@@ -29,6 +30,14 @@ class UserService(
         }
         val user = userRepository
             .findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
+
+        if (!validationUtil.isAllowed(
+                permissions = user.getListPermission(),
+                to = listOf(
+                    USER_PERMISSION.plus(HYPEN_READ)
+                )
+            )
+        ) throw UnAuthorizedException("User not allowed use this operations")
 
         val getData = userRepository
             .findAll(pageable)

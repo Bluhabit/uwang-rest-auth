@@ -17,7 +17,7 @@ import javax.persistence.Table
 @Table(name = "tb_role")
 data class Role(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
+//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"

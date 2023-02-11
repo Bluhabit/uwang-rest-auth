@@ -21,7 +21,7 @@ data class CreateUserRequest(
     @field:NotBlank
     var userFullName:String?,
     @field:NotNull
-    var userLevel: LevelUser?,
+    var userLevel: UserStatus?,
     @field:NotBlank
     var userPhoneNumber:String?,
     @field:NotNull
@@ -41,8 +41,8 @@ fun CreateUserRequest.toEntity() = User(
     userEmail = userEmail!!,
     userPassword = userPassword!!,
     userFullName=userFullName!!,
-    userLevel= userLevel!!,
     userAuthProvider= userAuthProvider!!,
+    userAuthTokenProvider="",
     userDateOfBirth=OffsetDateTime.now(),
     userCountryCode=userCountryCode!!,
     userPhoneNumber=userPhoneNumber!!,
