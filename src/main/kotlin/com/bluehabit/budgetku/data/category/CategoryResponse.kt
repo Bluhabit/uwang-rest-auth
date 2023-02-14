@@ -2,9 +2,6 @@ package com.bluehabit.budgetku.data.category
 
 import com.bluehabit.budgetku.common.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
-import com.bluehabit.budgetku.data.apiKey.ApiKey
-import com.bluehabit.budgetku.data.apiKey.ApiKeyResponse
-import com.bluehabit.budgetku.data.apiKey.toResponse
 import org.springframework.data.domain.Page
 
 data class CategoryResponse(

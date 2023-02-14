@@ -32,10 +32,10 @@ class ApiKeyAdminController(
     )=apiKeyService.generateApiKey()
 
     @DeleteMapping(
-        value = ["/api-key/{api_key_id}"],
+        value = ["/api-key/{apiKeyId}"],
         produces = ["application/json"]
     )
     fun deleteCredential(
-        @PathVariable("api_key_id") apiKeyId:Long
+        @PathVariable("apiKeyId") apiKeyId:Long
     )=apiKeyService.deleteApiKey(apiKeyId)
 }

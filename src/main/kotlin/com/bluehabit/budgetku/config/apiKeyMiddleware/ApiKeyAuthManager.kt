@@ -23,8 +23,8 @@ class ApiKeyAuthManager(
                 "Application is not permitted for use this resource"
             )
         } else {
-            authentication?.isAuthenticated = true
-            return authentication!!
+            authentication.isAuthenticated = true
+            return authentication
         }
     }
 

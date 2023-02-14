@@ -1,4 +1,4 @@
-package com.bluehabit.budgetku.data.wallet
+package com.bluehabit.budgetku.data.account
 
 import com.bluehabit.budgetku.data.user.User
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -16,22 +16,24 @@ import javax.persistence.Table
 
 @Entity
 @Table(
-    name = "tb_wallet"
+    name = "tb_account"
 )
-data class Wallet(
+data class Account(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    var walletId: String? = null,
+    var accountId: String? = null,
+    @Column(
+        unique = true
+    )
+    var accountNumber: Long,
     @Column
-    var walletNumber: Long,
+    var accountSourceName: String,
     @Column
-    var walletSourceName: String,
-    @Column
-    var walletBalance: Long,
+    var accountBalance: Long,
     @JsonIgnore
     @ManyToOne(
         cascade = [REFRESH],

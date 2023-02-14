@@ -20,7 +20,7 @@ data class UserResponse(
     var userDateOfBirth: String,
     var userEmail: String,
     var userAuthProvider: UserAuthProvider,
-    var userStatus: UserStatus,
+    var userStatus: UserStatus?,
     var userPermission: List<PermissionReponse>,
     var userRoles: List<RoleResponse>,
     var createdAt: OffsetDateTime,
