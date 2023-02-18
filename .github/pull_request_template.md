@@ -6,7 +6,7 @@
 
 #### Ticket Reference(s)
 
-[BKA-XXX](https://)
+[BKA-XXX](https://bluehabit.youtrack.cloud/issue/<TICKET_NUMBER>)
 
 #### Validation
 
