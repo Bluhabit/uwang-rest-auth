@@ -1,12 +1,4 @@
----
-name: [WIP][][Project Name-StoryNumber] - Story description
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
----
-
-**example:** [WIP][BUGFIX][FEATURE] [BKA-601] -  Security Credentials
+**example:** [WIP][BUGFIX][FEATURE][BKA-601] - Security Credentials
 
 #### Description
 
