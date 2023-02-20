@@ -44,7 +44,7 @@ class UserAdminController(
     )
     fun resetPassword(
         @RequestBody body: ResetPasswordRequest
-    ) = userService.resetPassword(body)
+    ) = userService.resetPasswordForUser(body)
 
     @DeleteMapping(
         value = ["/user/{user_id}"],

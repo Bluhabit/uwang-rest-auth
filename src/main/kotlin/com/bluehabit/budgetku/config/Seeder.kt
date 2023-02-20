@@ -112,6 +112,7 @@ class Seeder(
                     userDateOfBirth = date,
                     userCountryCode = "id",
                     userPhoneNumber = "4567890",
+                    userProfilePicture ="",
                     createdAt = date,
                     updatedAt = date,
                 )
@@ -146,6 +147,7 @@ class Seeder(
                     userDateOfBirth = date,
                     userCountryCode = "id",
                     userPhoneNumber = "45678945678",
+                    userProfilePicture ="",
                     createdAt = date,
                     updatedAt = date,
                 )

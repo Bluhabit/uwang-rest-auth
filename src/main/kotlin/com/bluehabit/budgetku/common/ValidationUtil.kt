@@ -60,5 +60,5 @@ class ValidationUtil(
 }
 
 fun List<Permission>.isAllowed( to: List<String>): Boolean {
-    return this.map { "${it.permissionName}.${it.permissionGroup}" }.containsAll(to)
+    return this.map { "${it.permissionGroup}.${it.permissionType}" }.containsAll(to)
 }

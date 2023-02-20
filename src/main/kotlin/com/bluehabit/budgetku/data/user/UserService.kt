@@ -2,69 +2,50 @@ package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.common.Constants
 import com.bluehabit.budgetku.common.Constants.Permission.HYPEN_READ
+import com.bluehabit.budgetku.common.Constants.Permission.HYPEN_WRITE
 import com.bluehabit.budgetku.common.Constants.Permission.USER_PERMISSION
+import com.bluehabit.budgetku.common.GoogleAuthUtil
 import com.bluehabit.budgetku.common.ValidationUtil
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
-import com.bluehabit.budgetku.common.isAllowed
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.PagingDataResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
 import com.bluehabit.budgetku.common.model.baseResponse
-import com.bluehabit.budgetku.common.model.pagingResponse
+import com.bluehabit.budgetku.common.model.buildResponse
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.data.role.RoleRepository
+import com.bluehabit.budgetku.data.userActivity.UserActivity
+import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
+import org.springframework.core.env.Environment
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
 import javax.transaction.Transactional
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
     private val roleRepository: RoleRepository,
+    private val userActivityRepository: UserActivityRepository,
     private val validationUtil: ValidationUtil,
-    private val jwtUtil: JwtUtil
+    private val jwtUtil: JwtUtil,
+    private val environment: Environment,
 ) : UserDetailsService {
     private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
+
     //region admin
-    fun signIn(
-        body: LoginRequest
-    ): AuthBaseResponse<UserResponse> {
-        validationUtil.validate(body)
-
-        val login = userRepository.findByUserEmail(body.email!!)
-            ?: throw UnAuthorizedException("Username or password didn't match to any account!")
-
-        if (!bcrypt.matches(body.password, login.userPassword))
-            throw UnAuthorizedException("Username or password didn't match to any account!")
-
-        val findRoleSuper = roleRepository
-            .findByRoleName("SUPER_ADMIN")
-
-        if (!login.userRoles.contains(findRoleSuper)) throw UnAuthorizedException("User doesn't have access")
-
-        val generatedToken = jwtUtil.generateToken(login.userEmail)
-
-        return baseAuthResponse {
-            code = OK.value()
-            data = login.toResponse()
-            message = "Sign In Success!"
-            token = generatedToken
-        }
-
-    }
-
     @Transactional
     override fun loadUserByUsername(username: String): UserDetails? {
 
@@ -110,75 +91,99 @@ class UserService(
 
     }
 
+    fun signInWithGoogle(
+        request: LoginGoogleRequest
+    ): AuthBaseResponse<UserResponse> = buildResponse(
+        userRepository,
+    ) {
+        validationUtil.validate(request)
+        val googleAuth = GoogleAuthUtil(environment)
+        val verifyUser =
+            googleAuth.getProfile(request.token!!)
+                ?: throw UnAuthorizedException("Token from provider not valid")
+        val findUser = userRepository.findByUserEmail(verifyUser.userEmail)
+            ?: throw UnAuthorizedException("User not registered")
+
+        baseAuthResponse {
+            code=OK.value()
+            data = findUser.toResponse()
+            message = ""
+        }
+    }
+
+
     //
     fun getListUsers(
         pageable: Pageable
-    ): BaseResponse<PagingDataResponse<UserResponse>> {
-        val email = SecurityContextHolder.getContext().authentication.principal.toString();
-        if (email.isEmpty()) throw UnAuthorizedException("[98] You don't have access!")
-
-        val user =
-            userRepository.findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-
-        if (!user.getListPermission().isAllowed(
-                to = listOf(
-                    USER_PERMISSION.plus(HYPEN_READ)
-                )
-            )
-        ) throw UnAuthorizedException("User not allowed use this operations")
+    ): BaseResponse<PagingDataResponse<UserResponse>> = buildResponse(
+        userRepository,
+        listOf(USER_PERMISSION.plus(HYPEN_READ))
+    ) { _ ->
 
         val getData = userRepository.findAll(pageable)
 
-        return baseResponse {
+        baseResponse {
             code = OK.value()
             data = getData.toResponse()
             message = ""
         }
     }
 
+
     fun addNewUser(
         body: CreateNewUserRequest
-    ): BaseResponse<UserResponse?> {
+    ): BaseResponse<UserResponse> = buildResponse(
+        userRepository,
+        listOf(USER_PERMISSION.plus(HYPEN_WRITE))
+    ) { _ ->
         validationUtil.validate(body)
         val exist = userRepository.exist(body.userEmail!!)
         if (exist) throw DuplicateException("Email already taken!")
 
         val result: String = bcrypt.encode(body.userPassword)
-        val user = userRepository.save(body.toEntity().copy(userPassword = result))
+        val savedUser = userRepository.save(body.toEntity().copy(userPassword = result))
 
-        return baseResponse {
+        baseResponse {
             code = OK.value()
-            data = user.toResponse()
+            data = savedUser.toResponse()
             message = ""
         }
     }
 
 
-    fun resetPassword(body: ResetPasswordRequest): BaseResponse<UserResponse> {
+    fun resetPasswordForUser(body: ResetPasswordRequest): BaseResponse<UserResponse> = buildResponse(
+        userRepository,
+        listOf(USER_PERMISSION.plus(HYPEN_WRITE))
+    ) {
         validationUtil.validate(body)
 
         val findUser = userRepository.findByIdOrNull(body.userId) ?: throw DataNotFoundException("Cannot find user!")
 
-        if (!bcrypt.matches(body.currentPassword, findUser.userPassword)) throw BadRequestException(
-            "Current password didn't match!"
-        )
+        //send email reset
 
-        val saved = userRepository.save(
-            findUser.copy(
-                userPassword = bcrypt.encode(body.newPassword)
+        //save activity
+        userActivityRepository.save(
+            UserActivity(
+                userActivityId = null,
+                user = it,
+                userActivityDescription = "Just send reset password for user ${findUser.userFullName}",
+                userActivityRef = findUser.userId,
+                userActivityType = "RESET_PASSWORD",
+                createdAt = OffsetDateTime.now(),
+                updatedAt = OffsetDateTime.now()
             )
         )
 
-        return baseResponse {
+        baseResponse {
             code = OK.value()
-            data = saved.toResponse()
+            data = findUser.toResponse()
             message = ""
         }
     }
 
     fun deleteUser(
         userId: String
-    ): BaseResponse<UserResponse?> {
+    ): BaseResponse<UserResponse> {
         val findUserOrNull = userRepository.findByIdOrNull(userId)
             ?: throw DataNotFoundException("Cannot delete,user doesn't exist or has been remove")
 

@@ -11,6 +11,11 @@ data class LoginRequest(
     var password:String?
 )
 
+data class LoginGoogleRequest(
+    @field:NotBlank
+    var token:String?
+)
+
 data class CreateNewUserRequest(
     @field:NotBlank
     var userCountryCode:String?,
@@ -46,6 +51,7 @@ fun CreateNewUserRequest.toEntity() = User(
     userDateOfBirth=OffsetDateTime.now(),
     userCountryCode=userCountryCode!!,
     userPhoneNumber=userPhoneNumber!!,
+    userProfilePicture="",
     createdAt = OffsetDateTime.now(),
     updatedAt = OffsetDateTime.now()
 )

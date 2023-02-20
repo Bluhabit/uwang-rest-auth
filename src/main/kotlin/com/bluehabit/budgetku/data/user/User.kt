@@ -46,6 +46,9 @@ data class User(
     @Column
     var userPassword: String,
 
+    @Column
+    var userProfilePicture:String,
+
     @Enumerated(value = EnumType.STRING)
     @Column
     var userAuthProvider: UserAuthProvider = UserAuthProvider.BASIC,

@@ -30,8 +30,9 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 
 	implementation("com.auth0:java-jwt:3.18.2")
-
 	implementation("com.google.code.gson:gson:2.8.5")
+	implementation("com.google.api-client:google-api-client:1.32.1")
+	implementation("com.google.firebase:firebase-admin:9.0.0")
 
 	implementation("org.postgresql:postgresql:42.3.1")
 	implementation("junit:junit:4.13.2")
