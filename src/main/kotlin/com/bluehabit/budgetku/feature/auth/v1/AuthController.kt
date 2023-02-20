@@ -15,7 +15,7 @@ class AuthController(
     private val authService: UserService
 ) {
     @PostMapping(
-        value = ["/sign-in-with-email"],
+        value = ["/sign-in-email"],
         produces = ["application/json"],
         consumes = ["application/json"]
     )
