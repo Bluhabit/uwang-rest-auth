@@ -2,6 +2,7 @@ package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.common.Constants
 import com.bluehabit.budgetku.common.ValidationUtil
+import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
@@ -79,13 +80,9 @@ class UserServiceTest {
         //user doesn't exist
         given(userRepository.findByUserEmail(user.userEmail)).willAnswer { null }
 
-        assertEquals(
-            userService.loadUserByUsername(user.userEmail),
-            null
-        )
+        assertEquals(userService.loadUserByUsername(user.userEmail), null)
 
         given(userRepository.findByUserEmail(user.userEmail)).willAnswer { user }
-
 
         assertEquals(
             userService.loadUserByUsername(user.userEmail)?.username,
@@ -95,6 +92,10 @@ class UserServiceTest {
 
     @Test
     fun `sign in with email and password`() {
+        val request = LoginRequest(
+            email = user.userEmail,
+            password = "1234"
+        )
         //success sign in
         given(userRepository.findByUserEmail(user.userEmail)).willAnswer {  user}
         given(jwtUtil.generateToken(user.userEmail)).willAnswer { "Ini token" }
@@ -124,11 +125,16 @@ class UserServiceTest {
             UnAuthorizedException::class.java
         ){
             userService.signInWithEmailAndPassword(
-                LoginRequest(
-                    email = user.userEmail,
-                    password = ""
-                )
+                request
             )
+        }
+
+        //validation error
+        given(validationUtil.validate(request)).willAnswer { throw BadRequestException("")  }
+        assertThrows(
+            BadRequestException::class.java
+        ){
+            userService.signInWithEmailAndPassword(request)
         }
     }
 
