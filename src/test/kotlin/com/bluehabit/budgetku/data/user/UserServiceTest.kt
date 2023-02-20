@@ -74,21 +74,17 @@ class UserServiceTest {
     }
 
     @Test
-    fun loadUserByUsername() {
+    fun `load user for Authorization header`() {
 
         //user doesn't exist
-        given(userRepository.findByUserEmail(user.userEmail)).willAnswer {
-            null
-        }
+        given(userRepository.findByUserEmail(user.userEmail)).willAnswer { null }
 
         assertEquals(
             userService.loadUserByUsername(user.userEmail),
             null
         )
 
-        given(userRepository.findByUserEmail(user.userEmail)).willAnswer {
-            user
-        }
+        given(userRepository.findByUserEmail(user.userEmail)).willAnswer { user }
 
 
         assertEquals(
@@ -98,32 +94,18 @@ class UserServiceTest {
     }
 
     @Test
-    fun `login with email and password throw when failed`() {
-        //login
-        given(userRepository.findByUserEmail(user.userEmail)).willAnswer {
-            throw UnAuthorizedException("")
-        }
-
-        assertThrows(
-           UnAuthorizedException::class.java
-        ){
-            userService.signInWithEmailAndPassword(
-                LoginRequest(
-                    email = user.userEmail,
-                    password = ""
-                )
-            )
-        }
-
-        //succes
-        `when`(userRepository.findByUserEmail(user.userEmail)).thenReturn(user)
+    fun `sign in with email and password`() {
+        //success sign in
+        given(userRepository.findByUserEmail(user.userEmail)).willAnswer {  user}
+        given(jwtUtil.generateToken(user.userEmail)).willAnswer { "Ini token" }
 
 
         assertEquals(
             AuthBaseResponse(
                 code = HttpStatus.OK.value(),
                 data = user.toResponse(),
-                message = ""
+                message = "Sign In Success!",
+                token = "Ini token"
             ),
             userService.signInWithEmailAndPassword(
                 LoginRequest(
@@ -132,9 +114,25 @@ class UserServiceTest {
                 )
             )
         )
+
+        //failed
+        given(userRepository.findByUserEmail(user.userEmail)).willAnswer {
+            throw UnAuthorizedException("")
+        }
+
+        assertThrows(
+            UnAuthorizedException::class.java
+        ){
+            userService.signInWithEmailAndPassword(
+                LoginRequest(
+                    email = user.userEmail,
+                    password = ""
+                )
+            )
+        }
     }
 
     @Test
-    fun signInWithGoogle() {
+    fun `sign in with google`() {
     }
 }
