@@ -17,7 +17,7 @@ import java.util.*
  * Api key service
  * */
 @Service
-class ApiKeyServiceImpl(
+class ApiKeyService(
     private val apiKeyRepository: ApiKeyRepository,
     private val userRepository: UserRepository
 ) {
@@ -29,11 +29,9 @@ class ApiKeyServiceImpl(
             throw UnAuthorizedException("[98] You don't have access!")
         }
 
-        if (userRepository
-                .findByUserEmail(email) == null
-        ) {
-            throw UnAuthorizedException("[98] You don't have permission")
-        }
+        userRepository.findByUserEmail(email)
+            ?: throw UnAuthorizedException("[98] You don't have permission")
+
 
         val allApiKeys = apiKeyRepository.findAll(pageable)
 
