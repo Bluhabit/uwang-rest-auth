@@ -1,6 +1,9 @@
 package com.bluehabit.budgetku.data.apiKey
 
 import com.bluehabit.budgetku.common.Constants
+import com.bluehabit.budgetku.common.exception.UnAuthorizedException
+import com.bluehabit.budgetku.common.model.PagingDataResponse
+import com.bluehabit.budgetku.common.model.baseResponse
 import com.bluehabit.budgetku.data.user.User
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
 import com.bluehabit.budgetku.data.user.UserRepository
@@ -15,8 +18,10 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContext
@@ -34,11 +39,12 @@ class ApiKeyServiceTest {
 
     @Mock
     lateinit var apiKeyRepository: ApiKeyRepository
-    @Mock
-    lateinit var  userRepository: UserRepository
 
-    lateinit var apiKey:ApiKey
-    lateinit var user:User
+    @Mock
+    lateinit var userRepository: UserRepository
+
+    lateinit var apiKey: ApiKey
+    lateinit var user: User
     private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
 
     val userNameAuth = UsernamePasswordAuthenticationToken(
@@ -47,6 +53,7 @@ class ApiKeyServiceTest {
         listOf()
 
     )
+
     @BeforeEach
     fun setUp() {
         apiKey = ApiKey(
@@ -61,11 +68,11 @@ class ApiKeyServiceTest {
             userPassword = bcrypt.encode("1234"),
             userFullName = "Admin blue habit",
             userAuthProvider = BASIC,
-            userAuthTokenProvider="",
+            userAuthTokenProvider = "",
             userDateOfBirth = OffsetDateTime.now(),
             userCountryCode = "id",
             userPhoneNumber = "4567890",
-            userProfilePicture ="",
+            userProfilePicture = "",
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now(),
         )
@@ -85,7 +92,7 @@ class ApiKeyServiceTest {
         `when`(securityContext.authentication.principal).thenReturn("admin@bluehabit.com")
         SecurityContextHolder.setContext(securityContext)
 
-        given(userRepository.findByUserEmail("admin@bluehabit.com")).willAnswer {
+        given(userRepository.findByUserEmail(user.userEmail)).willAnswer {
             user
         }
 
@@ -94,9 +101,19 @@ class ApiKeyServiceTest {
         }
 
         assertEquals(
-            listOf<ApiKey>(),
+            baseResponse<PagingDataResponse<ApiKeyResponse>> {
+                code = HttpStatus.OK.value()
+                message = "Data api keys"
+                data = PageImpl<ApiKey>(emptyList()).toResponse()
+            },
             apiKeyService.getAllApiKeys(Pageable.ofSize(1))
         )
+
+        given(userRepository.findByUserEmail(user.userEmail)).willAnswer { throw UnAuthorizedException("") }
+
+        assertThrows(UnAuthorizedException::class.java){apiKeyService.getAllApiKeys(Pageable.ofSize(1))}
+
+
     }
 
     @Test
