@@ -18,27 +18,4 @@ class WalletService(
     private val userRepository: UserRepository,
     private val validationUtil: ValidationUtil
 ) {
-    suspend fun getListWalletByUser(
-        userId:String,
-        pageable: Pageable
-    ):BaseResponse<PagingDataResponse<WalletResponse>> {
-        val findUser = userRepository.findByIdOrNull(userId)
-            ?: throw DataNotFoundException("Cannot find data user!")
-
-        val findWalletByUser = walletRepository.findAllByUser(
-            findUser,
-            pageable
-        )
-
-        if(findWalletByUser.isEmpty) throw DataNotFoundException(
-            "No account corresponding with user account ${findUser.userFullName}"
-        )
-
-        return baseResponse {
-            code = OK.value()
-            data = findWalletByUser.toResponse()
-            message = "Success"
-        }
-
-    }
 }

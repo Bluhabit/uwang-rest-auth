@@ -21,36 +21,5 @@ class UserAdminController(
     private val userService: UserService
 ) {
 
-    @GetMapping(
-        value = ["/users"],
-        produces = ["application/json"]
-    )
-    fun getListUser(
-        pageable: Pageable
-    ) = userService.getListUsers(pageable)
-    @PostMapping(
-        value = ["/user"],
-        produces = ["application/json"],
-        consumes = ["application/json"]
-    )
-    fun createUser(
-        @RequestBody body: CreateNewUserRequest
-    ) = userService.addNewUser(body)
 
-    @PutMapping(
-        value = ["/user/reset-password"],
-        produces = ["application/json"],
-        consumes = ["application/json"]
-    )
-    fun resetPassword(
-        @RequestBody body: ResetPasswordRequest
-    ) = userService.resetPasswordForUser(body)
-
-    @DeleteMapping(
-        value = ["/user/{user_id}"],
-        produces = ["application/json"]
-    )
-    fun deleteUser(
-        @PathVariable("user_id") userId: String
-    ) = userService.deleteUser(userId)
 }

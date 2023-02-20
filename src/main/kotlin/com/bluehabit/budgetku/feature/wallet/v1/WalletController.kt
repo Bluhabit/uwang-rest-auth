@@ -14,15 +14,4 @@ import org.springframework.web.bind.annotation.RestController
 class WalletController(
     private val walletService: WalletService
 ) {
-    @GetMapping(
-        value = ["/wallet/{userId}"],
-        produces = ["application/json"]
-    )
-    suspend fun getWalletByUserId(
-        @PathVariable("userId") userId:String,
-        pageable: Pageable
-    )=walletService.getListWalletByUser(
-        userId,
-        pageable
-    )
 }
