@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id("org.springframework.boot") version "2.6.6"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
+	id("io.gitlab.arturbosch.detekt") version "1.22.0" apply false
 	kotlin("jvm") version "1.6.10"
 	kotlin("plugin.spring") version "1.6.10"
 	kotlin("plugin.jpa") version "1.6.10"
@@ -59,4 +60,32 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+//https://dev.to/akdevcraft/git-pre-hook-setup-pre-push-hook-for-gradle-project-example-1nn6
+//https://emmanuelkehinde.io/setting-up-git-pre-commit-pre-push-hook-for-ktlint-check/
+tasks.create<Copy>("installGitHook") {
+	var suffix = "macos"
+	if (org.apache.tools.ant.taskdefs.condition.Os.isFamily(org.apache.tools.ant.taskdefs.condition.Os.FAMILY_WINDOWS)) {
+		suffix = "windows"
+	}
+
+	copy {
+		from(File(rootProject.rootDir, "scripts/pre-push-$suffix"))
+		into { File(rootProject.rootDir, ".git/hooks") }
+		rename("pre-push-$suffix", "pre-push")
+	}
+
+	copy {
+		from(File(rootProject.rootDir, "scripts/pre-commit-$suffix"))
+		into { File(rootProject.rootDir, ".git/hooks") }
+		rename("pre-commit-$suffix", "pre-commit")
+	}
+
+	//make file executable
+	fileMode = "775".toInt(8)
+}
+
+tasks.register("setup"){
+	dependsOn("installGitHook")
 }

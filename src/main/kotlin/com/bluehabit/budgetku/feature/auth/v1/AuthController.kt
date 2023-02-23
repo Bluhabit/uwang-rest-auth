@@ -1,5 +1,6 @@
 package com.bluehabit.budgetku.feature.auth.v1
 
+import com.bluehabit.budgetku.data.user.LoginGoogleRequest
 import com.bluehabit.budgetku.data.user.LoginRequest
 import com.bluehabit.budgetku.data.user.UserService
 import org.springframework.web.bind.annotation.PostMapping
@@ -24,4 +25,13 @@ class AuthController(
     ) = authService.signInWithEmailAndPassword(
         loginRequest
     )
+
+    @PostMapping(
+        value = ["/sign-in-google"],
+        produces = ["application/json"],
+        consumes = ["application/json"]
+    )
+    fun signInWithGoogle(
+        @RequestBody loginGoogleRequest: LoginGoogleRequest
+    )= authService.signInWithGoogle(loginGoogleRequest)
 }

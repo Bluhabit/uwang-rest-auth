@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Fatal -->
+
+    <issue id="AllowBackup" severity="fatal" />
+
+    <!-- Fatal -->
+
+    <!-- Error -->
+    <issue id="HardcodedText" severity="error" />
+    <issue id="WebViewLayout" severity="error" />
+    <issue id="EllipsizeMaxLines" severity="error" />
+    <issue id="MissingPermission" severity="error" />
+    <issue id="MissingConstraints" severity="error" />
+    <!-- Error -->
+
+    <!-- Warning-->
+    <issue id="UnusedResources" severity="warning" />
+    <issue id="ContentDescription" severity="warning" />
+    <issue id="Deprecated" severity="warning" />
+    <issue id="Typos" severity="warning" />
+    <!-- Warning-->
+
+    <!-- Ignore -->
+
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+
+    <!-- Ignore -->
+
+    <!-- The following must be at the bottom of your file!
+     All lint issues (not listed above) will be treated as errors. -->
+    <issue id="all" severity="error" />
+</lint>

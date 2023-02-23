@@ -32,6 +32,24 @@ import javax.validation.ConstraintViolationException
  * */
 @RestControllerAdvice
 class ErrorHandlerController {
+
+    @ExceptionHandler(
+        value = [IllegalArgumentException::class]
+    )
+    @ResponseStatus(
+        BAD_REQUEST
+    )
+    fun illegalArgument(
+        e:IllegalArgumentException
+    ): BaseResponse<List<Any>> {
+        e.printStackTrace()
+        return baseResponse<List<Any>> {
+            code = BAD_REQUEST.value()
+            data = listOf()
+            message = e.message.orEmpty()
+        }
+    }
+
     @ExceptionHandler(
         value = [ConstraintViolationException::class]
     )

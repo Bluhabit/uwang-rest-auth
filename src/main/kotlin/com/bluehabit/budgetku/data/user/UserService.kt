@@ -93,9 +93,7 @@ class UserService(
 
     fun signInWithGoogle(
         request: LoginGoogleRequest
-    ): AuthBaseResponse<UserResponse> = buildResponse(
-        userRepository,
-    ) {
+    ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(request)
         val googleAuth = GoogleAuthUtil(environment)
         val verifyUser =
@@ -104,10 +102,11 @@ class UserService(
         val findUser = userRepository.findByUserEmail(verifyUser.userEmail)
             ?: throw UnAuthorizedException("User not registered")
 
-        baseAuthResponse {
-            code=OK.value()
+        return baseAuthResponse {
+            code = OK.value()
             data = findUser.toResponse()
             message = ""
         }
     }
+
 }

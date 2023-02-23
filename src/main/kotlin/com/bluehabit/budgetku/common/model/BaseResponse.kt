@@ -44,9 +44,9 @@ fun <Type> buildResponse(
     )
 }
 
- fun <Type> buildResponse(
-     userRepository: UserRepository,
-     whenValidAndAccepted: (user: User) -> Type
+fun <Type> buildResponse(
+    userRepository: UserRepository,
+    whenValidAndAccepted: (user: User) -> Type
 ): Type {
     val email = SecurityContextHolder.getContext().authentication.principal.toString();
     if (email.isEmpty()) throw UnAuthorizedException("[98] You don't have access!")
