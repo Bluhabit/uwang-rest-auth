@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# This hook is for Android project git repos.
+#
+# You can use git config variables to customize this hook.
+# -----------------------------------------------------------
+# Change hooks.lintTargetDirectory to point at a non . directory
+# Change hooks.lintArgs to add any custom lint arguments you prefer
+
+# Get custom info
+dirToLint=$(git config hooks.lintTargetDirectory)
+lintArgs=$(git config hooks.lintArgs)
+projectDir=$(git rev-parse --show-toplevel)
+lintReportPath="/lint-report.html"
+
+# If user has not defined a preferred directory to lint against, make it .
+if [ -z "$dirToLint"]
+  then
+  dirToLint="."
+fi
+
+# Perform lint check
+echo "Performing pre-commit lint check of ""$dirToLint"
+./gradlew detekt --daemon
+detektStatus=$?
+
+lintStatus=1
+if [ $detektStatus -eq 0 ]
+then
+  echo "Android Detekt Success."
+  lintStatus=$?
+
+  if [ $lintStatus -ne 0 ]
+  then
+    echo "Android Lint failure, git push aborted."
+    echo "Open ${projectDir}${lintReportPath} in a browser to see Lint Report"
+    exit 1
+  fi
+else
+  echo "Android Detekt failure, git push aborted."
+  exit 1
+fi
+
+echo "LintStatus ${lintStatus}"
+echo "DetektStatus ${detektStatus}"
+
+exit $lintStatus
