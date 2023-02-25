@@ -98,8 +98,8 @@ class UserService(
         val googleAuth = GoogleAuthUtil(environment)
         val verifyUser =
             googleAuth.getProfile(request.token!!)
-                ?: throw UnAuthorizedException("Token from provider not valid")
-        val findUser = userRepository.findByUserEmail(verifyUser.userEmail)
+        if (!verifyUser.first) throw UnAuthorizedException(verifyUser.third)
+        val findUser = userRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
             ?: throw UnAuthorizedException("User not registered")
 
         return baseAuthResponse {

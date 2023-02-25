@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(
-    value = ["/api/v1/auth"]
+    value = ["/v1/auth"]
 )
 class AuthController(
     private val authService: UserService
