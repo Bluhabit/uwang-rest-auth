@@ -12,7 +12,7 @@ object Constants {
         const val WRITE = "WRITE"
     }
     object ActivityType{
-        const val SEND_RESET_FR_USER = "SEND_RESET_FOR_USER"
+        const val SEND_RESET_FOR_USER = "SEND_RESET_FOR_USER"
     }
     object BCrypt{
         const val STRENGTH = 16
