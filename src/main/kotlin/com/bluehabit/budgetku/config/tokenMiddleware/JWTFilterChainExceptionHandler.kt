@@ -1,9 +1,11 @@
 package com.bluehabit.budgetku.config.tokenMiddleware
 
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
+import com.bluehabit.budgetku.common.translate
 import com.bluehabit.budgetku.data.user.UserRepository
 import com.bluehabit.budgetku.data.user.UserService
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -19,7 +21,8 @@ class JWTFilterChainExceptionHandler(
     private val userService: UserService,
     private val jwtUtil: JwtUtil,
     @Qualifier("handlerExceptionResolver")
-    private val resolver: HandlerExceptionResolver
+    private val resolver: HandlerExceptionResolver,
+    private val message: ResourceBundleMessageSource
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -36,11 +39,11 @@ class JWTFilterChainExceptionHandler(
 
                 val jwt = header.replace("Bearer ", "")
                 if (jwt.isBlank()) {
-                    throw UnAuthorizedException("No token provided")
+                    throw UnAuthorizedException(message.translate("auth.token.invalid"))
                 }
 
                 if (jwtUtil.isJwtExpired(jwt)) {
-                    throw UnAuthorizedException("Token is not valid or expired")
+                    throw UnAuthorizedException(message.translate("auth.token.invalid"))
                 }
 
                 val email = jwtUtil.validateTokenAndRetrieveSubject(jwt)
@@ -48,7 +51,7 @@ class JWTFilterChainExceptionHandler(
 
                 val user = userService
                     .loadUserByUsername(email)
-                    ?: throw UnAuthorizedException("Token is not valid or expired")
+                    ?: throw UnAuthorizedException(message.translate("auth.token.invalid"))
 
 
                 val userNameAuth = UsernamePasswordAuthenticationToken(

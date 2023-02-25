@@ -16,10 +16,12 @@ import com.bluehabit.budgetku.common.model.PagingDataResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
 import com.bluehabit.budgetku.common.model.baseResponse
 import com.bluehabit.budgetku.common.model.buildResponse
+import com.bluehabit.budgetku.common.translate
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.data.role.RoleRepository
 import com.bluehabit.budgetku.data.userActivity.UserActivity
 import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
+import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -32,6 +34,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
+import java.util.*
 import javax.transaction.Transactional
 
 @Service
@@ -42,6 +45,7 @@ class UserService(
     private val validationUtil: ValidationUtil,
     private val jwtUtil: JwtUtil,
     private val environment: Environment,
+    private val messageSource: ResourceBundleMessageSource
 ) : UserDetailsService {
     private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
 
@@ -71,7 +75,7 @@ class UserService(
         val login = userRepository
             .findByUserEmail(
                 body.email!!
-            ) ?: throw UnAuthorizedException("Username or password didn't match to any account!")
+            ) ?: throw UnAuthorizedException(messageSource.translate("auth.unauthorized.user.not.exist.message"))
 
         if (!bcrypt.matches(
                 body.password,
@@ -98,9 +102,11 @@ class UserService(
         val googleAuth = GoogleAuthUtil(environment)
         val verifyUser =
             googleAuth.getProfile(request.token!!)
-                ?: throw UnAuthorizedException("Token from provider not valid")
-        val findUser = userRepository.findByUserEmail(verifyUser.userEmail)
-            ?: throw UnAuthorizedException("User not registered")
+        if (!verifyUser.first) throw UnAuthorizedException(verifyUser.third)
+        val findUser = userRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
+            ?: throw UnAuthorizedException(
+                messageSource.translate("auth.unauthorized.user.not.exist.message")
+            )
 
         return baseAuthResponse {
             code = OK.value()
