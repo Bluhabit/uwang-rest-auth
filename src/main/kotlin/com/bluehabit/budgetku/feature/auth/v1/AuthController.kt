@@ -24,10 +24,8 @@ class AuthController(
     )
     fun signInWithEmailAndPassword(
         @RequestBody loginRequest: LoginRequest,
-        @RequestHeader(name = "Accept-Language", required = false) locale: Locale
     ) = authService.signInWithEmailAndPassword(
-        loginRequest,
-        locale
+        loginRequest
     )
 
     @PostMapping(
@@ -37,6 +35,5 @@ class AuthController(
     )
     fun signInWithGoogle(
         @RequestBody loginGoogleRequest: LoginGoogleRequest,
-        @RequestHeader(name = "Accept-Language", required = false) locale: Locale
-    )= authService.signInWithGoogle(loginGoogleRequest,locale)
+    )= authService.signInWithGoogle(loginGoogleRequest)
 }

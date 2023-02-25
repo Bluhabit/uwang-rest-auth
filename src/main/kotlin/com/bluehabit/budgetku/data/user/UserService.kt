@@ -16,6 +16,7 @@ import com.bluehabit.budgetku.common.model.PagingDataResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
 import com.bluehabit.budgetku.common.model.baseResponse
 import com.bluehabit.budgetku.common.model.buildResponse
+import com.bluehabit.budgetku.common.translate
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.data.role.RoleRepository
 import com.bluehabit.budgetku.data.userActivity.UserActivity
@@ -67,15 +68,14 @@ class UserService(
 
     //region user auth
     fun signInWithEmailAndPassword(
-        body: LoginRequest,
-        locale: Locale
+        body: LoginRequest
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(body)
 
         val login = userRepository
             .findByUserEmail(
                 body.email!!
-            ) ?: throw UnAuthorizedException("Username or password didn't match to any account!")
+            ) ?: throw UnAuthorizedException(messageSource.translate("auth.unauthorized.user.not.exist.message"))
 
         if (!bcrypt.matches(
                 body.password,
@@ -96,8 +96,7 @@ class UserService(
     }
 
     fun signInWithGoogle(
-        request: LoginGoogleRequest,
-        locale: Locale
+        request: LoginGoogleRequest
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(request)
         val googleAuth = GoogleAuthUtil(environment)
@@ -106,7 +105,7 @@ class UserService(
         if (!verifyUser.first) throw UnAuthorizedException(verifyUser.third)
         val findUser = userRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
             ?: throw UnAuthorizedException(
-                messageSource.getMessage("auth.unauthorized.message",null, locale)
+                messageSource.translate("auth.unauthorized.user.not.exist.message")
             )
 
         return baseAuthResponse {
