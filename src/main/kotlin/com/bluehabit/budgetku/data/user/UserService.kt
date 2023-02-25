@@ -20,6 +20,7 @@ import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.data.role.RoleRepository
 import com.bluehabit.budgetku.data.userActivity.UserActivity
 import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
+import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -32,6 +33,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
+import java.util.*
 import javax.transaction.Transactional
 
 @Service
@@ -42,6 +44,7 @@ class UserService(
     private val validationUtil: ValidationUtil,
     private val jwtUtil: JwtUtil,
     private val environment: Environment,
+    private val messageSource: ResourceBundleMessageSource
 ) : UserDetailsService {
     private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
 
@@ -64,7 +67,8 @@ class UserService(
 
     //region user auth
     fun signInWithEmailAndPassword(
-        body: LoginRequest
+        body: LoginRequest,
+        locale: Locale
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(body)
 
@@ -92,7 +96,8 @@ class UserService(
     }
 
     fun signInWithGoogle(
-        request: LoginGoogleRequest
+        request: LoginGoogleRequest,
+        locale: Locale
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(request)
         val googleAuth = GoogleAuthUtil(environment)
@@ -100,7 +105,9 @@ class UserService(
             googleAuth.getProfile(request.token!!)
         if (!verifyUser.first) throw UnAuthorizedException(verifyUser.third)
         val findUser = userRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
-            ?: throw UnAuthorizedException("User not registered")
+            ?: throw UnAuthorizedException(
+                messageSource.getMessage("auth.unauthorized.message",null, locale)
+            )
 
         return baseAuthResponse {
             code = OK.value()

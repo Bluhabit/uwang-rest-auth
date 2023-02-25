@@ -4,6 +4,8 @@ import com.bluehabit.budgetku.data.apiKey.ApiKeyRepository
 import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyAuthFilter
 import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyAuthManager
 import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyFilterChainExceptionHandler
+import org.springframework.boot.autoconfigure.web.WebProperties.LocaleResolver
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -14,6 +16,8 @@ import org.springframework.security.web.authentication.logout.LogoutFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.servlet.i18n.SessionLocaleResolver
+import java.util.*
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +26,7 @@ class ApiKeySecurity(
     private val apiKeyRepository: ApiKeyRepository,
     private val filterException: ApiKeyFilterChainExceptionHandler
 ):WebSecurityConfigurerAdapter(){
+
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
 
