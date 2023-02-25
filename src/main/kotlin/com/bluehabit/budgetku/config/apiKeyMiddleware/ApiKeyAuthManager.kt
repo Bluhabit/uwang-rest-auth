@@ -26,8 +26,8 @@ class ApiKeyAuthManager(
                 message.translate("auth.apikey.invalid")
             )
         } else {
-            authentication?.isAuthenticated = true
-            return authentication!!
+            authentication.isAuthenticated = true
+            return authentication
         }
     }
 

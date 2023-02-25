@@ -7,6 +7,7 @@ import com.bluehabit.budgetku.config.apiKeyMiddleware.ApiKeyFilterChainException
 import org.springframework.boot.autoconfigure.web.WebProperties.LocaleResolver
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -24,14 +25,15 @@ import java.util.*
 @Order(1)
 class ApiKeySecurity(
     private val apiKeyRepository: ApiKeyRepository,
-    private val filterException: ApiKeyFilterChainExceptionHandler
+    private val filterException: ApiKeyFilterChainExceptionHandler,
+    private val messageSource: ResourceBundleMessageSource
 ):WebSecurityConfigurerAdapter(){
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
 
         val apiKeyAuthFilter = ApiKeyAuthFilter("x-api-key")
-        apiKeyAuthFilter.setAuthenticationManager(ApiKeyAuthManager(apiKeyRepository))
+        apiKeyAuthFilter.setAuthenticationManager(ApiKeyAuthManager(apiKeyRepository,messageSource))
 
         val corsOrigin = "*"
 
