@@ -1,5 +1,16 @@
 .gradle
-.idea
+
+.idea/compiler.xml
+.idea/gradle.xml
+.idea/jarRepositories.xml
+.idea/jpa-buddy.xml
+.idea/jpa-buddy-datasource.xml
+.idea/kotlinc.xml
+.idea/misc.xml
+.idea/uiDesigner.xml
+.idea/vcs.xml
+.idea/workspace.xml
+
 .vscode
 /build
 fba.json
