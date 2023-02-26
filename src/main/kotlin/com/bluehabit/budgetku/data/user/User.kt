@@ -2,7 +2,6 @@ package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.data.role.Role
 import org.hibernate.annotations.GenericGenerator
-import java.security.AuthProvider
 import java.time.OffsetDateTime
 import javax.persistence.CascadeType
 import javax.persistence.Column
@@ -10,11 +9,8 @@ import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.FetchType
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.ManyToMany
-import javax.persistence.ManyToOne
 import javax.persistence.Table
 
 @Entity

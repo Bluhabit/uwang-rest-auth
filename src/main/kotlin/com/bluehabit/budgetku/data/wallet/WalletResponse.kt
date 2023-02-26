@@ -2,11 +2,7 @@ package com.bluehabit.budgetku.data.wallet
 
 import com.bluehabit.budgetku.common.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
-import com.bluehabit.budgetku.data.user.User
-import com.bluehabit.budgetku.data.user.UserResponse
-import com.bluehabit.budgetku.data.user.toResponse
 import org.springframework.data.domain.Page
-import java.time.OffsetDateTime
 
 
 data class WalletResponse(

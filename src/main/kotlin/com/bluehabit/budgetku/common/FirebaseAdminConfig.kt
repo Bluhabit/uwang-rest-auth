@@ -33,7 +33,7 @@ class FirebaseConfig(
              "type": "$type",
              "project_id": "$projectId",
              "private_key_id": "$privateKeyId",
-             "private_key": "$privateKey",
+             "private_key": "${privateKey.toString()}",
              "client_email": "$clientEmail",
              "client_id": "$clientId",
              "auth_uri": "$authUri",

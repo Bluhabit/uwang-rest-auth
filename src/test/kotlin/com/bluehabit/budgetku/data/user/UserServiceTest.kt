@@ -5,12 +5,10 @@ import com.bluehabit.budgetku.common.ValidationUtil
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
-import com.bluehabit.budgetku.common.model.baseAuthResponse
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.data.role.RoleRepository
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
 import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
-import kotlinx.coroutines.delay
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,10 +16,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.`when`
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus

@@ -37,11 +37,13 @@ class TokenSecurity(
             .and()
             .authorizeRequests()
             .antMatchers(
-                "/api/v1/admin/auth/sign-in",
-                "/api/v1/auth/sign-in-email"
+                "/v1/auth/sign-in-email",
+                "/v1/auth/sign-in-google",
+                "/v1/auth/sign-up-email",
+                "/v1/auth/sign-up-google"
             ).permitAll()
             .antMatchers(
-                "/api/v1/**",
+                "/v1/**",
             )
             .authenticated()
             .and()

@@ -20,9 +20,11 @@ data class AuthBaseResponse<DATA>(
     var token: String = ""
 )
 
-fun <Data> baseResponse(lambda: BaseResponse<Data>.() -> Unit): BaseResponse<Data> = BaseResponse<Data>().apply(lambda)
+fun <Data> baseResponse(lambda: BaseResponse<Data>.() -> Unit): BaseResponse<Data> =
+    BaseResponse<Data>().apply(lambda)
 
-fun <Data> baseAuthResponse(lambda: AuthBaseResponse<Data>.() -> Unit) = AuthBaseResponse<Data>().apply(lambda)
+fun <Data> baseAuthResponse(lambda: AuthBaseResponse<Data>.() -> Unit) =
+    AuthBaseResponse<Data>().apply(lambda)
 
 fun <Type> buildResponse(
     userRepository: UserRepository,

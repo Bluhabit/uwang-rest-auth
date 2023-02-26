@@ -43,7 +43,7 @@ class ApiKeySecurity(
             .disable()
             .authorizeRequests()
                 .and()
-                    .antMatcher("/api/**")
+                    .antMatcher("/v1/**")
                     .addFilter(apiKeyAuthFilter)
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

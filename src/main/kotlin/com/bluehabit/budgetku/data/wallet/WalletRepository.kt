@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.PagingAndSortingRepository
 
 interface WalletRepository:PagingAndSortingRepository<Wallet,String> {
-    fun findAllByUser(user: User,pageable: Pageable): Page<Wallet>
+    fun findAllByUser(user: User, pageable: Pageable): Page<Wallet>
 }
