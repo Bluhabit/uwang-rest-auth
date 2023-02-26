@@ -1,8 +1,8 @@
 version: '3.5'
 
 services:
-  #  rest_api_medical_record:
-  #    container_name: "rest-api-medical-record"
+  #  rest_api_budgetku:
+  #    container_name: "rest_api_budgetku"
   #    build:
   #      context: .
   #      dockerfile: Dockerfile
