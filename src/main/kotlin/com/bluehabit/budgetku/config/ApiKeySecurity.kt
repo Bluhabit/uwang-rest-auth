@@ -1,3 +1,10 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.config
 
 import com.bluehabit.budgetku.data.apiKey.ApiKeyRepository
@@ -43,7 +50,7 @@ class ApiKeySecurity(
             .disable()
             .authorizeRequests()
                 .and()
-                    .antMatcher("/api/**")
+                    .antMatcher("/v1/**")
                     .addFilter(apiKeyAuthFilter)
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

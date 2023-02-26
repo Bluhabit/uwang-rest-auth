@@ -1,3 +1,10 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.common.model
 
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
@@ -20,9 +27,11 @@ data class AuthBaseResponse<DATA>(
     var token: String = ""
 )
 
-fun <Data> baseResponse(lambda: BaseResponse<Data>.() -> Unit): BaseResponse<Data> = BaseResponse<Data>().apply(lambda)
+fun <Data> baseResponse(lambda: BaseResponse<Data>.() -> Unit): BaseResponse<Data> =
+    BaseResponse<Data>().apply(lambda)
 
-fun <Data> baseAuthResponse(lambda: AuthBaseResponse<Data>.() -> Unit) = AuthBaseResponse<Data>().apply(lambda)
+fun <Data> baseAuthResponse(lambda: AuthBaseResponse<Data>.() -> Unit) =
+    AuthBaseResponse<Data>().apply(lambda)
 
 fun <Type> buildResponse(
     userRepository: UserRepository,

@@ -1,3 +1,10 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.controller
 
 
@@ -22,6 +29,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.multipart.MaxUploadSizeExceededException
+import org.springframework.web.servlet.NoHandlerFoundException
 import java.text.ParseException
 import javax.persistence.NonUniqueResultException
 import javax.validation.ConstraintViolationException
@@ -34,19 +42,31 @@ import javax.validation.ConstraintViolationException
 class ErrorHandlerController {
 
     @ExceptionHandler(
+        value = [NoHandlerFoundException::class]
+    )
+    @ResponseStatus(NOT_FOUND)
+    fun resNotFound(e: NoHandlerFoundException): BaseResponse<List<Any>> {
+
+        return baseResponse {
+            code = NOT_FOUND.value()
+            data = listOf()
+            message = e.localizedMessage
+        }
+    }
+
+    @ExceptionHandler(
         value = [IllegalArgumentException::class]
     )
     @ResponseStatus(
         BAD_REQUEST
     )
     fun illegalArgument(
-        e:IllegalArgumentException
+        e: IllegalArgumentException
     ): BaseResponse<List<Any>> {
-        e.printStackTrace()
-        return baseResponse<List<Any>> {
+        return baseResponse {
             code = BAD_REQUEST.value()
             data = listOf()
-            message = e.message.orEmpty()
+            message = e.localizedMessage
         }
     }
 
@@ -61,7 +81,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -117,7 +137,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -131,7 +151,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -145,7 +165,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -159,7 +179,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -173,7 +193,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -187,7 +207,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -201,7 +221,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -228,7 +248,7 @@ class ErrorHandlerController {
         baseResponse<List<Any>> {
             code = BAD_REQUEST.value()
             data = listOf()
-            message = error.message.orEmpty()
+            message = error.localizedMessage
         }
 
     @ExceptionHandler(
@@ -242,7 +262,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 
     @ExceptionHandler(
@@ -256,6 +276,6 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.message.orEmpty()
+        message = error.localizedMessage
     }
 }

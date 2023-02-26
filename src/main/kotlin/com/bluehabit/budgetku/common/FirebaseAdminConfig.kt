@@ -1,3 +1,10 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.common
 
 import com.google.auth.oauth2.GoogleCredentials
@@ -33,7 +40,7 @@ class FirebaseConfig(
              "type": "$type",
              "project_id": "$projectId",
              "private_key_id": "$privateKeyId",
-             "private_key": "$privateKey",
+             "private_key": "${privateKey.toString()}",
              "client_email": "$clientEmail",
              "client_id": "$clientId",
              "auth_uri": "$authUri",

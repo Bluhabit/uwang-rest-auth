@@ -10,13 +10,13 @@ package com.bluehabit.budgetku.data.user
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface UserRepository : PagingAndSortingRepository<User, String> {
-    @Query("SELECT case when count(m) > 0 then true else false end from User as m where m.userEmail =:userEmail")
+interface UserVerificationRepository : PagingAndSortingRepository<UserVerification, String> {
+    @Query("SELECT case when count(m) > 0 then true else false end from UserActivation as m where m.userActivationStatusToken =:userActivationToken")
     fun exist(
-        userEmail: String,
+        userActivationToken: String,
     ):Boolean
 
-    fun findByUserEmail(userEmail: String): User?
+    fun findByUserActivationToken(userActivationToken: String): UserVerification?
 
 
 }

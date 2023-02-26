@@ -1,3 +1,10 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.config
 
 import com.bluehabit.budgetku.config.tokenMiddleware.JWTFilterChainExceptionHandler
@@ -37,11 +44,13 @@ class TokenSecurity(
             .and()
             .authorizeRequests()
             .antMatchers(
-                "/api/v1/admin/auth/sign-in",
-                "/api/v1/auth/sign-in-email"
+                "/v1/auth/sign-in-email",
+                "/v1/auth/sign-in-google",
+                "/v1/auth/sign-up-email",
+                "/v1/auth/sign-up-google"
             ).permitAll()
             .antMatchers(
-                "/api/v1/**",
+                "/v1/**",
             )
             .authenticated()
             .and()

@@ -1,8 +1,16 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.feature.auth.v1
 
 import com.bluehabit.budgetku.data.user.LoginGoogleRequest
 import com.bluehabit.budgetku.data.user.LoginRequest
 import com.bluehabit.budgetku.data.user.UserService
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -17,6 +25,7 @@ import java.util.Locale
 class AuthController(
     private val authService: UserService
 ) {
+
     @PostMapping(
         value = ["/sign-in-email"],
         produces = ["application/json"],

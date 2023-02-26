@@ -1,13 +1,16 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.data.role
 
 import com.bluehabit.budgetku.common.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
 import com.bluehabit.budgetku.data.permission.PermissionReponse
-import com.bluehabit.budgetku.data.user.User
-import com.bluehabit.budgetku.data.user.UserResponse
-import com.bluehabit.budgetku.data.user.toResponse
 import org.springframework.data.domain.Page
-import java.time.OffsetDateTime
 
 
 data class RoleResponse(

@@ -1,9 +1,13 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.common.model.pagingResponse
-import com.bluehabit.budgetku.data.apiKey.ApiKey
-import com.bluehabit.budgetku.data.apiKey.ApiKeyResponse
-import com.bluehabit.budgetku.data.apiKey.toResponse
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionReponse
 import com.bluehabit.budgetku.data.permission.toResponse

@@ -1,15 +1,25 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.common
 
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.data.permission.Permission
+import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 import javax.validation.ConstraintViolationException
 import javax.validation.Validator
+import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType.Object
 
 @Component
 class ValidationUtil(
-    val validator: Validator
+    val validator: Validator,
+    val message: ResourceBundleMessageSource
 ) {
     fun validate(any: Any) {
         val result = validator.validate(any)
@@ -19,9 +29,11 @@ class ValidationUtil(
         }
     }
 
-    fun validateDate(start: Long, end: Long) {
+    fun validateDateRange(start: Long, end: Long, maxRange: Int = 3) {
         if (start > end) {
-            throw BadRequestException("not allowed start date more than end date")
+            throw BadRequestException(
+                message.translate("date.range.start.overlap")
+            )
         }
 
         val differenceInTime: Long = end - start
@@ -29,8 +41,13 @@ class ValidationUtil(
             .toDays(differenceInTime)
                 % 365)
 
-        if (differenceInDays > 3) {
-            throw BadRequestException("Maks date range only allow for 3 days")
+        if (differenceInDays > maxRange) {
+            throw BadRequestException(
+                message.translate(
+                    "date.range.max.overlap",
+                    arrayOf(maxRange)
+                )
+            )
         }
 
     }
@@ -59,6 +76,6 @@ class ValidationUtil(
 
 }
 
-fun List<Permission>.isAllowed( to: List<String>): Boolean {
+fun List<Permission>.isAllowed(to: List<String>): Boolean {
     return this.map { "${it.permissionGroup}.${it.permissionType}" }.containsAll(to)
 }

@@ -1,31 +1,24 @@
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
 package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.common.Constants
-import com.bluehabit.budgetku.common.Constants.Permission.HYPEN_READ
-import com.bluehabit.budgetku.common.Constants.Permission.HYPEN_WRITE
-import com.bluehabit.budgetku.common.Constants.Permission.USER_PERMISSION
 import com.bluehabit.budgetku.common.GoogleAuthUtil
 import com.bluehabit.budgetku.common.ValidationUtil
-import com.bluehabit.budgetku.common.exception.BadRequestException
-import com.bluehabit.budgetku.common.exception.DataNotFoundException
-import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
-import com.bluehabit.budgetku.common.model.BaseResponse
-import com.bluehabit.budgetku.common.model.PagingDataResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
-import com.bluehabit.budgetku.common.model.baseResponse
-import com.bluehabit.budgetku.common.model.buildResponse
 import com.bluehabit.budgetku.common.translate
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
 import com.bluehabit.budgetku.data.role.RoleRepository
-import com.bluehabit.budgetku.data.userActivity.UserActivity
 import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
-import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
@@ -33,8 +26,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import java.time.OffsetDateTime
-import java.util.*
 import javax.transaction.Transactional
 
 @Service
@@ -45,7 +36,7 @@ class UserService(
     private val validationUtil: ValidationUtil,
     private val jwtUtil: JwtUtil,
     private val environment: Environment,
-    private val messageSource: ResourceBundleMessageSource
+    private val message: ResourceBundleMessageSource
 ) : UserDetailsService {
     private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
 
@@ -75,13 +66,13 @@ class UserService(
         val login = userRepository
             .findByUserEmail(
                 body.email!!
-            ) ?: throw UnAuthorizedException(messageSource.translate("auth.unauthorized.user.not.exist.message"))
+            ) ?: throw UnAuthorizedException(message.translate("auth.user.not.exist"))
 
         if (!bcrypt.matches(
                 body.password,
                 login.userPassword
             )
-        ) throw UnAuthorizedException("Username or password didn't match to any account!")
+        ) throw UnAuthorizedException(message.translate("auth.invalid"))
 
         val generatedToken = jwtUtil.generateToken(login.userEmail)
 
@@ -89,7 +80,7 @@ class UserService(
         return baseAuthResponse {
             code = OK.value()
             data = login.toResponse()
-            message = "Sign In Success!"
+            message = this@UserService.message.translate("auth.success")
             token = generatedToken
         }
 
@@ -99,20 +90,24 @@ class UserService(
         request: LoginGoogleRequest
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(request)
-        val googleAuth = GoogleAuthUtil(environment)
+        val googleAuth = GoogleAuthUtil(environment,message)
         val verifyUser =
             googleAuth.getProfile(request.token!!)
         if (!verifyUser.first) throw UnAuthorizedException(verifyUser.third)
         val findUser = userRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
             ?: throw UnAuthorizedException(
-                messageSource.translate("auth.unauthorized.user.not.exist.message")
+                message.translate("auth.user.not.exist")
             )
 
         return baseAuthResponse {
             code = OK.value()
             data = findUser.toResponse()
-            message = ""
+            message = this@UserService.message.translate("auth.success")
         }
     }
 
+    fun signUpWithEmail():AuthBaseResponse<UserResponse>{
+
+        return baseAuthResponse {  }
+    }
 }
