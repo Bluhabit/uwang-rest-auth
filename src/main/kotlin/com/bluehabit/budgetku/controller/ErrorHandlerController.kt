@@ -14,6 +14,7 @@ import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.baseResponse
+import org.hibernate.LazyInitializationException
 import org.hibernate.exception.DataException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.http.converter.HttpMessageNotWritableException
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -40,6 +42,35 @@ import javax.validation.ConstraintViolationException
  * */
 @RestControllerAdvice
 class ErrorHandlerController {
+
+    @ExceptionHandler(
+        value = [LazyInitializationException::class]
+    )
+    @ResponseStatus(
+        BAD_REQUEST
+    )
+    fun LazyInit(e:LazyInitializationException): BaseResponse<List<Any>> {
+        return baseResponse {
+            code = NOT_FOUND.value()
+            data = listOf()
+            message = e.localizedMessage
+        }
+    }
+
+    @ExceptionHandler(
+        value = [HttpMessageNotWritableException::class]
+    )
+    @ResponseStatus(
+        BAD_REQUEST
+    )
+    fun LazyInit(e:HttpMessageNotWritableException): BaseResponse<List<Any>> {
+        return baseResponse {
+            code = NOT_FOUND.value()
+            data = listOf()
+            message = e.localizedMessage
+        }
+    }
+
 
     @ExceptionHandler(
         value = [NoHandlerFoundException::class]

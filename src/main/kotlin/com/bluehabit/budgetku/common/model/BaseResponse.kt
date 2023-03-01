@@ -11,7 +11,6 @@ import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.isAllowed
 import com.bluehabit.budgetku.data.user.User
 import com.bluehabit.budgetku.data.user.UserRepository
-import com.bluehabit.budgetku.data.user.getListPermission
 import org.springframework.security.core.context.SecurityContextHolder
 
 data class BaseResponse<DATA>(
@@ -43,11 +42,8 @@ fun <Type> buildResponse(
 
     val user =
         userRepository.findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-    if (!user.getListPermission().isAllowed(
-            to = permission
-        )
-    ) throw UnAuthorizedException("User not allowed use this operations")
 
+    //todo check permission
     return whenValidAndAccepted(
         user
     )

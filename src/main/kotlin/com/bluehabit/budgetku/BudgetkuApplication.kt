@@ -7,10 +7,13 @@
 
 package com.bluehabit.budgetku
 
+import com.bluehabit.budgetku.common.Constants.BCrypt.STRENGTH
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.support.ResourceBundleMessageSource
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 import java.util.*
 
@@ -30,6 +33,19 @@ class BudgetkuApplication{
 
 		return base
 	}
+
+	@Bean
+	fun bcrypt():BCryptPasswordEncoder = BCryptPasswordEncoder(STRENGTH)
+
+	@Bean
+	fun scrypt():SCryptPasswordEncoder = SCryptPasswordEncoder(
+		2,
+		1,
+		1,
+		10,
+		10
+	)
+
 }
 
 fun main(args: Array<String>) {

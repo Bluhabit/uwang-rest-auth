@@ -31,15 +31,15 @@ class GoogleAuthUtil(
                 userId = null,
                 userEmail = claims["email"]?.asString().orEmpty(),
                 userCountryCode = claims["locale"]?.asString().orEmpty(),
-                userAuthProvider = GOOGLE,
+                userAuthProvider = GOOGLE.name,
                 userPassword = "",
                 userProfilePicture = claims["picture"]?.asString().orEmpty(),
                 userFullName = claims["given_name"]?.asString().orEmpty(),
-                userStatus = ACTIVE,
+                userStatus = ACTIVE.name,
                 userDateOfBirth = OffsetDateTime.now(),
                 userAuthTokenProvider = token,
                 userPhoneNumber = "",
-                userRoles = listOf(),
+             //   userRoles = listOf(),
                 createdAt = OffsetDateTime.now(),
                 updatedAt = OffsetDateTime.now()
             )

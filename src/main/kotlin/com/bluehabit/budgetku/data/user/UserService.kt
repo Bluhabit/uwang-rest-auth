@@ -15,30 +15,28 @@ import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
 import com.bluehabit.budgetku.common.translate
 import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
-import com.bluehabit.budgetku.data.role.RoleRepository
 import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus.OK
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val roleRepository: RoleRepository,
     private val userActivityRepository: UserActivityRepository,
     private val validationUtil: ValidationUtil,
     private val jwtUtil: JwtUtil,
     private val environment: Environment,
-    private val message: ResourceBundleMessageSource
+    private val message: ResourceBundleMessageSource,
+    private val scrypt : SCryptPasswordEncoder
 ) : UserDetailsService {
-    private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
 
     //region admin
     @Transactional
@@ -49,15 +47,14 @@ class UserService(
         return User(
             username,
             user.userPassword,
-            user.userRoles.map {
-                SimpleGrantedAuthority(it.roleName)
-            }
+            listOf()
         )
 
     }
     //end region
 
     //region user auth
+    @Transactional
     fun signInWithEmailAndPassword(
         body: LoginRequest
     ): AuthBaseResponse<UserResponse> {
@@ -68,14 +65,14 @@ class UserService(
                 body.email!!
             ) ?: throw UnAuthorizedException(message.translate("auth.user.not.exist"))
 
-        if (!bcrypt.matches(
+        if (!scrypt.matches(
                 body.password,
                 login.userPassword
             )
         ) throw UnAuthorizedException(message.translate("auth.invalid"))
 
         val generatedToken = jwtUtil.generateToken(login.userEmail)
-
+//
 
         return baseAuthResponse {
             code = OK.value()

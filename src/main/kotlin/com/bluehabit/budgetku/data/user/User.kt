@@ -7,14 +7,13 @@
 
 package com.bluehabit.budgetku.data.user
 
-import com.bluehabit.budgetku.data.role.Role
+import com.bluehabit.budgetku.data.permission.Permission
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.ManyToMany
@@ -52,22 +51,21 @@ data class User(
     @Column
     var userProfilePicture:String,
 
-    @Enumerated(value = EnumType.STRING)
     @Column
-    var userAuthProvider: UserAuthProvider = UserAuthProvider.BASIC,
+    var userAuthProvider: String = UserAuthProvider.BASIC.name,
 
-    @Enumerated(value = EnumType.STRING)
     @Column
-    var userStatus: UserStatus = UserStatus.NONACTIVE,
+    var userStatus: String = UserStatus.NONACTIVE.name,
 
     @Column
     var userAuthTokenProvider:String,
 
     @ManyToMany(
         fetch = FetchType.LAZY,
-        cascade = [CascadeType.REFRESH],
+        cascade = [CascadeType.ALL]
     )
-    var userRoles:List<Role> = listOf(),
+    @JsonIgnore
+    var userPermissions: Collection<Permission> = listOf(),
 
     @Column
     var createdAt: OffsetDateTime,

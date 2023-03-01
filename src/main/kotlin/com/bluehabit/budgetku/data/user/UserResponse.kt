@@ -11,8 +11,6 @@ import com.bluehabit.budgetku.common.model.pagingResponse
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionReponse
 import com.bluehabit.budgetku.data.permission.toResponse
-import com.bluehabit.budgetku.data.role.RoleResponse
-import com.bluehabit.budgetku.data.role.toResponse
 import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
@@ -23,30 +21,15 @@ data class UserResponse(
     var userCountryCode: String,
     var userDateOfBirth: String,
     var userEmail: String,
-    var userAuthProvider: UserAuthProvider,
-    var userStatus: UserStatus,
+    var userAuthProvider: String,
+    var userStatus: String,
     var userPermission: List<PermissionReponse>,
-    var userRoles: List<RoleResponse>,
     var createdAt: OffsetDateTime,
     var updatedAt: OffsetDateTime,
 )
 
-fun User.getListPermission(): List<Permission> {
-    val permission = mutableListOf<Permission>()
-    userRoles.forEach{ permission += it.permissions.map {result-> result } }
-    return permission.toList()
-}
-
 
 fun User.toResponse(): UserResponse {
-    val permission = mutableListOf<PermissionReponse>()
-
-    val role = userRoles.map {
-        permission += it.permissions.map { p ->
-            p.toResponse()
-        }
-        it.toResponse()
-    }
 
     return UserResponse(
         userId = userId,
@@ -56,8 +39,7 @@ fun User.toResponse(): UserResponse {
         userStatus = userStatus,
         userCountryCode = userCountryCode,
         userDateOfBirth = userDateOfBirth.toString(),
-        userPermission = permission,
-        userRoles = role,
+        userPermission = userPermissions.map { it.toResponse() },
         createdAt = createdAt,
         updatedAt = updatedAt
     )

@@ -50,6 +50,7 @@ dependencies {
     implementation("com.google.firebase:firebase-admin:9.0.0")
 
     implementation("org.postgresql:postgresql:42.3.1")
+    runtimeOnly("mysql:mysql-connector-java")
     implementation("junit:junit:4.13.2")
     implementation("javax.activation:activation:1.1.1")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
