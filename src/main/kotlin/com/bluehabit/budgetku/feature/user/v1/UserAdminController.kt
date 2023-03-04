@@ -22,11 +22,16 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(
-    value = ["/api/v1/admin"]
+    value = ["/v1/admin"]
 )
 class UserAdminController(
     private val userService: UserService
 ) {
 
+    @GetMapping(
+        value = ["/tes"],
+        produces = ["application/json"]
+    )
+    fun tes()= mapOf("HOHO" to "HEHE")
 
 }

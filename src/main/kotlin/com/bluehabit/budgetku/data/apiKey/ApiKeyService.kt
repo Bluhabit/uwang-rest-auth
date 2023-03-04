@@ -85,7 +85,7 @@ class ApiKeyService(
     }
 
     fun deleteApiKey(
-        apikeyId: Long
+        apikeyId: String
     ): BaseResponse<ApiKeyResponse> {
         val email = SecurityContextHolder.getContext().authentication.principal.toString();
         if (email.isBlank()) {

@@ -14,6 +14,8 @@ import com.bluehabit.budgetku.common.exception.DuplicateException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.baseResponse
+import jakarta.persistence.NonUniqueResultException
+import jakarta.validation.ConstraintViolationException
 import org.hibernate.LazyInitializationException
 import org.hibernate.exception.DataException
 import org.springframework.dao.DataIntegrityViolationException
@@ -33,8 +35,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.multipart.MaxUploadSizeExceededException
 import org.springframework.web.servlet.NoHandlerFoundException
 import java.text.ParseException
-import javax.persistence.NonUniqueResultException
-import javax.validation.ConstraintViolationException
 
 /**
  * Error handler controller

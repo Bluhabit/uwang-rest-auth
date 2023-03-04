@@ -7,10 +7,12 @@
 
 package com.bluehabit.budgetku.data.user
 
+import com.bluehabit.budgetku.data.apiKey.ApiKey
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface UserRepository : PagingAndSortingRepository<User, String> {
+interface UserRepository : PagingAndSortingRepository<User, String>, CrudRepository<User, String> {
     @Query("SELECT case when count(m) > 0 then true else false end from User as m where m.userEmail =:userEmail")
     fun exist(
         userEmail: String,

@@ -9,12 +9,11 @@ package com.bluehabit.budgetku.common
 
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.data.permission.Permission
+import jakarta.validation.ConstraintViolationException
+import jakarta.validation.Validator
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
-import javax.validation.ConstraintViolationException
-import javax.validation.Validator
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType.Object
 
 @Component
 class ValidationUtil(

@@ -7,8 +7,8 @@
 
 package com.bluehabit.budgetku.config.apiKeyMiddleware
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter
-import javax.servlet.http.HttpServletRequest
 
 class ApiKeyAuthFilter(
     private val headerName:String

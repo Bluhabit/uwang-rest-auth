@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.config.tokenMiddleware
+package com.bluehabit.budgetku.config;
 
 
 import com.auth0.jwt.JWT
@@ -37,16 +37,21 @@ class JwtUtil {
         .sign(Algorithm.HMAC512(secret))
 
 
-    @Throws(JWTVerificationException::class)
+    @Throws(JWTDecodeException::class)
     fun validateTokenAndRetrieveSubject(
         token: String
-    ): String {
-
-        val decode = JWT.decode(token).getClaim("email").asString()
-
-
-        return decode
+    ): String? {
+        return try {
+            JWT.decode(token).getClaim("email").asString()
+        } catch (e: Exception) {
+            null
+        }
     }
+
     @Throws(JWTDecodeException::class)
-    fun isJwtExpired(token: String) = JWT.decode(token).expiresAt.before(Date(OffsetDateTime.now().toEpochSecond()))
+    fun isJwtExpired(token: String) = try {
+        JWT.decode(token).expiresAt.before(Date(OffsetDateTime.now().toEpochSecond()))
+    } catch (e: Exception) {
+        false
+    }
 }

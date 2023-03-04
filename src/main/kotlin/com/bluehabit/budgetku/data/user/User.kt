@@ -9,15 +9,15 @@ package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.data.permission.Permission
 import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.ManyToMany
+import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
-import javax.persistence.CascadeType
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.Id
-import javax.persistence.ManyToMany
-import javax.persistence.Table
 
 @Entity
 @Table(name = "tb_user")
@@ -61,7 +61,7 @@ data class User(
     var userAuthTokenProvider:String,
 
     @ManyToMany(
-        fetch = FetchType.LAZY,
+        fetch = FetchType.EAGER,
         cascade = [CascadeType.ALL]
     )
     @JsonIgnore

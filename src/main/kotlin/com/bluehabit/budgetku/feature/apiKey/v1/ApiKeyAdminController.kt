@@ -43,6 +43,6 @@ class ApiKeyAdminController(
         produces = ["application/json"]
     )
     fun deleteCredential(
-        @PathVariable("api_key_id") apiKeyId:Long
+        @PathVariable("api_key_id") apiKeyId:String
     )=apiKeyService.deleteApiKey(apiKeyId)
 }

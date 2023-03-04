@@ -14,28 +14,30 @@ import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
 import com.bluehabit.budgetku.common.translate
-import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
+import com.bluehabit.budgetku.config.JwtUtil
 import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
+import jakarta.transaction.Transactional
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus.OK
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
+
 
 @Service
 class UserService(
     private val userRepository: UserRepository,
     private val userActivityRepository: UserActivityRepository,
     private val validationUtil: ValidationUtil,
-    private val jwtUtil: JwtUtil,
     private val environment: Environment,
     private val message: ResourceBundleMessageSource,
-    private val scrypt : SCryptPasswordEncoder
+    private val scrypt : SCryptPasswordEncoder,
+    private val jwtUtil: JwtUtil
 ) : UserDetailsService {
 
     //region admin
@@ -47,7 +49,7 @@ class UserService(
         return User(
             username,
             user.userPassword,
-            listOf()
+            user.userPermissions.map { SimpleGrantedAuthority(it.permissionType) }
         )
 
     }

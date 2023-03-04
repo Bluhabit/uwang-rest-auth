@@ -9,17 +9,17 @@ package com.bluehabit.budgetku.data.wallet
 
 import com.bluehabit.budgetku.data.user.User
 import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType.LAZY
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
-import javax.persistence.CascadeType.REFRESH
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.FetchType.LAZY
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.ManyToOne
-import javax.persistence.Table
 
 @Entity
 @Table(
@@ -41,7 +41,7 @@ data class Wallet(
     var walletBalance: Long,
     @JsonIgnore
     @ManyToOne(
-        cascade = [REFRESH],
+        cascade = [CascadeType.REFRESH],
         fetch = LAZY
     )
     var user: User? = null,

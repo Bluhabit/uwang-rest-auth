@@ -7,9 +7,9 @@
 
 package com.bluehabit.budgetku.data.user
 
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import java.time.OffsetDateTime
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 
 data class LoginRequest(
     @field:NotBlank
