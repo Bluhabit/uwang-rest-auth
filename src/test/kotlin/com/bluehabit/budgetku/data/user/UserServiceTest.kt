@@ -97,7 +97,7 @@ class UserServiceTest {
                 message = "Sign In Success!",
                 token = "Ini token"
             ),
-            userService.signInWithEmailAndPassword(
+            userService.signInWithEmail(
                 SignInWithEmailRequest(
                     email = userCredential.userEmail,
                     password = "1234"
@@ -113,7 +113,7 @@ class UserServiceTest {
         assertThrows(
             UnAuthorizedException::class.java
         ){
-            userService.signInWithEmailAndPassword(
+            userService.signInWithEmail(
                 request
             )
         }
@@ -123,7 +123,7 @@ class UserServiceTest {
         assertThrows(
             BadRequestException::class.java
         ){
-            userService.signInWithEmailAndPassword(request)
+            userService.signInWithEmail(request)
         }
     }
 

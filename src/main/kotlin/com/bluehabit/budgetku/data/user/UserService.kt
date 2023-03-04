@@ -7,16 +7,13 @@
 
 package com.bluehabit.budgetku.data.user
 
-import com.bluehabit.budgetku.common.Constants.Permission
 import com.bluehabit.budgetku.common.Constants.Permission.RANDOM
-import com.bluehabit.budgetku.common.Constants.Permission.READ_USER
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.PagingDataResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
 import com.bluehabit.budgetku.common.model.baseResponse
-import com.bluehabit.budgetku.common.model.pagingResponse
 import com.bluehabit.budgetku.common.utils.GoogleAuthUtil
 import com.bluehabit.budgetku.common.utils.ValidationUtil
 import com.bluehabit.budgetku.common.utils.allowTo
@@ -35,6 +32,7 @@ import jakarta.transaction.Transactional
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
@@ -42,7 +40,9 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.time.OffsetDateTime
+import java.time.Period
 import java.util.UUID
 
 
@@ -78,7 +78,7 @@ class UserService(
     //end region
 
     //region user auth
-    fun signInWithEmailAndPassword(
+    fun signInWithEmail(
         body: SignInWithEmailRequest
     ): AuthBaseResponse<UserResponse> {
         validationUtil.validate(body)
@@ -120,7 +120,7 @@ class UserService(
         val findUser = userCredentialRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
             ?: throw UnAuthorizedException(translate("auth.user.not.exist"))
 
-        if(findUser.userAuthProvider != UserAuthProvider.GOOGLE.name){
+        if (findUser.userAuthProvider != UserAuthProvider.GOOGLE.name) {
             throw UnAuthorizedException(translate("auth.method.not.allowed"))
         }
 
@@ -138,11 +138,11 @@ class UserService(
         validationUtil.validate(request)
 
         val isExist = userCredentialRepository.exist(request.email!!)
-        if(isExist){
+        if (isExist) {
             throw UnAuthorizedException(translate("auth.failed.user.exist"))
         }
 
-        val uuid = UUID.fromString(request.email).toString()
+        val uuid = UUID.randomUUID().toString()
         val date = OffsetDateTime.now()
         val activationToken = UUID.randomUUID().toString()
         val userProfile = UserProfile(
@@ -164,7 +164,7 @@ class UserService(
             userAuthProvider = BASIC.name,
             userPermissions = listOf(),
             userProfile = savedProfile,
-            userAuthTokenProvider="",
+            userAuthTokenProvider = "",
             createdAt = date,
             updatedAt = date
         )
@@ -187,6 +187,57 @@ class UserService(
             code = OK.value()
             data = savedCredential.toResponse()
             message = translate("auth.success")
+        }
+    }
+
+    fun signUpWithGoogle(
+        request: SignUpWithGoogleRequest
+    ) {
+
+    }
+
+    @Transactional
+    fun userVerification(
+        token: String
+    ): BaseResponse<List<Any>> = buildResponse {
+        if (token.isEmpty()) {
+            throw UnAuthorizedException("Verification failed")
+        }
+
+        val verificationData = userVerificationRepository.findByUserActivationToken(token)
+            ?: throw UnAuthorizedException("Token not valid")
+
+        if (verificationData.activationAt != null) {
+            throw UnAuthorizedException("Token not valid")
+        }
+
+        if (Period.between(
+                verificationData.createdAt.toLocalDate(),
+                OffsetDateTime.now().toLocalDate()
+            ).days > 1
+        ) {
+            throw UnAuthorizedException("Token not valid or expired")
+        }
+
+        val findUser = userCredentialRepository.findByIdOrNull(verificationData.userId)
+            ?: throw UnAuthorizedException("User not found")
+
+        userCredentialRepository.save(
+            findUser.copy(
+                userStatus = UserStatus.ACTIVE.name
+            )
+        )
+        userVerificationRepository.save(
+            verificationData.copy(
+                activationAt = OffsetDateTime.now()
+            )
+        )
+
+        baseResponse {
+            code = OK.value()
+            data = listOf()
+            message = translate("auth.verification.success")
+
         }
     }
     //end region
