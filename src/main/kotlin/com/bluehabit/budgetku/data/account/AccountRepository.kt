@@ -5,15 +5,14 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.wallet
+package com.bluehabit.budgetku.data.account
 
-import com.bluehabit.budgetku.data.apiKey.ApiKey
-import com.bluehabit.budgetku.data.user.User
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface WalletRepository:PagingAndSortingRepository<Wallet,String>, CrudRepository<Wallet, String> {
-    fun findAllByUser(user: User, pageable: Pageable): Page<Wallet>
+interface AccountRepository:PagingAndSortingRepository<Account,String>, CrudRepository<Account, String> {
+    fun findAllByUser(user: UserCredential, pageable: Pageable): Page<Account>
 }

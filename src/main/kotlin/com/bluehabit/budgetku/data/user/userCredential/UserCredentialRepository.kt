@@ -5,20 +5,19 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.user
+package com.bluehabit.budgetku.data.user.userCredential
 
-import com.bluehabit.budgetku.data.apiKey.ApiKey
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface UserRepository : PagingAndSortingRepository<User, String>, CrudRepository<User, String> {
-    @Query("SELECT case when count(m) > 0 then true else false end from User as m where m.userEmail =:userEmail")
+interface UserCredentialRepository : PagingAndSortingRepository<UserCredential, String>, CrudRepository<UserCredential, String> {
+    @Query("SELECT case when count(m) > 0 then true else false end from UserCredential as m where m.userEmail =:userEmail")
     fun exist(
         userEmail: String,
     ):Boolean
 
-    fun findByUserEmail(userEmail: String): User?
+    fun findByUserEmail(userEmail: String): UserCredential?
 
 
 }

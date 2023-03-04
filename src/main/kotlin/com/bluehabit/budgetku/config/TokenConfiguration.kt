@@ -26,7 +26,7 @@ class TokenConfiguration(
 ) {
 
     @Bean
-    @Order(2)
+    @Order(1)
     @Throws(Exception::class, UnAuthorizedException::class)
     fun filterChainToken(http: HttpSecurity): SecurityFilterChain {
 

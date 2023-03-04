@@ -4,9 +4,9 @@ import com.bluehabit.budgetku.common.Constants
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.PagingDataResponse
 import com.bluehabit.budgetku.common.model.baseResponse
-import com.bluehabit.budgetku.data.user.User
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
-import com.bluehabit.budgetku.data.user.UserRepository
+import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -40,10 +40,10 @@ class ApiKeyServiceTest {
     lateinit var apiKeyRepository: ApiKeyRepository
 
     @Mock
-    lateinit var userRepository: UserRepository
+    lateinit var userCredentialRepository: UserCredentialRepository
 
     lateinit var apiKey: ApiKey
-    lateinit var user: User
+    lateinit var userCredential: UserCredential
     private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
 
     val userNameAuth = UsernamePasswordAuthenticationToken(
@@ -61,7 +61,7 @@ class ApiKeyServiceTest {
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now()
         )
-        user = User(
+        userCredential = UserCredential(
             userId = "26ff6c62-a447-4e7f-941e-e3c866bd69bc",
             userEmail = "admin@bluehabit.com",
             userPassword = bcrypt.encode("1234"),
@@ -91,8 +91,8 @@ class ApiKeyServiceTest {
         `when`(securityContext.authentication.principal).thenReturn("admin@bluehabit.com")
         SecurityContextHolder.setContext(securityContext)
 
-        given(userRepository.findByUserEmail(user.userEmail)).willAnswer {
-            user
+        given(userCredentialRepository.findByUserEmail(userCredential.userEmail)).willAnswer {
+            userCredential
         }
 
         given(apiKeyRepository.findAll(Pageable.ofSize(1))).willAnswer {
@@ -108,7 +108,7 @@ class ApiKeyServiceTest {
             apiKeyService.getAllApiKeys(Pageable.ofSize(1))
         )
 
-        given(userRepository.findByUserEmail(user.userEmail)).willAnswer { throw UnAuthorizedException("") }
+        given(userCredentialRepository.findByUserEmail(userCredential.userEmail)).willAnswer { throw UnAuthorizedException("") }
 
         assertThrows(UnAuthorizedException::class.java){apiKeyService.getAllApiKeys(Pageable.ofSize(1))}
 

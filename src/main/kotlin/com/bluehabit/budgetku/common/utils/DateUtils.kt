@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.common
+package com.bluehabit.budgetku.common.utils
 
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter

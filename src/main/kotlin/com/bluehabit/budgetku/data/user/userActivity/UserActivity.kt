@@ -5,10 +5,10 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.wallet
+package com.bluehabit.budgetku.data.user.userActivity
 
-import com.bluehabit.budgetku.data.user.User
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
+import com.bluehabit.budgetku.data.user.userProfile.UserProfile
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -23,31 +23,30 @@ import java.time.OffsetDateTime
 
 @Entity
 @Table(
-    name = "tb_wallet"
+    name = "tb_user_activity"
 )
-data class Wallet(
+data class UserActivity(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    var walletId: String? = null,
+    var userActivityId: String? = null,
     @Column
-    var walletNumber: Long,
+    var userActivityDescription: String? = null,
     @Column
-    var walletSourceName: String,
+    var userActivityType: String? = null,
     @Column
-    var walletBalance: Long,
-    @JsonIgnore
+    var userActivityRef: String? = null,
     @ManyToOne(
         cascade = [CascadeType.REFRESH],
         fetch = LAZY
     )
-    var user: User? = null,
+    var userProfile: UserProfile? = null,
     @Column
-    var createdAt: OffsetDateTime? = null,
+    var createdAt: OffsetDateTime,
     @Column
-    var updatedAt: OffsetDateTime? = null
+    var updatedAt: OffsetDateTime
 
 )

@@ -8,7 +8,7 @@
 package com.bluehabit.budgetku.config.tokenMiddleware
 
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
-import com.bluehabit.budgetku.common.translate
+import com.bluehabit.budgetku.common.utils.translate
 import com.bluehabit.budgetku.config.JwtUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

@@ -5,9 +5,11 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.user
+package com.bluehabit.budgetku.data.user.userProfile
 
 import com.bluehabit.budgetku.data.permission.Permission
+import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
+import com.bluehabit.budgetku.data.user.UserStatus.NONACTIVE
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -16,14 +18,17 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.Table
+import jakarta.persistence.Temporal
+import jakarta.persistence.TemporalType.DATE
 import org.hibernate.annotations.GenericGenerator
+import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.util.Date
 
 @Entity
-@Table(name = "tb_user")
-data class User(
+@Table(name = "tb_user_profile")
+data class UserProfile(
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
@@ -33,39 +38,19 @@ data class User(
     @Column
     var userFullName: String,
 
-    @Column
-    var userDateOfBirth: OffsetDateTime,
+    @Temporal(
+        DATE
+    )
+    var userDateOfBirth: LocalDate?=null,
 
     @Column(unique = true)
-    var userEmail: String,
-
-    @Column(unique = true)
-    var userPhoneNumber: String,
+    var userPhoneNumber: String?=null,
 
     @Column
     var userCountryCode: String,
 
     @Column
-    var userPassword: String,
-
-    @Column
-    var userProfilePicture:String,
-
-    @Column
-    var userAuthProvider: String = UserAuthProvider.BASIC.name,
-
-    @Column
-    var userStatus: String = UserStatus.NONACTIVE.name,
-
-    @Column
-    var userAuthTokenProvider:String,
-
-    @ManyToMany(
-        fetch = FetchType.EAGER,
-        cascade = [CascadeType.ALL]
-    )
-    @JsonIgnore
-    var userPermissions: Collection<Permission> = listOf(),
+    var userProfilePicture:String?=null,
 
     @Column
     var createdAt: OffsetDateTime,

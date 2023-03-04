@@ -7,7 +7,7 @@
 
 package com.bluehabit.budgetku.data.permission
 
-import com.bluehabit.budgetku.common.fromOffsetDatetime
+import com.bluehabit.budgetku.common.utils.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
 import org.springframework.data.domain.Page
 

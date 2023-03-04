@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.common
+package com.bluehabit.budgetku.common.utils
 
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.data.permission.Permission
@@ -73,8 +73,4 @@ class ValidationUtil(
         }
     }
 
-}
-
-fun List<Permission>.isAllowed(to: List<String>): Boolean {
-    return this.map { "${it.permissionGroup}.${it.permissionType}" }.containsAll(to)
 }

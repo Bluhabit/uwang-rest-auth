@@ -5,12 +5,14 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.user
+package com.bluehabit.budgetku.data.account
 
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType
+import jakarta.persistence.FetchType.LAZY
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -19,33 +21,33 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
 
-
 @Entity
-@Table(name = "tb_user_verification")
-data class UserVerification(
+@Table(
+    name = "tb_account"
+)
+data class Account(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    var userActivationId: String? = null,
-
+    var walletId: String? = null,
     @Column
-    var userActivationToken: String,
-
+    var walletNumber: Long,
     @Column
-    var userActivationExpired: OffsetDateTime,
-
+    var walletSourceName: String,
+    @Column
+    var walletBalance: Long,
+    @JsonIgnore
     @ManyToOne(
-        fetch = FetchType.LAZY,
         cascade = [CascadeType.REFRESH],
+        fetch = LAZY
     )
-    var user:User?=null,
-
+    var user: UserCredential? = null,
     @Column
-    var createdAt: OffsetDateTime,
-
+    var createdAt: OffsetDateTime? = null,
     @Column
-    var updatedAt: OffsetDateTime
+    var updatedAt: OffsetDateTime? = null
+
 )

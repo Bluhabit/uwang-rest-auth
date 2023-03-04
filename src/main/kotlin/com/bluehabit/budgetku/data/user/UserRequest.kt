@@ -9,56 +9,29 @@ package com.bluehabit.budgetku.data.user
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
-import java.time.OffsetDateTime
 
-data class LoginRequest(
+data class SignInWithEmailRequest(
     @field:NotBlank
     var email:String?,
     @field:NotBlank
     var password:String?
 )
 
-data class LoginGoogleRequest(
+data class SignInWithGoogleRequest(
     @field:NotBlank
     var token:String?
 )
 
-data class CreateNewUserRequest(
+data class SignUpWithEmailRequest(
     @field:NotBlank
-    var userCountryCode:String?,
+    var fullName:String?,
     @field:NotBlank
-    var userEmail:String?,
+    var email:String?,
     @field:NotBlank
-    var userPassword:String?,
+    var password:String?
+)
+data class SignUpWithGoogleRequest(
     @field:NotBlank
-    var userFullName:String?,
-    @field:NotNull
-    var userLevel: UserStatus?,
-    @field:NotBlank
-    var userPhoneNumber:String?,
-    @field:NotNull
-    var userAuthProvider: UserAuthProvider?,
+    var token:String?
 )
 
-data class ResetPasswordRequest(
-    @field:NotNull
-    var userId:String,
-    @field:NotBlank
-    var currentPassword:String,
-    @field:NotBlank
-    var newPassword:String
-)
-fun CreateNewUserRequest.toEntity() = User(
-    userId = null,
-    userEmail = userEmail!!,
-    userPassword = userPassword!!,
-    userFullName=userFullName!!,
-    userAuthProvider= userAuthProvider!!.name,
-    userAuthTokenProvider="",
-    userDateOfBirth=OffsetDateTime.now(),
-    userCountryCode=userCountryCode!!,
-    userPhoneNumber=userPhoneNumber!!,
-    userProfilePicture="",
-    createdAt = OffsetDateTime.now(),
-    updatedAt = OffsetDateTime.now()
-)

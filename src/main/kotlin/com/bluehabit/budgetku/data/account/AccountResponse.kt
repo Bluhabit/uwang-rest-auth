@@ -5,14 +5,14 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.wallet
+package com.bluehabit.budgetku.data.account
 
-import com.bluehabit.budgetku.common.fromOffsetDatetime
+import com.bluehabit.budgetku.common.utils.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
 import org.springframework.data.domain.Page
 
 
-data class WalletResponse(
+data class AccountResponse(
     var walletId: String? = null,
     var walletNumber: Long? = null,
     var walletSourceName: String? = "",
@@ -21,7 +21,7 @@ data class WalletResponse(
     var updatedAt: String? = ""
 )
 
-fun Wallet.toResponse() = WalletResponse(
+fun Account.toResponse() = AccountResponse(
     walletId = walletId,
     walletNumber = walletNumber,
     walletSourceName = walletSourceName,
@@ -30,7 +30,7 @@ fun Wallet.toResponse() = WalletResponse(
     updatedAt = updatedAt.fromOffsetDatetime()
 )
 
-fun Page<Wallet>.toResponse() = pagingResponse<WalletResponse> {
+fun Page<Account>.toResponse() = pagingResponse {
     page = number
     currentSize = size
     items = content.map { it.toResponse() }

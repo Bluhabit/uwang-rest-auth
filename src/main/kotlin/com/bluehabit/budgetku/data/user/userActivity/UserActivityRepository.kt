@@ -5,9 +5,8 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.userActivity
+package com.bluehabit.budgetku.data.user.userActivity
 
-import com.bluehabit.budgetku.data.apiKey.ApiKey
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 

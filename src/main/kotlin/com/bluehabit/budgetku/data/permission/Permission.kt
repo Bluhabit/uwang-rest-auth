@@ -22,7 +22,6 @@ import java.time.OffsetDateTime
 )
 data class Permission(
     @Id
-//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"

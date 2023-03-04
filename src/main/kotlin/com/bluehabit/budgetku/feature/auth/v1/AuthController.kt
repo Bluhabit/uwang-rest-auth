@@ -7,16 +7,13 @@
 
 package com.bluehabit.budgetku.feature.auth.v1
 
-import com.bluehabit.budgetku.data.user.LoginGoogleRequest
-import com.bluehabit.budgetku.data.user.LoginRequest
+import com.bluehabit.budgetku.data.user.SignInWithGoogleRequest
+import com.bluehabit.budgetku.data.user.SignInWithEmailRequest
 import com.bluehabit.budgetku.data.user.UserService
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.Locale
 
 @RestController
 @RequestMapping(
@@ -32,9 +29,9 @@ class AuthController(
         consumes = ["application/json"]
     )
     fun signInWithEmailAndPassword(
-        @RequestBody loginRequest: LoginRequest,
+        @RequestBody signInWithEmailRequest: SignInWithEmailRequest,
     ) = authService.signInWithEmailAndPassword(
-        loginRequest
+        signInWithEmailRequest
     )
 
     @PostMapping(
@@ -43,6 +40,6 @@ class AuthController(
         consumes = ["application/json"]
     )
     fun signInWithGoogle(
-        @RequestBody loginGoogleRequest: LoginGoogleRequest,
-    )= authService.signInWithGoogle(loginGoogleRequest)
+        @RequestBody signInWithGoogleRequest: SignInWithGoogleRequest,
+    )= authService.signInWithGoogle(signInWithGoogleRequest)
 }

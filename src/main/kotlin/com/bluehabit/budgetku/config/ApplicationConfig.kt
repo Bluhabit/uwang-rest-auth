@@ -44,10 +44,6 @@ class ApplicationConfig {
 
         return base
     }
-
-    @Bean
-    fun bcrypt(): BCryptPasswordEncoder = BCryptPasswordEncoder(BCrypt.STRENGTH)
-
     @Bean
     fun scrypt(): SCryptPasswordEncoder = SCryptPasswordEncoder(
         2,

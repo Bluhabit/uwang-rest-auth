@@ -5,36 +5,42 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.apiKey
+package com.bluehabit.budgetku.data.user.userVerification
 
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
+import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType.LAZY
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
 
+
 @Entity
-@Table(
-    name = "tb_api_key"
-)
-data class ApiKey(
+@Table(name = "tb_user_verification")
+data class UserVerification(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    val id: String?=null,
+    var userActivationId: String? = null,
 
     @Column
-    val value: String,
+    var userId:String,
 
     @Column
-    val createdAt: OffsetDateTime,
+    var userActivationToken: String,
 
     @Column
-    val updatedAt: OffsetDateTime
+    var createdAt: OffsetDateTime,
+
+    @Column
+    var activationAt: OffsetDateTime?=null
 )
