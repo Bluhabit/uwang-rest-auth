@@ -51,13 +51,8 @@ class UserServiceTest {
             userId = "26ff6c62-a447-4e7f-941e-e3c866bd69bc",
             userEmail = "admin@bluehabit.com",
             userPassword = bcrypt.encode("1234"),
-            userFullName = "Admin blue habit",
             userAuthProvider = BASIC.name,
             userAuthTokenProvider="",
-            userDateOfBirth = OffsetDateTime.now(),
-            userCountryCode = "id",
-            userPhoneNumber = "4567890",
-            userProfilePicture ="",
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now(),
         )
