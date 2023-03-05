@@ -10,6 +10,10 @@ package com.bluehabit.budgetku.common
 object Constants {
     object Permission{
 
+        const val GROUP_NOTIFICATION = "budgetku.notification"
+        const val WRITE_NOTIFICATION = "budgetku.notification.WRITE"
+        const val READ_NOTIFICATION = "budgetku.notification.READ"
+
         const val GROUP_USER = "budgetku.user"
         const val WRITE_USER = "budgetku.user.WRITE"
         const val READ_USER = "budgetku.user.READ"

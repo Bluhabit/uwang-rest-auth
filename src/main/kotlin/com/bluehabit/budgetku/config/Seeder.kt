@@ -8,12 +8,15 @@
 package com.bluehabit.budgetku.config
 
 import com.bluehabit.budgetku.common.Constants.Permission.GROUP_CATEGORY
+import com.bluehabit.budgetku.common.Constants.Permission.GROUP_NOTIFICATION
 import com.bluehabit.budgetku.common.Constants.Permission.GROUP_ROLE
 import com.bluehabit.budgetku.common.Constants.Permission.GROUP_USER
 import com.bluehabit.budgetku.common.Constants.Permission.READ_CATEGORY
+import com.bluehabit.budgetku.common.Constants.Permission.READ_NOTIFICATION
 import com.bluehabit.budgetku.common.Constants.Permission.READ_ROLE
 import com.bluehabit.budgetku.common.Constants.Permission.READ_USER
 import com.bluehabit.budgetku.common.Constants.Permission.WRITE_CATEGORY
+import com.bluehabit.budgetku.common.Constants.Permission.WRITE_NOTIFICATION
 import com.bluehabit.budgetku.common.Constants.Permission.WRITE_ROLE
 import com.bluehabit.budgetku.common.Constants.Permission.WRITE_USER
 import com.bluehabit.budgetku.data.notification.notification.Notification
@@ -51,6 +54,22 @@ class Seeder(
 
 
         val permissions = listOf(
+            Permission(
+                permissionId = "f56917a2-279c-4ad3-8db2-8fc1e54e2beo",
+                permissionName = "Send,Edit,Delete Notification",
+                permissionGroup = GROUP_NOTIFICATION,
+                permissionType = WRITE_NOTIFICATION,
+                createdAt = date,
+                updatedAt = date
+            ),
+            Permission(
+                permissionId = "da8bb576-6966-4fb1-88d7-11f0258389al",
+                permissionName = "Read only notification",
+                permissionGroup = GROUP_NOTIFICATION,
+                permissionType = READ_NOTIFICATION,
+                createdAt = date,
+                updatedAt = date
+            ),
             Permission(
                 permissionId = "f56917a2-279c-4ad3-8db2-8fc1e54e2be3",
                 permissionName = "Manage User",
@@ -178,7 +197,7 @@ class Seeder(
         }
         val notificationCategory = notificationCategoryRepository.save(
             NotificationCategory(
-                categoryId = null,
+                categoryId = "26ff6c62-a447-4e7f-941e-e3c866bd69bg",
                 categoryDescription = "Ini Promo",
                 categoryName = "Promo",
                 createdAt = date,

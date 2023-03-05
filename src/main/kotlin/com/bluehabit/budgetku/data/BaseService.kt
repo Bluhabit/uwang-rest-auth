@@ -109,8 +109,7 @@ abstract class BaseService(
     }
 
     fun sendNotificationBroadcast(
-        notification: Notification,
-        userCredential: UserCredential
+        notification: Notification
     ) {
         try {
             val messages = Message.builder()

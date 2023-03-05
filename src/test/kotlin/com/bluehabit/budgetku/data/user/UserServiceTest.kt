@@ -53,6 +53,7 @@ class UserServiceTest {
             userPassword = bcrypt.encode("1234"),
             userAuthProvider = BASIC.name,
             userAuthTokenProvider="",
+            userNotificationToken="",
             createdAt = OffsetDateTime.now(),
             updatedAt = OffsetDateTime.now(),
         )
@@ -93,7 +94,7 @@ class UserServiceTest {
         assertEquals(
             AuthBaseResponse(
                 code = HttpStatus.OK.value(),
-                data = com.bluehabit.budgetku.data.notification.toResponse(),
+                data = userCredential.toResponse(),
                 message = "Sign In Success!",
                 token = "Ini token"
             ),

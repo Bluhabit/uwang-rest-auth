@@ -25,11 +25,6 @@ import java.time.OffsetDateTime
 )
 data class NotificationCategory(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
     var categoryId: String? = null,
 
     @Column

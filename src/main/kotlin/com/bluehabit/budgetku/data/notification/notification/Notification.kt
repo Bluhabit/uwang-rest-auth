@@ -54,7 +54,7 @@ data class Notification(
     var notificationCategory:NotificationCategory? =null,
 
     @ManyToMany(
-        fetch = LAZY,
+        fetch = EAGER,
         cascade = [CascadeType.ALL]
     )
     var notificationRead: Collection<NotificationRead> = listOf(),
