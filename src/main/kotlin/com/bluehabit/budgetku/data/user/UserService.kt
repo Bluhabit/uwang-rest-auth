@@ -7,7 +7,7 @@
 
 package com.bluehabit.budgetku.data.user
 
-import com.bluehabit.budgetku.common.Constants.Permission.RANDOM
+import com.bluehabit.budgetku.common.Constants.Permission.READ_USER
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.BaseResponse
@@ -17,9 +17,12 @@ import com.bluehabit.budgetku.common.model.baseResponse
 import com.bluehabit.budgetku.common.utils.GoogleAuthUtil
 import com.bluehabit.budgetku.common.utils.ValidationUtil
 import com.bluehabit.budgetku.common.utils.allowTo
+import com.bluehabit.budgetku.common.utils.getTodayDateTime
+import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
 import com.bluehabit.budgetku.config.JwtUtil
 import com.bluehabit.budgetku.data.BaseService
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
+import com.bluehabit.budgetku.data.user.UserStatus.ACTIVE
 import com.bluehabit.budgetku.data.user.UserStatus.WAITING_CONFIRMATION
 import com.bluehabit.budgetku.data.user.userActivity.UserActivityRepository
 import com.bluehabit.budgetku.data.user.userCredential.UserCredential
@@ -40,10 +43,9 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import java.time.Duration
 import java.time.OffsetDateTime
 import java.time.Period
-import java.util.UUID
+import java.util.*
 
 
 @Service
@@ -71,6 +73,10 @@ class UserService(
         return User(
             username,
             user.userPassword,
+            user.userStatus == ACTIVE.name,
+            false,
+            false,
+            false,
             user.userPermissions.map { SimpleGrantedAuthority(it.permissionType) }
         )
 
@@ -80,7 +86,7 @@ class UserService(
     //region user auth
     fun signInWithEmail(
         body: SignInWithEmailRequest
-    ): AuthBaseResponse<UserResponse> {
+    ): AuthBaseResponse<UserCredentialResponse> {
         validationUtil.validate(body)
 
         val login = userCredentialRepository
@@ -92,11 +98,12 @@ class UserService(
             throw UnAuthorizedException(translate("auth.invalid"))
         }
 
-        if (login.userAuthProvider != UserAuthProvider.BASIC.name) {
+        if (login.userAuthProvider != BASIC.name) {
             throw UnAuthorizedException(translate("auth.method.not.allowed"))
         }
 
         val generatedToken = jwtUtil.generateToken(login.userEmail)
+
 
         return baseAuthResponse {
             code = OK.value()
@@ -109,15 +116,15 @@ class UserService(
 
     fun signInWithGoogle(
         request: SignInWithGoogleRequest
-    ): AuthBaseResponse<UserResponse> {
+    ): AuthBaseResponse<UserCredentialResponse> {
         validationUtil.validate(request)
         val googleAuth = GoogleAuthUtil(environment, i18n)
         val verifyUser =
-            googleAuth.getCredential(request.token!!)
-        if (!verifyUser.first) {
-            throw UnAuthorizedException(verifyUser.third)
+            googleAuth.getGoogleClaim(request.token!!)
+        if (!verifyUser.valid) {
+            throw UnAuthorizedException(verifyUser.message)
         }
-        val findUser = userCredentialRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
+        val findUser = userCredentialRepository.findByUserEmail(verifyUser.email)
             ?: throw UnAuthorizedException(translate("auth.user.not.exist"))
 
         if (findUser.userAuthProvider != UserAuthProvider.GOOGLE.name) {
@@ -134,7 +141,7 @@ class UserService(
     @Transactional
     fun signUpWithEmail(
         request: SignUpWithEmailRequest
-    ): AuthBaseResponse<UserResponse> {
+    ): AuthBaseResponse<UserCredentialResponse> {
         validationUtil.validate(request)
 
         val isExist = userCredentialRepository.exist(request.email!!)
@@ -143,7 +150,7 @@ class UserService(
         }
 
         val uuid = UUID.randomUUID().toString()
-        val date = OffsetDateTime.now()
+        val date = getTodayDateTimeOffset()
         val activationToken = UUID.randomUUID().toString()
         val userProfile = UserProfile(
             userId = uuid,
@@ -190,41 +197,89 @@ class UserService(
         }
     }
 
+    @Transactional
     fun signUpWithGoogle(
         request: SignUpWithGoogleRequest
-    ) {
+    ): AuthBaseResponse<UserCredentialResponse> {
+        validationUtil.validate(request)
 
+        val claim = GoogleAuthUtil(
+            environment,
+            i18n
+        ).getGoogleClaim(request.token!!)
+
+        if (!claim.valid) {
+            throw UnAuthorizedException(claim.message)
+        }
+
+        val isExist = userCredentialRepository.exist(claim.email)
+        if (isExist) {
+            throw UnAuthorizedException(translate("auth.failed.user.exist"))
+        }
+
+        val uuid = UUID.randomUUID().toString()
+        val date = getTodayDateTimeOffset()
+        val userProfile = UserProfile(
+            userId = uuid,
+            userFullName = claim.fullName,
+            userProfilePicture = null,
+            userDateOfBirth = null,
+            userCountryCode = "id",
+            userPhoneNumber = null,
+            createdAt = date,
+            updatedAt = date
+        )
+        val savedProfile = userProfileRepository.save(userProfile)
+        val userCredential = UserCredential(
+            userId = uuid,
+            userEmail = claim.email,
+            userPassword = scrypt.encode(claim.email),
+            userStatus = ACTIVE.name,
+            userAuthProvider = BASIC.name,
+            userPermissions = listOf(),
+            userProfile = savedProfile,
+            userAuthTokenProvider = request.token!!,
+            createdAt = date,
+            updatedAt = date
+        )
+        val savedCredential = userCredentialRepository.save(userCredential)
+
+        return baseAuthResponse {
+            code = OK.value()
+            data = savedCredential.toResponse()
+            message = translate("auth.success")
+        }
     }
 
     @Transactional
     fun userVerification(
         token: String
-    ): BaseResponse<List<Any>> = buildResponse {
+    ): BaseResponse<List<Any>>  {
         if (token.isEmpty()) {
             throw UnAuthorizedException("Verification failed")
         }
 
         val verificationData = userVerificationRepository.findByUserActivationToken(token)
-            ?: throw UnAuthorizedException("Token not valid")
+            ?: throw UnAuthorizedException("Token not valid 1")
 
         if (verificationData.activationAt != null) {
-            throw UnAuthorizedException("Token not valid")
+            throw UnAuthorizedException("Token not valid 2")
         }
 
         if (Period.between(
                 verificationData.createdAt.toLocalDate(),
-                OffsetDateTime.now().toLocalDate()
+                getTodayDateTime().toLocalDate()
             ).days > 1
         ) {
             throw UnAuthorizedException("Token not valid or expired")
         }
 
         val findUser = userCredentialRepository.findByIdOrNull(verificationData.userId)
-            ?: throw UnAuthorizedException("User not found")
+            ?: throw UnAuthorizedException("User not found 3")
 
         userCredentialRepository.save(
             findUser.copy(
-                userStatus = UserStatus.ACTIVE.name
+                userStatus = ACTIVE.name
             )
         )
         userVerificationRepository.save(
@@ -233,11 +288,32 @@ class UserService(
             )
         )
 
-        baseResponse {
+       return baseResponse {
             code = OK.value()
             data = listOf()
             message = translate("auth.verification.success")
 
+        }
+    }
+
+    fun refreshToken(
+        jwt: String?
+    ): AuthBaseResponse<List<Any>> {
+        if (jwt.isNullOrEmpty()) {
+            throw UnAuthorizedException("Token not valid")
+        }
+        val claims = jwtUtil.decode(jwt)
+        if (!claims.first) {
+            throw UnAuthorizedException(claims.second)
+        }
+
+        val generate = jwtUtil.generateToken(claims.second)
+
+        return baseAuthResponse {
+            code = OK.value()
+            data = listOf()
+            message = translate("auth.success")
+            token = generate
         }
     }
     //end region
@@ -245,7 +321,7 @@ class UserService(
     fun getAllUsers(
         pageable: Pageable
     ): BaseResponse<PagingDataResponse<UserProfileResponse>> = buildResponse(
-        allow = { it.allowTo(RANDOM) }
+        allow = { it.allowTo(READ_USER) }
     ) {
         val findAll = userProfileRepository.findAll(pageable)
 

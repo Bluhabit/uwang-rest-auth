@@ -12,11 +12,11 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTCreationException
 import com.auth0.jwt.exceptions.JWTDecodeException
-import com.auth0.jwt.exceptions.JWTVerificationException
-import com.bluehabit.budgetku.common.exception.UnAuthorizedException
+import com.bluehabit.budgetku.common.utils.getExpiredDate
+import com.bluehabit.budgetku.common.utils.getTodayDateTime
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 @Component
@@ -30,8 +30,9 @@ class JwtUtil {
     fun generateToken(email: String): String = JWT
         .create()
         .withSubject("User detail")
-        .withIssuedAt(Date())
-        .withExpiresAt(Date(OffsetDateTime.now().plusHours(24).toEpochSecond()))
+        .withIssuedAt(getTodayDateTime().toInstant(ZoneOffset.UTC))
+        .withExpiresAt(getExpiredDate())
+        .withNotBefore(getTodayDateTime().toInstant(ZoneOffset.UTC))
         .withClaim("email", email)
         .withIssuer(issuer)
         .sign(Algorithm.HMAC512(secret))
@@ -40,18 +41,28 @@ class JwtUtil {
     @Throws(JWTDecodeException::class)
     fun validateTokenAndRetrieveSubject(
         token: String
-    ): String? {
+    ): Pair<Boolean, String> {
         return try {
-            JWT.decode(token).getClaim("email").asString()
+            val verify = JWT.require(Algorithm.HMAC512(secret))
+                .withIssuer(issuer)
+                .build()
+                .verify(token)
+
+            val email = verify.getClaim("email").asString()
+            Pair(true, email)
         } catch (e: Exception) {
-            null
+            Pair(false, e.message.orEmpty())
         }
     }
 
     @Throws(JWTDecodeException::class)
-    fun isJwtExpired(token: String) = try {
-        JWT.decode(token).expiresAt.before(Date(OffsetDateTime.now().toEpochSecond()))
-    } catch (e: Exception) {
-        false
+    fun decode(
+        token: String
+    ): Pair<Boolean, String> {
+
+            val verify = JWT.decode(token).getClaim("email").asString()
+
+           return Pair(true, verify)
     }
+
 }

@@ -17,57 +17,45 @@ import org.springframework.core.env.Environment
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
+data class GoogleClaim(
+    var email:String = "",
+    var picture:String ="",
+    var fullName:String="",
+    var locale:String="",
+    var valid:Boolean,
+    var message:String
+)
 class GoogleAuthUtil(
     private val env: Environment,
     private val messageSource: ResourceBundleMessageSource
 ) {
-    fun getCredential(token: String): Triple<Boolean, UserCredential?, String> {
+
+    fun getGoogleClaim(token:String):GoogleClaim{
         try {
             val claims = JWT.decode(token).claims
             val exp = claims["exp"]?.asLong() ?: 0
+            var message = messageSource.translate("auth.token.invalid")
+
             if (LocalDate.now().isAfter(LocalDate.ofEpochDay(exp))) {
-                return Triple(false, null, messageSource.translate("auth.token.invalid"))
+                return GoogleClaim(
+                    valid = false,
+                    message = message
+                )
             }
-            val userCredential = UserCredential(
-                userId = null,
-                userEmail = claims["email"]?.asString().orEmpty(),
-                userAuthProvider = GOOGLE.name,
-                userPassword = "",
-                userStatus = ACTIVE.name,
-                userAuthTokenProvider = token,
-                createdAt = OffsetDateTime.now(),
-                updatedAt = OffsetDateTime.now()
+            return GoogleClaim(
+                valid = true,
+                message = "",
+                email = claims["email"]?.asString().orEmpty(),
+                picture = claims["picture"]?.asString().orEmpty(),
+                fullName = claims["given_name"]?.asString().orEmpty(),
+
             )
-            return Triple(true, userCredential, "")
         } catch (e: Exception) {
-            return Triple(true, null, e.message.orEmpty())
+            return GoogleClaim(
+                valid = false,
+                message = e.message.orEmpty()
+            )
         }
-
-
     }
 
-    fun getProfile(token: String): Triple<Boolean, UserProfile?, String> {
-        try {
-            val claims = JWT.decode(token).claims
-            val exp = claims["exp"]?.asLong() ?: 0
-            if (LocalDate.now().isAfter(LocalDate.ofEpochDay(exp))) {
-                return Triple(false, null, messageSource.translate("auth.token.invalid"))
-            }
-            val userCredential = UserProfile(
-                userId = null,
-                userCountryCode = claims["locale"]?.asString().orEmpty(),
-                userProfilePicture = claims["picture"]?.asString().orEmpty(),
-                userFullName = claims["given_name"]?.asString().orEmpty(),
-                userDateOfBirth = LocalDate.now(),
-                userPhoneNumber = "",
-                createdAt = OffsetDateTime.now(),
-                updatedAt = OffsetDateTime.now()
-            )
-            return Triple(true, userCredential, "")
-        } catch (e: Exception) {
-            return Triple(true, null, e.message.orEmpty())
-        }
-
-
-    }
 }

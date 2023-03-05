@@ -7,17 +7,17 @@
 
 package com.bluehabit.budgetku.data.permission
 
-import com.bluehabit.budgetku.common.utils.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
 import org.springframework.data.domain.Page
+import java.time.OffsetDateTime
 
 data class PermissionReponse(
     var permissionId:String? = null,
     var permissionName:String? = null,
     var permissionType:String? = null,
     var permissionGroup:String?=null,
-    var createdAt: String="",
-    var updatedAt: String="",
+    var createdAt: OffsetDateTime?,
+    var updatedAt: OffsetDateTime?
 )
 
 fun Permission.toResponse() = PermissionReponse(
@@ -25,10 +25,10 @@ fun Permission.toResponse() = PermissionReponse(
     permissionName = permissionName,
     permissionType = permissionType,
     permissionGroup = permissionGroup,
-    createdAt = createdAt.fromOffsetDatetime(),
-    updatedAt = updatedAt.fromOffsetDatetime()
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
-fun Page<Permission>.toResponse() = pagingResponse<PermissionReponse> {
+fun Page<Permission>.toResponse() = pagingResponse {
     page = number
     currentSize = size
     items = content.map { it.toResponse() }

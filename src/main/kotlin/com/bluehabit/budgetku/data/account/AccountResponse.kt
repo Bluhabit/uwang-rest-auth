@@ -7,9 +7,9 @@
 
 package com.bluehabit.budgetku.data.account
 
-import com.bluehabit.budgetku.common.utils.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
 import org.springframework.data.domain.Page
+import java.time.OffsetDateTime
 
 
 data class AccountResponse(
@@ -17,8 +17,8 @@ data class AccountResponse(
     var walletNumber: Long? = null,
     var walletSourceName: String? = "",
     var walletBalance: Long? = 0,
-    var createdAt: String? = "",
-    var updatedAt: String? = ""
+    var createdAt: OffsetDateTime?,
+    var updatedAt: OffsetDateTime?
 )
 
 fun Account.toResponse() = AccountResponse(
@@ -26,8 +26,8 @@ fun Account.toResponse() = AccountResponse(
     walletNumber = walletNumber,
     walletSourceName = walletSourceName,
     walletBalance = walletBalance,
-    createdAt = createdAt.fromOffsetDatetime(),
-    updatedAt = updatedAt.fromOffsetDatetime()
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
 fun Page<Account>.toResponse() = pagingResponse {

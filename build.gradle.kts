@@ -40,7 +40,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 
-    implementation("com.auth0:java-jwt:3.18.2")
+    implementation("com.auth0:java-jwt:4.3.0")
     implementation("com.google.code.gson:gson:2.8.5")
     implementation("com.google.api-client:google-api-client:1.32.1")
     implementation("com.google.firebase:firebase-admin:9.0.0")

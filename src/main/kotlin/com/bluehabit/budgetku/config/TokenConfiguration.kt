@@ -40,7 +40,9 @@ class TokenConfiguration(
                     "/v1/auth/sign-in-email",
                     "/v1/auth/sign-in-google",
                     "/v1/auth/sign-up-email",
-                    "/v1/auth/sign-up-google"
+                    "/v1/auth/sign-up-google",
+                    "/v1/auth/refresh-token/**",
+                    "/v1/auth/verification/**",
                 )
                     .permitAll()
 

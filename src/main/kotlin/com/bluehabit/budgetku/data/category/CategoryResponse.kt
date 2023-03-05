@@ -7,16 +7,16 @@
 
 package com.bluehabit.budgetku.data.category
 
-import com.bluehabit.budgetku.common.utils.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
 import org.springframework.data.domain.Page
+import java.time.OffsetDateTime
 
 data class CategoryResponse(
     var categoryId: String? = null,
     var categoryName: String,
     var categorySlug: String,
-    var createdAt: String? = null,
-    var updatedAt: String? = null
+    var createdAt: OffsetDateTime?,
+    var updatedAt: OffsetDateTime?
 )
 
 
@@ -24,11 +24,11 @@ fun Category.toResponse() = CategoryResponse(
     categoryId = categoryId,
     categoryName = categoryName,
     categorySlug = categorySlug,
-    createdAt = createdAt.fromOffsetDatetime(),
-    updatedAt = updatedAt.fromOffsetDatetime()
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
-fun Page<Category>.toResponse() = pagingResponse<CategoryResponse> {
+fun Page<Category>.toResponse() = pagingResponse {
     page = number
     currentSize = size
     items = content.map { it.toResponse() }

@@ -7,12 +7,11 @@
 
 package com.bluehabit.budgetku.data.user.userActivity
 
-import com.bluehabit.budgetku.common.utils.fromOffsetDatetime
 import com.bluehabit.budgetku.common.model.pagingResponse
 import com.bluehabit.budgetku.data.user.UserProfileResponse
-import com.bluehabit.budgetku.data.user.UserResponse
 import com.bluehabit.budgetku.data.user.toResponse
 import org.springframework.data.domain.Page
+import java.time.OffsetDateTime
 
 data class UserActivityResponse(
     var userActivityId: String? = null,
@@ -20,8 +19,8 @@ data class UserActivityResponse(
     var userActivityType: String? = null,
     var userActivityRef: String? = null,
     var user: UserProfileResponse? = null,
-    var createdAt: String = "",
-    var updatedAt: String = ""
+    var createdAt: OffsetDateTime?,
+    var updatedAt: OffsetDateTime?
 )
 
 fun UserActivity.toResponse() = UserActivityResponse(
@@ -30,8 +29,8 @@ fun UserActivity.toResponse() = UserActivityResponse(
     userActivityType = userActivityType,
     userActivityRef = userActivityRef,
     user = userProfile?.toResponse(),
-    createdAt = createdAt.fromOffsetDatetime(),
-    updatedAt = updatedAt.fromOffsetDatetime()
+    createdAt = createdAt,
+    updatedAt = updatedAt
 )
 
 fun Page<UserActivity>.toResponse() = pagingResponse {

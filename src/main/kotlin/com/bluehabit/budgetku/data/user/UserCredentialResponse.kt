@@ -16,7 +16,7 @@ import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
 
-data class UserResponse(
+data class UserCredentialResponse(
     var userId: String? = null,
     var userEmail: String,
     var userAuthProvider: String,
@@ -38,9 +38,9 @@ data class UserProfileResponse(
 )
 
 
-fun UserCredential.toResponse(): UserResponse {
+fun UserCredential.toResponse(): UserCredentialResponse {
 
-    return UserResponse(
+    return UserCredentialResponse(
         userId = userId,
         userEmail = userEmail,
         userAuthProvider = userAuthProvider,

@@ -13,46 +13,68 @@ import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.context.support.ResourceBundleMessageSource
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.User
 
 abstract class BaseService(
     private val userCredentialRepository: UserCredentialRepository,
     private val i18n: ResourceBundleMessageSource
 ) {
     fun translate(key: String): String {
-        return i18n.getMessage(key, null, LocaleContextHolder.getLocale())
+        return try {
+            i18n.getMessage(key, null, LocaleContextHolder.getLocale())
+        } catch (e: Exception) {
+            key
+        }
     }
 
     fun translate(key: String, vararg params: String): String {
-        return i18n.getMessage(key, params, LocaleContextHolder.getLocale())
+        return try {
+            i18n.getMessage(key, params, LocaleContextHolder.getLocale())
+        } catch (e: Exception) {
+            key
+        }
     }
 
 
     fun <Type> buildResponse(
-        allow: (Collection<Permission>) -> Boolean,
-        next: (currentUserCredential: UserCredential) -> Type
+        allow: (Collection<GrantedAuthority>) -> Boolean,
+        next: (String) -> Type
     ): Type {
-        val email = SecurityContextHolder.getContext().authentication.principal.toString();
-        if (email.isEmpty()) throw UnAuthorizedException(translate("user.not.allowed"))
 
-        val user = userCredentialRepository.findByUserEmail(email)
-                ?: throw UnAuthorizedException(translate("user.not.allowed"))
+        val context = SecurityContextHolder.getContext().authentication
 
-        if (!allow(user.userPermissions)) {
+        val email = context.principal.toString();
+        if (email.isEmpty()) {
             throw UnAuthorizedException(translate("user.not.allowed"))
         }
-        return next(user)
+
+        val authority = context.authorities
+
+        if (!allow(authority)) {
+            throw UnAuthorizedException(translate("user.not.allowed"))
+        }
+
+        return next(email)
     }
 
     fun <Type> buildResponse(
-        next: (userCredential: UserCredential) -> Type
+        next: (String) -> Type
     ): Type {
-        val email = SecurityContextHolder.getContext().authentication.principal.toString();
-        if (email.isEmpty()) throw UnAuthorizedException(translate("user.not.allowed"))
+        val context = SecurityContextHolder.getContext().authentication
 
-        val user =
-            userCredentialRepository.findByUserEmail(email) ?: throw UnAuthorizedException(translate("user.not.allowed"))
+        if (!context.isAuthenticated) {
+            throw UnAuthorizedException(translate("user.not.allowed"))
+        }
 
-        return next(user)
+        val email = context.principal.toString();
+        if (email.isEmpty()) {
+            throw UnAuthorizedException(translate("user.not.allowed"))
+        }
+
+
+        return next(email)
     }
 }

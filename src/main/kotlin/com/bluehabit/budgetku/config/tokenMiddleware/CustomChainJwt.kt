@@ -50,26 +50,21 @@ class CustomChainJwt(
                     throw UnAuthorizedException(errMessage)
                 }
 
-                val email = jwtUtil.validateTokenAndRetrieveSubject(jwt)
-                    ?: throw UnAuthorizedException(errMessage)
-
-                if (jwtUtil.isJwtExpired(jwt)) {
-                    throw UnAuthorizedException(errMessage)
+                val validate = jwtUtil.validateTokenAndRetrieveSubject(jwt)
+                if (!validate.first) {
+                    throw UnAuthorizedException(validate.second)
                 }
 
-
                 val user = userService
-                    .loadUserByUsername(email)
+                    .loadUserByUsername(validate.second)
                     ?: throw UnAuthorizedException(errMessage)
 
 
                 val userNameAuth = UsernamePasswordAuthenticationToken(
-                    email,
-                    null,
+                    validate.second,
+                    user.username,
                     user.authorities
-
                 )
-
 
                 SecurityContextHolder.getContext().authentication = userNameAuth
                 filterChain.doFilter(request, response)
