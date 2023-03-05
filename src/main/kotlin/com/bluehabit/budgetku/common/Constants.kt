@@ -27,6 +27,10 @@ object Constants {
         const val RANDOM = "budgetku.random.READ"
 
     }
+
+    object Notification{
+        const val BroadcastTopic = "BudgetKu"
+    }
     object BCrypt{
         const val STRENGTH = 2
     }

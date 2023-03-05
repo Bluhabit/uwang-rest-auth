@@ -48,6 +48,9 @@ data class UserCredential(
     @Column
     var userAuthTokenProvider:String,
 
+    @Column
+    var userNotificationToken:String,
+
     @ManyToMany(
         fetch = FetchType.EAGER,
         cascade = [ALL]

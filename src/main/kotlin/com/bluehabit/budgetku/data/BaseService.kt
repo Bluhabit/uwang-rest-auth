@@ -7,10 +7,14 @@
 
 package com.bluehabit.budgetku.data
 
+import com.bluehabit.budgetku.common.Constants
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
+import com.bluehabit.budgetku.data.notification.notification.Notification
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.Message
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.security.core.GrantedAuthority
@@ -76,5 +80,55 @@ abstract class BaseService(
 
 
         return next(email)
+    }
+
+    fun sendNotificationToDevice(
+        notification: Notification,
+        userCredential: UserCredential
+    ) {
+        try {
+            val messages = Message.builder()
+                .putAllData(
+                    mapOf(
+                        "notificationId" to notification.notificationId,
+                        "notificationTitle" to notification.notificationTitle,
+                        "notificationBody" to notification.notificationBody,
+                        "notificationCategory" to notification.notificationCategory?.categoryName.toString(),
+                        "notificationDescription" to notification.notificationDescription
+                    )
+                )
+                .setToken(userCredential.userNotificationToken)
+                .build()
+            FirebaseMessaging.getInstance()
+                .send(messages)
+
+
+        } catch (e: Exception) {
+
+        }
+    }
+
+    fun sendNotificationBroadcast(
+        notification: Notification,
+        userCredential: UserCredential
+    ) {
+        try {
+            val messages = Message.builder()
+                .putAllData(
+                    mapOf(
+                        "notificationId" to notification.notificationId,
+                        "notificationTitle" to notification.notificationTitle,
+                        "notificationBody" to notification.notificationBody,
+                        "notificationCategory" to notification.notificationCategory?.categoryName.toString(),
+                        "notificationDescription" to notification.notificationDescription
+                    )
+                )
+                .setTopic(Constants.Notification.BroadcastTopic)
+                .build()
+            FirebaseMessaging.getInstance()
+                .send(messages)
+        } catch (e: Exception) {
+
+        }
     }
 }

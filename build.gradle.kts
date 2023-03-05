@@ -56,6 +56,11 @@ dependencies {
     implementation("org.assertj:assertj-core:3.21.0")
     //for application properties custom
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    implementation(platform("org.apache.tika:tika-bom:2.7.0"))
+
+    // version not required since bom (platform in Gradle terms)
+    implementation("org.apache.tika:tika-core")
 }
 
 tasks.withType<KotlinCompile> {

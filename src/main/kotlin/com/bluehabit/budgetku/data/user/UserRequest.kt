@@ -9,6 +9,7 @@ package com.bluehabit.budgetku.data.user
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import org.springframework.web.multipart.MultipartFile
 
 data class SignInWithEmailRequest(
     @field:NotBlank
@@ -35,3 +36,7 @@ data class SignUpWithGoogleRequest(
     var token:String?
 )
 
+data class UpdateProfilePictureRequest(
+    @field:NotNull
+    var file:MultipartFile?
+)

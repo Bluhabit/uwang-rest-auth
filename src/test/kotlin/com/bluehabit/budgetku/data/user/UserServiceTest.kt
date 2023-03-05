@@ -93,7 +93,7 @@ class UserServiceTest {
         assertEquals(
             AuthBaseResponse(
                 code = HttpStatus.OK.value(),
-                data = userCredential.toResponse(),
+                data = com.bluehabit.budgetku.data.notification.toResponse(),
                 message = "Sign In Success!",
                 token = "Ini token"
             ),

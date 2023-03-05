@@ -17,6 +17,8 @@ import com.bluehabit.budgetku.common.model.baseResponse
 import com.bluehabit.budgetku.common.utils.GoogleAuthUtil
 import com.bluehabit.budgetku.common.utils.ValidationUtil
 import com.bluehabit.budgetku.common.utils.allowTo
+import com.bluehabit.budgetku.common.utils.createFileName
+import com.bluehabit.budgetku.common.utils.getMimeTypes
 import com.bluehabit.budgetku.common.utils.getTodayDateTime
 import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
 import com.bluehabit.budgetku.config.JwtUtil
@@ -172,6 +174,7 @@ class UserService(
             userPermissions = listOf(),
             userProfile = savedProfile,
             userAuthTokenProvider = "",
+            userNotificationToken = "",
             createdAt = date,
             updatedAt = date
         )
@@ -239,6 +242,7 @@ class UserService(
             userPermissions = listOf(),
             userProfile = savedProfile,
             userAuthTokenProvider = request.token!!,
+            userNotificationToken = "",
             createdAt = date,
             updatedAt = date
         )
@@ -254,7 +258,7 @@ class UserService(
     @Transactional
     fun userVerification(
         token: String
-    ): BaseResponse<List<Any>>  {
+    ): BaseResponse<List<Any>> {
         if (token.isEmpty()) {
             throw UnAuthorizedException("Verification failed")
         }
@@ -288,7 +292,7 @@ class UserService(
             )
         )
 
-       return baseResponse {
+        return baseResponse {
             code = OK.value()
             data = listOf()
             message = translate("auth.verification.success")
@@ -315,6 +319,20 @@ class UserService(
             message = translate("auth.success")
             token = generate
         }
+    }
+
+    fun uploadProfilePicture(
+        request: UpdateProfilePictureRequest
+    ): BaseResponse<UserProfileResponse> = buildResponse {
+        val user = userCredentialRepository.findByUserEmail(it)
+            ?: throw UnAuthorizedException(translate("auth.user.not.exist"))
+
+        val mediaType = request.file?.getMimeTypes().orEmpty()
+        val fileNAme = user.createFileName(mediaType)
+
+
+
+        baseResponse { }
     }
     //end region
 

@@ -16,6 +16,11 @@ import com.bluehabit.budgetku.common.Constants.Permission.READ_USER
 import com.bluehabit.budgetku.common.Constants.Permission.WRITE_CATEGORY
 import com.bluehabit.budgetku.common.Constants.Permission.WRITE_ROLE
 import com.bluehabit.budgetku.common.Constants.Permission.WRITE_USER
+import com.bluehabit.budgetku.data.notification.notification.Notification
+import com.bluehabit.budgetku.data.notification.notification.NotificationRepository
+import com.bluehabit.budgetku.data.notification.notificationCategory.NotificationCategory
+import com.bluehabit.budgetku.data.notification.notificationCategory.NotificationCategoryRepository
+import com.bluehabit.budgetku.data.notification.notificationRead.NotificationReadRepository
 import com.bluehabit.budgetku.data.permission.Permission
 import com.bluehabit.budgetku.data.permission.PermissionRepository
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
@@ -35,11 +40,14 @@ class Seeder(
     private val userCredentialRepository: UserCredentialRepository,
     private val userProfileRepository: UserProfileRepository,
     private val permissionRepository: PermissionRepository,
-    private val scrypt:SCryptPasswordEncoder
+    private val notificationCategoryRepository: NotificationCategoryRepository,
+    private val notificationReadRepository: NotificationReadRepository,
+    private val notificationRepository: NotificationRepository,
+    private val scrypt: SCryptPasswordEncoder
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
         val date = OffsetDateTime.now()
-        val dateOfBirth = LocalDate.of(1998,9,16)
+        val dateOfBirth = LocalDate.of(1998, 9, 16)
 
 
         val permissions = listOf(
@@ -110,6 +118,7 @@ class Seeder(
                 userPassword = password,
                 userAuthProvider = BASIC.name,
                 userAuthTokenProvider = "",
+                userNotificationToken = "",
                 createdAt = date,
                 updatedAt = date,
             )
@@ -132,6 +141,7 @@ class Seeder(
                     userProfile = savedProfile1
                 )
             )
+
         }
 
 
@@ -143,6 +153,7 @@ class Seeder(
                 userPassword = password,
                 userAuthTokenProvider = "",
                 userAuthProvider = BASIC.name,
+                userNotificationToken = "",
                 createdAt = date,
                 updatedAt = date,
             )
@@ -165,9 +176,17 @@ class Seeder(
                 )
             )
         }
-
-
+        val notificationCategory = notificationCategoryRepository.save(
+            NotificationCategory(
+                categoryId = null,
+                categoryDescription = "Ini Promo",
+                categoryName = "Promo",
+                createdAt = date,
+                updatedAt = date,
+            )
+        )
 
     }
+
 
 }
