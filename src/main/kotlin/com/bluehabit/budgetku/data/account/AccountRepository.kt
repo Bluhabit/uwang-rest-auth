@@ -17,7 +17,7 @@ import org.springframework.data.repository.PagingAndSortingRepository
 interface AccountRepository:PagingAndSortingRepository<Account,String>, CrudRepository<Account, String> {
     fun findAllByUser(user: UserCredential, pageable: Pageable): Page<Account>
 
-    @Query("SELECT case when count(m) > 0 then true else false end from Account as m where m.accountNumber =:userEmail")
+    @Query("SELECT case when count(m) > 0 then true else false end from Account as m where m.accountNumber =:accountNumber")
     fun exist(
         accountNumber: Long,
     ):Boolean
