@@ -12,28 +12,11 @@ import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
 
-data class AccountResponse(
-    var walletId: String? = null,
-    var walletNumber: Long? = null,
-    var walletSourceName: String? = "",
-    var walletBalance: Long? = 0,
-    var createdAt: OffsetDateTime?,
-    var updatedAt: OffsetDateTime?
-)
-
-fun Account.toResponse() = AccountResponse(
-    walletId = walletId,
-    walletNumber = walletNumber,
-    walletSourceName = walletSourceName,
-    walletBalance = walletBalance,
-    createdAt = createdAt,
-    updatedAt = updatedAt
-)
 
 fun Page<Account>.toResponse() = pagingResponse {
     page = number
     currentSize = size
-    items = content.map { it.toResponse() }
+    items = content.map { it }
     totalData = totalElements
     totalPagesCount = totalPages
 }

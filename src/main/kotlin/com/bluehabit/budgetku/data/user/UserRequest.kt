@@ -8,6 +8,7 @@
 package com.bluehabit.budgetku.data.user
 
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import org.springframework.web.multipart.MultipartFile
 
@@ -36,6 +37,19 @@ data class SignUpWithGoogleRequest(
     var token:String?
 )
 
+data class AssignPermissionRequest(
+    @field:NotBlank
+    var userId:String?,
+    @field:NotEmpty
+    var permissions:List<String>?
+)
+
+data class BannedUserRequest(
+    @field:NotBlank
+    var userId: String?,
+    @field:NotBlank
+    var reason:String?
+)
 data class UpdateProfilePictureRequest(
     @field:NotNull
     var file:MultipartFile?

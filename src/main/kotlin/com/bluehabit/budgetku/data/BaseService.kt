@@ -8,6 +8,7 @@
 package com.bluehabit.budgetku.data
 
 import com.bluehabit.budgetku.common.Constants
+import com.bluehabit.budgetku.common.exception.RestrictedException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.data.notification.notification.Notification
 import com.bluehabit.budgetku.data.user.userCredential.UserCredential
@@ -70,13 +71,19 @@ abstract class BaseService() {
 
         val email = context.principal.toString();
         if (email.isEmpty()) {
-            throw UnAuthorizedException(translate("user.not.allowed"))
+            throw RestrictedException(
+                translate("user.not.allowed"),
+                errorNotAllowed
+            )
         }
 
         val authority = context.authorities
 
         if (!checkAccess(authority)) {
-            throw UnAuthorizedException(translate("user.not.allowed"))
+            throw RestrictedException(
+                translate("user.not.allowed"),
+                errorNotAllowed
+            )
         }
 
         return next(email)
@@ -88,12 +95,18 @@ abstract class BaseService() {
         val context = SecurityContextHolder.getContext().authentication
 
         if (!context.isAuthenticated) {
-            throw UnAuthorizedException(translate("user.not.allowed"))
+            throw RestrictedException(
+                translate("user.not.allowed"),
+                errorNotAllowed
+            )
         }
 
         val email = context.principal.toString();
         if (email.isEmpty()) {
-            throw UnAuthorizedException(translate("user.not.allowed"))
+            throw RestrictedException(
+                translate("user.not.allowed"),
+                errorNotAllowed
+            )
         }
 
 

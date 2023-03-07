@@ -9,6 +9,8 @@ package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.common.Constants.ErrorCode
 import com.bluehabit.budgetku.common.Constants.Permission.READ_USER
+import com.bluehabit.budgetku.common.Constants.Permission.WRITE_USER
+import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
 import com.bluehabit.budgetku.common.model.BaseResponse
@@ -25,10 +27,13 @@ import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
 import com.bluehabit.budgetku.config.JwtUtil
 import com.bluehabit.budgetku.data.BaseService
 import com.bluehabit.budgetku.common.utils.FileStorageUtils
+import com.bluehabit.budgetku.data.role.permission.PermissionRepository
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
 import com.bluehabit.budgetku.data.user.UserAuthProvider.GOOGLE
 import com.bluehabit.budgetku.data.user.UserStatus.ACTIVE
+import com.bluehabit.budgetku.data.user.UserStatus.SUSPENDED
 import com.bluehabit.budgetku.data.user.UserStatus.WAITING_CONFIRMATION
+import com.bluehabit.budgetku.data.user.userActivity.UserActivity
 import com.bluehabit.budgetku.data.user.userActivity.UserActivityRepository
 import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
@@ -41,6 +46,7 @@ import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
@@ -64,7 +70,7 @@ class UserService(
     private val validationUtil: ValidationUtil,
     private val environment: Environment,
     private val scrypt: SCryptPasswordEncoder,
-    private val jwtUtil: JwtUtil
+    private val jwtUtil: JwtUtil, private val permissionRepository: PermissionRepository
 ) : UserDetailsService, BaseService() {
 
     //region admin
@@ -349,6 +355,7 @@ class UserService(
     }
     //end region
 
+    //region admin
     fun getAllUsers(
         pageable: Pageable
     ): BaseResponse<PagingDataResponse<UserProfileResponse>> = buildResponse(
@@ -362,4 +369,88 @@ class UserService(
             message = translate("users.found")
         }
     }
+
+    @Transactional
+    suspend fun assignPermission(
+        request: AssignPermissionRequest
+    ): BaseResponse<UserCredentialResponse> = buildResponse(
+        checkAccess = { it.allowTo(WRITE_USER) }
+    ) {
+        validationUtil.validate(request)
+        val findUser = userCredentialRepository.findByIdOrNull(request.userId!!)
+            ?: throw DataNotFoundException(
+                translate(""),
+                errorDataNotFound
+            )
+        val findPermission = permissionRepository.findAllById(request.permissions.orEmpty())
+
+        val savedUser = userCredentialRepository.save(
+            findUser.copy(
+                userPermissions = findPermission.toList()
+            )
+        )
+
+        baseResponse {
+            code = OK.value()
+            data = savedUser.toResponse()
+            message = "Sukses"
+        }
+    }
+
+    @Transactional
+    suspend fun bannedUser(
+        request: BannedUserRequest
+    ):BaseResponse<UserCredentialResponse> = buildResponse(
+        checkAccess = { it.allowTo(WRITE_USER) }
+    ) {
+        validationUtil.validate(request)
+
+        val findUser = userCredentialRepository.findByIdOrNull(request.userId!!)
+            ?: throw DataNotFoundException(
+                translate(""),
+                errorDataNotFound
+            )
+
+        val update = userCredentialRepository.save(
+            findUser.copy(
+                userStatus = SUSPENDED.name,
+                updatedAt = getTodayDateTimeOffset()
+            )
+        )
+
+        baseResponse {
+            code = OK.value()
+            data = update.toResponse()
+            message = "Success"
+        }
+    }
+
+    @Transactional
+    suspend fun activateUser(
+        request: BannedUserRequest
+    ):BaseResponse<UserCredentialResponse> = buildResponse(
+        checkAccess = { it.allowTo(WRITE_USER) }
+    ) {
+        validationUtil.validate(request)
+
+        val findUser = userCredentialRepository.findByIdOrNull(request.userId!!)
+            ?: throw DataNotFoundException(
+                translate(""),
+                errorDataNotFound
+            )
+
+        val update = userCredentialRepository.save(
+            findUser.copy(
+                userStatus = ACTIVE.name,
+                updatedAt = getTodayDateTimeOffset()
+            )
+        )
+
+        baseResponse {
+            code = OK.value()
+            data = update.toResponse()
+            message = "Success"
+        }
+    }
+    //end region
 }

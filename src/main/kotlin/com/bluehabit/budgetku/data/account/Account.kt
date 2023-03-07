@@ -28,7 +28,7 @@ import java.time.OffsetDateTime
     name = "tb_account"
 )
 @SQLDelete(
-    sql = "UPDATE tb_account SET deleted=true WHERE walletId=?"
+    sql = "UPDATE tb_account SET deleted=true WHERE accountId=?"
 )
 @Where(
     clause = "deleted = false"
@@ -40,13 +40,13 @@ data class Account(
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    var walletId: String? = null,
+    var accountId: String? = null,
     @Column
-    var walletNumber: Long,
+    var accountNumber: Long,
     @Column
-    var walletSourceName: String,
+    var accountSourceName: String,
     @Column
-    var walletBalance: Long,
+    var accountBalance: Long,
     @JsonIgnore
     @ManyToOne(
         cascade = [CascadeType.REFRESH],

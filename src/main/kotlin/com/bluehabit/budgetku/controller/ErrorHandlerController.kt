@@ -11,6 +11,7 @@ package com.bluehabit.budgetku.controller
 import com.bluehabit.budgetku.common.exception.BadRequestException
 import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.DuplicateException
+import com.bluehabit.budgetku.common.exception.RestrictedException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
 import com.bluehabit.budgetku.common.model.baseResponse
@@ -138,7 +139,21 @@ class ErrorHandlerController {
     fun dataNotFound(
         error: DataNotFoundException
     ) = baseResponse<List<Any>> {
-        code = CONFLICT.value()
+        code = error.errorCode
+        data = listOf()
+        message = error.message.orEmpty()
+    }
+
+    @ExceptionHandler(
+        value = [RestrictedException::class]
+    )
+    @ResponseStatus(
+        CONFLICT
+    )
+    fun userNotAllowed(
+        error: RestrictedException
+    ) = baseResponse<List<Any>> {
+        code = error.errorCode
         data = listOf()
         message = error.message.orEmpty()
     }
@@ -259,12 +274,12 @@ class ErrorHandlerController {
         value = [DuplicateException::class],
     )
     @ResponseStatus(
-        BAD_REQUEST
+        CONFLICT
     )
     fun sqlError(
         error: DuplicateException
     ) = baseResponse<List<Any>> {
-        code = BAD_REQUEST.value()
+        code = error.errorCode
         data = listOf()
         message = error.message.orEmpty()
     }
