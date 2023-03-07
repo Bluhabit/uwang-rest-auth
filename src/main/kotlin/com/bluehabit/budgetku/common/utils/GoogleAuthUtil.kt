@@ -8,6 +8,7 @@
 package com.bluehabit.budgetku.common.utils
 
 import com.auth0.jwt.JWT
+import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import com.bluehabit.budgetku.data.user.UserAuthProvider.GOOGLE
 import com.bluehabit.budgetku.data.user.UserStatus.ACTIVE

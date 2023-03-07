@@ -24,8 +24,8 @@ import com.bluehabit.budgetku.data.notification.notification.NotificationReposit
 import com.bluehabit.budgetku.data.notification.notificationCategory.NotificationCategory
 import com.bluehabit.budgetku.data.notification.notificationCategory.NotificationCategoryRepository
 import com.bluehabit.budgetku.data.notification.notificationRead.NotificationReadRepository
-import com.bluehabit.budgetku.data.permission.Permission
-import com.bluehabit.budgetku.data.permission.PermissionRepository
+import com.bluehabit.budgetku.data.role.permission.Permission
+import com.bluehabit.budgetku.data.role.permission.PermissionRepository
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
 import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
@@ -202,6 +202,7 @@ class Seeder(
                 categoryName = "Promo",
                 createdAt = date,
                 updatedAt = date,
+                deleted = false
             )
         )
 

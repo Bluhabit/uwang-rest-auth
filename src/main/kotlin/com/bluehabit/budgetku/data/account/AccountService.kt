@@ -7,6 +7,7 @@
 
 package com.bluehabit.budgetku.data.account
 
+import com.bluehabit.budgetku.common.Constants.ErrorCode
 import com.bluehabit.budgetku.common.utils.ValidationUtil
 import com.bluehabit.budgetku.common.utils.allowTo
 import com.bluehabit.budgetku.data.BaseService
@@ -18,16 +19,14 @@ import org.springframework.stereotype.Service
 @Service
 class AccountService(
     private val accountRepository: AccountRepository,
-    private val userCredentialRepository: UserCredentialRepository,
+    override val userCredentialRepository: UserCredentialRepository,
     private val validationUtil: ValidationUtil,
-    private val i18n: ResourceBundleMessageSource
-) : BaseService(
-    userCredentialRepository,
-    i18n
-) {
+    override val i18n: ResourceBundleMessageSource,
+    override val errorCode: Int = ErrorCode.CODE_ACCOUNT
+) : BaseService() {
     @Transactional
     fun createNewAccount() = buildResponse(
-        allow = {it.allowTo("")}
+        checkAccess = {it.allowTo("")}
     ) {
 
     }

@@ -7,7 +7,7 @@
 
 package com.bluehabit.budgetku.data.user.userProfile
 
-import com.bluehabit.budgetku.data.permission.Permission
+import com.bluehabit.budgetku.data.role.permission.Permission
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
 import com.bluehabit.budgetku.data.user.UserStatus.NONACTIVE
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -21,12 +21,20 @@ import jakarta.persistence.Table
 import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType.DATE
 import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.Date
 
 @Entity
 @Table(name = "tb_user_profile")
+@SQLDelete(
+    sql = "UPDATE tb_user_profile SET deleted=true WHERE id=?"
+)
+@Where(
+    clause = "deleted = false"
+)
 data class UserProfile(
     @Id
     @GenericGenerator(
@@ -56,5 +64,10 @@ data class UserProfile(
     var createdAt: OffsetDateTime,
 
     @Column
-    var updatedAt: OffsetDateTime
+    var updatedAt: OffsetDateTime,
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    var deleted:Boolean = false
 )

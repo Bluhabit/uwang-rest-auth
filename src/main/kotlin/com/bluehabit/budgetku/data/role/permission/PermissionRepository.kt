@@ -5,10 +5,10 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.category
+package com.bluehabit.budgetku.data.role.permission
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.PagingAndSortingRepository
 
-interface CategoryRepository:PagingAndSortingRepository<Category,String>, CrudRepository<Category, String> {
+interface PermissionRepository:PagingAndSortingRepository<Permission,String>, CrudRepository<Permission, String> {
 }

@@ -7,6 +7,7 @@
 
 package com.bluehabit.budgetku.data.user
 
+import com.bluehabit.budgetku.common.Constants.ErrorCode
 import com.bluehabit.budgetku.common.Constants.Permission.READ_USER
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
@@ -23,7 +24,9 @@ import com.bluehabit.budgetku.common.utils.getTodayDateTime
 import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
 import com.bluehabit.budgetku.config.JwtUtil
 import com.bluehabit.budgetku.data.BaseService
+import com.bluehabit.budgetku.common.utils.FileStorageUtils
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
+import com.bluehabit.budgetku.data.user.UserAuthProvider.GOOGLE
 import com.bluehabit.budgetku.data.user.UserStatus.ACTIVE
 import com.bluehabit.budgetku.data.user.UserStatus.WAITING_CONFIRMATION
 import com.bluehabit.budgetku.data.user.userActivity.UserActivityRepository
@@ -52,19 +55,17 @@ import java.util.*
 
 @Service
 class UserService(
-    private val userCredentialRepository: UserCredentialRepository,
+    override val userCredentialRepository: UserCredentialRepository,
+    override val i18n: ResourceBundleMessageSource,
+    override val errorCode: Int = ErrorCode.CODE_USER,
     private val userActivityRepository: UserActivityRepository,
     private val userVerificationRepository: UserVerificationRepository,
     private val userProfileRepository: UserProfileRepository,
     private val validationUtil: ValidationUtil,
     private val environment: Environment,
-    private val i18n: ResourceBundleMessageSource,
     private val scrypt: SCryptPasswordEncoder,
     private val jwtUtil: JwtUtil
-) : UserDetailsService, BaseService(
-    userCredentialRepository,
-    i18n
-) {
+) : UserDetailsService, BaseService() {
 
     //region admin
     @Transactional
@@ -129,14 +130,17 @@ class UserService(
         val findUser = userCredentialRepository.findByUserEmail(verifyUser.email)
             ?: throw UnAuthorizedException(translate("auth.user.not.exist"))
 
-        if (findUser.userAuthProvider != UserAuthProvider.GOOGLE.name) {
+        if (findUser.userAuthProvider != GOOGLE.name) {
             throw UnAuthorizedException(translate("auth.method.not.allowed"))
         }
+
+        val generateToken = jwtUtil.generateToken(findUser.userEmail)
 
         return baseAuthResponse {
             code = OK.value()
             data = findUser.toResponse()
             message = translate("auth.success")
+            token = generateToken
         }
     }
 
@@ -189,7 +193,7 @@ class UserService(
             activationAt = null
 
         )
-        val savedVerification = userVerificationRepository.save(verification)
+        userVerificationRepository.save(verification)
         //todo send email
 
 
@@ -216,6 +220,7 @@ class UserService(
         }
 
         val isExist = userCredentialRepository.exist(claim.email)
+
         if (isExist) {
             throw UnAuthorizedException(translate("auth.failed.user.exist"))
         }
@@ -238,10 +243,10 @@ class UserService(
             userEmail = claim.email,
             userPassword = scrypt.encode(claim.email),
             userStatus = ACTIVE.name,
-            userAuthProvider = BASIC.name,
+            userAuthProvider = GOOGLE.name,
             userPermissions = listOf(),
             userProfile = savedProfile,
-            userAuthTokenProvider = request.token!!,
+            userAuthTokenProvider = claim.fullName,
             userNotificationToken = "",
             createdAt = date,
             updatedAt = date
@@ -330,16 +335,24 @@ class UserService(
         val mediaType = request.file?.getMimeTypes().orEmpty()
         val fileNAme = user.createFileName(mediaType)
 
+        FileStorageUtils().save(
+            file = request.file!!,
+            fileName = fileNAme
+        )
 
 
-        baseResponse { }
+        baseResponse {
+            code = OK.value()
+            data = user.userProfile?.toResponse()
+            message = "Sukses"
+        }
     }
     //end region
 
     fun getAllUsers(
         pageable: Pageable
     ): BaseResponse<PagingDataResponse<UserProfileResponse>> = buildResponse(
-        allow = { it.allowTo(READ_USER) }
+        checkAccess = { it.allowTo(READ_USER) }
     ) {
         val findAll = userProfileRepository.findAll(pageable)
 

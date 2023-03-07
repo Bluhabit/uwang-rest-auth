@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.category
+package com.bluehabit.budgetku.data.budget.budgetCategory
 
 import org.hibernate.annotations.GenericGenerator
 import java.time.OffsetDateTime
@@ -15,12 +15,20 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
 
 @Entity
 @Table(
-    name = "tb_category"
+    name = "tb_budget_category"
 )
-data class Category(
+@SQLDelete(
+    sql = "UPDATE tb_budget_category SET deleted=true WHERE categoryId=?"
+)
+@Where(
+    clause = "deleted = false"
+)
+data class BudgetCategory(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
     @GenericGenerator(
@@ -35,6 +43,11 @@ data class Category(
     @Column
     var createdAt: OffsetDateTime? = null,
     @Column
-    var updatedAt: OffsetDateTime? = null
+    var updatedAt: OffsetDateTime? = null,
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    var deleted:Boolean = false
 
 )

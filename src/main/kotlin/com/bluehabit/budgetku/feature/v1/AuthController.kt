@@ -5,18 +5,19 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.feature.auth.v1
+package com.bluehabit.budgetku.feature.v1
 
 import com.bluehabit.budgetku.data.user.SignInWithGoogleRequest
 import com.bluehabit.budgetku.data.user.SignInWithEmailRequest
 import com.bluehabit.budgetku.data.user.SignUpWithEmailRequest
 import com.bluehabit.budgetku.data.user.SignUpWithGoogleRequest
+import com.bluehabit.budgetku.data.user.UpdateProfilePictureRequest
 import com.bluehabit.budgetku.data.user.UserService
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -30,6 +31,7 @@ class AuthController(
 
     companion object {
         const val json = "application/json"
+        const val formData = "multipart/form-data"
     }
 
     @PostMapping(
@@ -87,4 +89,13 @@ class AuthController(
     fun refreshToken(
         @PathVariable("token") token: String?
     ) = authService.refreshToken(token)
+
+    @PostMapping(
+        value = ["/upload-profile-picture"],
+        produces = [json],
+        consumes = [formData]
+    )
+    fun profilePicture(
+        @ModelAttribute request: UpdateProfilePictureRequest
+    ) = authService.uploadProfilePicture(request)
 }

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.feature.notification.v1
+package com.bluehabit.budgetku.feature.v1
 
 import com.bluehabit.budgetku.data.notification.NotificationBroadcastRequest
 import com.bluehabit.budgetku.data.notification.NotificationService

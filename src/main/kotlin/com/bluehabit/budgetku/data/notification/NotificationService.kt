@@ -7,6 +7,7 @@
 
 package com.bluehabit.budgetku.data.notification
 
+import com.bluehabit.budgetku.common.Constants.ErrorCode
 import com.bluehabit.budgetku.common.Constants.Permission.WRITE_NOTIFICATION
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.BaseResponse
@@ -33,13 +34,11 @@ class NotificationService(
     private val notificationRepository: NotificationRepository,
     private val notificationReadRepository: NotificationReadRepository,
     private val notificationCategoryRepository: NotificationCategoryRepository,
-    private val userCredentialRepository: UserCredentialRepository,
-    private val i18n: ResourceBundleMessageSource,
-    private val validationUtil: ValidationUtil
-) : BaseService(
-    userCredentialRepository,
-    i18n
-) {
+    private val validationUtil: ValidationUtil,
+    override val userCredentialRepository: UserCredentialRepository,
+    override val i18n: ResourceBundleMessageSource,
+    override val errorCode: Int = ErrorCode.CODE_NOTIFICATION
+) : BaseService() {
 
     @Transactional
     fun getNotification(
@@ -64,7 +63,7 @@ class NotificationService(
     fun sendBroadcast(
         request: NotificationBroadcastRequest
     ): BaseResponse<Notification> = buildResponse(
-        allow = { it.allowTo(WRITE_NOTIFICATION) }
+        checkAccess = { it.allowTo(WRITE_NOTIFICATION) }
     ) {
         validationUtil.validate(request)
 

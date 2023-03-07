@@ -19,11 +19,19 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
 import java.time.OffsetDateTime
 
 @Entity
 @Table(
     name = "tb_user_activity"
+)
+@SQLDelete(
+    sql = "UPDATE tb_user_activity SET deleted=true WHERE id=?"
+)
+@Where(
+    clause = "deleted = false"
 )
 data class UserActivity(
     @Id
@@ -47,6 +55,11 @@ data class UserActivity(
     @Column
     var createdAt: OffsetDateTime,
     @Column
-    var updatedAt: OffsetDateTime
+    var updatedAt: OffsetDateTime,
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    var deleted:Boolean = false
 
 )

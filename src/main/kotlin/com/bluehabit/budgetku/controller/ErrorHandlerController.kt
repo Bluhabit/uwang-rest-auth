@@ -224,7 +224,7 @@ class ErrorHandlerController {
     ) = baseResponse<List<Any>> {
         code = BAD_REQUEST.value()
         data = listOf()
-        message = error.localizedMessage
+        message = error.mostSpecificCause.message.orEmpty()
     }
 
     @ExceptionHandler(

@@ -19,11 +19,21 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
 import java.time.OffsetDateTime
 
-@Entity(
+@Entity
+@Table(
     name = "tb_notification_read"
+)
+@SQLDelete(
+    sql = "UPDATE tb_notification_read SET deleted=true WHERE readId=?"
+)
+@Where(
+    clause = "deleted = false"
 )
 data class NotificationRead(
     @Id
@@ -53,5 +63,10 @@ data class NotificationRead(
     @Column
     var createdAt: OffsetDateTime? = null,
     @Column
-    var updatedAt: OffsetDateTime? = null
+    var updatedAt: OffsetDateTime? = null,
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    var deleted:Boolean = false
 )

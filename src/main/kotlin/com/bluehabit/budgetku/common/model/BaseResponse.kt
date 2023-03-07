@@ -8,7 +8,7 @@
 package com.bluehabit.budgetku.common.model
 
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
-import com.bluehabit.budgetku.data.permission.Permission
+import com.bluehabit.budgetku.data.role.permission.Permission
 import com.bluehabit.budgetku.data.user.userCredential.UserCredential
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import org.springframework.security.core.context.SecurityContextHolder

@@ -19,11 +19,19 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
 import java.time.OffsetDateTime
 
 @Entity
 @Table(
     name = "tb_account"
+)
+@SQLDelete(
+    sql = "UPDATE tb_account SET deleted=true WHERE walletId=?"
+)
+@Where(
+    clause = "deleted = false"
 )
 data class Account(
     @Id
@@ -48,6 +56,11 @@ data class Account(
     @Column
     var createdAt: OffsetDateTime? = null,
     @Column
-    var updatedAt: OffsetDateTime? = null
+    var updatedAt: OffsetDateTime? = null,
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    var deleted:Boolean = false
 
 )

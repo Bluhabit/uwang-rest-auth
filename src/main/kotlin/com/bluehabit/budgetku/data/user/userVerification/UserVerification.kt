@@ -18,11 +18,19 @@ import jakarta.persistence.Id
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.GenericGenerator
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.Where
 import java.time.OffsetDateTime
 
 
 @Entity
 @Table(name = "tb_user_verification")
+@SQLDelete(
+    sql = "UPDATE tb_user_verification SET deleted=true WHERE id=?"
+)
+@Where(
+    clause = "deleted = false"
+)
 data class UserVerification(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "UUID")
@@ -42,5 +50,10 @@ data class UserVerification(
     var createdAt: OffsetDateTime,
 
     @Column
-    var activationAt: OffsetDateTime?=null
+    var activationAt: OffsetDateTime?=null,
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    var deleted:Boolean = false
 )

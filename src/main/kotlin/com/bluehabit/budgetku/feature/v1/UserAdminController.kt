@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.feature.user.v1
+package com.bluehabit.budgetku.feature.v1
 
 import com.bluehabit.budgetku.data.user.UserService
 import org.springframework.data.domain.Pageable

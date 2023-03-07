@@ -8,7 +8,7 @@
 package com.bluehabit.budgetku.common.utils
 
 import com.bluehabit.budgetku.common.exception.BadRequestException
-import com.bluehabit.budgetku.data.permission.Permission
+import com.bluehabit.budgetku.data.role.permission.Permission
 import jakarta.validation.ConstraintViolationException
 import jakarta.validation.Validator
 import org.springframework.context.support.ResourceBundleMessageSource

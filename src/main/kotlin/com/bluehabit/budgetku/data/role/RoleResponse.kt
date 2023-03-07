@@ -5,28 +5,29 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.notification
+package com.bluehabit.budgetku.data.role
 
 import com.bluehabit.budgetku.common.model.pagingResponse
-import com.bluehabit.budgetku.data.notification.notification.Notification
-import com.bluehabit.budgetku.data.notification.notificationRead.NotificationRead
+import com.bluehabit.budgetku.data.role.permission.Permission
+import com.bluehabit.budgetku.data.role.roleGroup.RoleGroup
 import org.springframework.data.domain.Page
+import java.time.OffsetDateTime
 
 
-@JvmName("notificationPagingResponse")
-fun Page<Notification>.toResponse() = pagingResponse {
+@JvmName("pagingPermissionResponse")
+fun Page<Permission>.toResponse() = pagingResponse {
     page = number
     currentSize = size
-    items = content.map { it }
+    items = content.map { it}
     totalData = totalElements
     totalPagesCount = totalPages
 }
 
-@JvmName("notificatonReadPagingResponse")
-fun Page<NotificationRead>.toResponse() = pagingResponse {
+@JvmName("pagingRoleGroupResponse")
+fun Page<RoleGroup>.toResponse() = pagingResponse {
     page = number
     currentSize = size
-    items = content.map { it }
+    items = content.map { it}
     totalData = totalElements
     totalPagesCount = totalPages
 }

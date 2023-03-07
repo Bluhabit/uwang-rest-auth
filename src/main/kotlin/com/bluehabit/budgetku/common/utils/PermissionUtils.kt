@@ -7,7 +7,7 @@
 
 package com.bluehabit.budgetku.common.utils
 
-import com.bluehabit.budgetku.data.permission.Permission
+import com.bluehabit.budgetku.data.role.permission.Permission
 import org.springframework.security.core.GrantedAuthority
 
 

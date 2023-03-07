@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.feature.wallet.v1
+package com.bluehabit.budgetku.feature.v1
 
 import com.bluehabit.budgetku.data.account.AccountService
 import org.springframework.web.bind.annotation.RequestMapping

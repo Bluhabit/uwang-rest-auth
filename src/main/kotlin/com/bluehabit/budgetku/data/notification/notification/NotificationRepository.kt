@@ -18,16 +18,19 @@ interface NotificationRepository : PagingAndSortingRepository<Notification, Stri
 
 
     @Query(
-        """SELECT N FROM tb_notification N 
+        """SELECT N FROM Notification N 
             JOIN N.notificationCategory C
             LEFT JOIN N.notificationRead NR
             WHERE (N.user.userId = ?1 OR N.user.userId IS NULL) 
             AND (NR.userProfile.userId = ?1 OR NR.userProfile.userId IS NULL)
+            AND N.deleted = false 
             order by N.createdAt DESC"""
     )
     fun findNotificationByUserId(
         userId: String,
         pageable: Pageable
     ): Page<Notification>
+
+
 
 }

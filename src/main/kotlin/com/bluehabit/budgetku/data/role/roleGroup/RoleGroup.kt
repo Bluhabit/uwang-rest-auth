@@ -5,16 +5,13 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.budgetku.data.notification.notificationCategory
+package com.bluehabit.budgetku.data.role.roleGroup
 
-import com.bluehabit.budgetku.data.notification.notification.Notification
-import com.fasterxml.jackson.annotation.JsonIgnore
-import jakarta.persistence.CascadeType
+import com.bluehabit.budgetku.data.role.permission.Permission
+import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.FetchType.LAZY
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
+import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.Table
@@ -25,23 +22,30 @@ import java.time.OffsetDateTime
 
 @Entity
 @Table(
-    name = "tb_notification_category"
+    name = "tb_role_group"
 )
 @SQLDelete(
-    sql = "UPDATE tb_notification_category SET deleted=true WHERE categoryId=?"
+    sql = "UPDATE tb_role_group SET deleted=true WHERE roleId=?"
 )
 @Where(
     clause = "deleted = false"
 )
-data class NotificationCategory(
+data class RoleGroup(
     @Id
-    var categoryId: String? = null,
-
+    @GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    var roleId: String? = null,
     @Column
-    var categoryName: String,
-
+    var roleName: String,
     @Column
-    var categoryDescription: String,
+    var roleDescription: String,
+    @ManyToMany(
+        fetch = FetchType.EAGER,
+        cascade = [ALL]
+    )
+    var rolePermissions: Collection<Permission> = listOf(),
 
     @Column
     var createdAt: OffsetDateTime? = null,
@@ -52,5 +56,4 @@ data class NotificationCategory(
         nullable = false
     )
     var deleted: Boolean = false
-
 )

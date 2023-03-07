@@ -32,6 +32,17 @@ object Constants {
 
     }
 
+    object ErrorCode{
+        const val CODE_BUDGET = 1000
+        const val CODE_POST = 2000
+        const val CODE_ACCOUNT = 3000
+        const val CODE_USER = 4000
+        const val CODE_NOTIFICATION = 5000
+        const val CODE_ROLE = 6000
+
+
+    }
+
     object Notification{
         const val BroadcastTopic = "BudgetKu"
     }
