@@ -18,6 +18,7 @@ import com.bluehabit.budgetku.common.utils.ValidationUtil
 import com.bluehabit.budgetku.common.utils.allowTo
 import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
 import com.bluehabit.budgetku.data.BaseService
+import com.bluehabit.budgetku.data.post.InMemorySseEmitterRepository
 import com.bluehabit.budgetku.data.role.permission.PermissionRepository
 import com.bluehabit.budgetku.data.role.roleGroup.RoleGroup
 import com.bluehabit.budgetku.data.role.roleGroup.RoleGroupRepository
@@ -34,6 +35,7 @@ class RoleService(
     override val i18n: ResourceBundleMessageSource,
     override val userCredentialRepository: UserCredentialRepository,
     override val errorCode: Int = ErrorCode.CODE_ROLE,
+    override val inMemorySseEmitterRepository: InMemorySseEmitterRepository,
     private val roleGroupRepository: RoleGroupRepository,
     private val permissionRepository: PermissionRepository,
     private val validationUtil: ValidationUtil

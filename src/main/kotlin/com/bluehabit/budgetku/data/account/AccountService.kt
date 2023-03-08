@@ -16,6 +16,7 @@ import com.bluehabit.budgetku.common.model.baseResponse
 import com.bluehabit.budgetku.common.utils.ValidationUtil
 import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
 import com.bluehabit.budgetku.data.BaseService
+import com.bluehabit.budgetku.data.post.InMemorySseEmitterRepository
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import jakarta.transaction.Transactional
 import org.springframework.context.support.ResourceBundleMessageSource
@@ -26,19 +27,20 @@ import org.springframework.stereotype.Service
 
 @Service
 class AccountService(
-    private val accountRepository: AccountRepository,
     override val userCredentialRepository: UserCredentialRepository,
-    private val validationUtil: ValidationUtil,
     override val i18n: ResourceBundleMessageSource,
-    override val errorCode: Int = ErrorCode.CODE_ACCOUNT
+    override val errorCode: Int = ErrorCode.CODE_BUDGET,
+    override val inMemorySseEmitterRepository: InMemorySseEmitterRepository,
+    private val accountRepository: AccountRepository,
+    private val validationUtil: ValidationUtil,
 ) : BaseService() {
 
     @Transactional
     suspend fun getListAccount(
         pageable: Pageable
-    ):BaseResponse<PagingDataResponse<Account>> = buildResponse {
+    ): BaseResponse<PagingDataResponse<Account>> = buildResponse {
 
-        val findAccount = accountRepository.findAccountByUserEmail(it,pageable)
+        val findAccount = accountRepository.findAccountByUserEmail(it, pageable)
 
         baseResponse {
             code = OK.value()
@@ -46,6 +48,7 @@ class AccountService(
             message = "Sukses"
         }
     }
+
     @Transactional
     suspend fun createNewAccount(
         request: AccountRequest
@@ -59,7 +62,7 @@ class AccountService(
             )
 
         val isExist = accountRepository.exist(request.accountNumber!!)
-        if(isExist){
+        if (isExist) {
             throw DuplicateException(
                 translate(""),
                 errorDataAlreadyExist
@@ -88,7 +91,7 @@ class AccountService(
 
     @Transactional
     suspend fun updateAccount(
-        accountNumber:String,
+        accountNumber: String,
         request: AccountRequest
     ): BaseResponse<Account> = buildResponse() {
         validationUtil.validate(request)
@@ -100,8 +103,7 @@ class AccountService(
             )
 
         val account = accountRepository.findByIdOrNull(accountNumber)
-            ?:
-            throw DataNotFoundException(
+            ?: throw DataNotFoundException(
                 translate(""),
                 errorDataAlreadyExist
             )
@@ -126,8 +128,8 @@ class AccountService(
 
     @Transactional
     suspend fun deleteAccount(
-        accountId:String
-    ):BaseResponse<Account> = buildResponse {
+        accountId: String
+    ): BaseResponse<Account> = buildResponse {
         val findAccount = accountRepository.findByIdOrNull(accountId)
             ?: throw DataNotFoundException(
                 translate(""),

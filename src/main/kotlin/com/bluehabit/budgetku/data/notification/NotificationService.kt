@@ -21,6 +21,7 @@ import com.bluehabit.budgetku.data.notification.notification.Notification
 import com.bluehabit.budgetku.data.notification.notification.NotificationRepository
 import com.bluehabit.budgetku.data.notification.notificationCategory.NotificationCategoryRepository
 import com.bluehabit.budgetku.data.notification.notificationRead.NotificationReadRepository
+import com.bluehabit.budgetku.data.post.InMemorySseEmitterRepository
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import jakarta.transaction.Transactional
 import org.springframework.context.support.ResourceBundleMessageSource
@@ -31,13 +32,14 @@ import org.springframework.stereotype.Service
 
 @Service
 class NotificationService(
+    override val userCredentialRepository: UserCredentialRepository,
+    override val i18n: ResourceBundleMessageSource,
+    override val errorCode: Int = ErrorCode.CODE_NOTIFICATION,
+    override val inMemorySseEmitterRepository: InMemorySseEmitterRepository,
     private val notificationRepository: NotificationRepository,
     private val notificationReadRepository: NotificationReadRepository,
     private val notificationCategoryRepository: NotificationCategoryRepository,
-    private val validationUtil: ValidationUtil,
-    override val userCredentialRepository: UserCredentialRepository,
-    override val i18n: ResourceBundleMessageSource,
-    override val errorCode: Int = ErrorCode.CODE_NOTIFICATION
+    private val validationUtil: ValidationUtil
 ) : BaseService() {
 
     @Transactional

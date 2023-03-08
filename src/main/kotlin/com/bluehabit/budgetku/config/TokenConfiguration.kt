@@ -43,6 +43,8 @@ class TokenConfiguration(
                     "/v1/auth/sign-up-google",
                     "/v1/auth/refresh-token/**",
                     "/v1/auth/verification/**",
+                    "/v1/post/subscribe/**",
+                    "/v1/post/send/**",
                 )
                     .permitAll()
 

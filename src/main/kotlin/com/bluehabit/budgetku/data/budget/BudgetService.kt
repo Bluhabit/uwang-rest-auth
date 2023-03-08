@@ -23,6 +23,7 @@ import com.bluehabit.budgetku.data.budget.budgetCategory.BudgetCategoryRepositor
 import com.bluehabit.budgetku.data.budget.budgetCategory.BudgetCategoryRequest
 import com.bluehabit.budgetku.data.budget.budgetCategory.BudgetCategoryUpdateRequest
 import com.bluehabit.budgetku.data.budget.budgetCategory.toResponse
+import com.bluehabit.budgetku.data.post.InMemorySseEmitterRepository
 import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.data.domain.Pageable
@@ -33,11 +34,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class BudgetService(
-    private val budgetCategoryRepository: BudgetCategoryRepository,
-    private val validationUtil: ValidationUtil,
     override val userCredentialRepository: UserCredentialRepository,
     override val i18n: ResourceBundleMessageSource,
-    override val errorCode: Int = ErrorCode.CODE_BUDGET
+    override val errorCode: Int = ErrorCode.CODE_BUDGET,
+    override val inMemorySseEmitterRepository: InMemorySseEmitterRepository,
+    private val budgetCategoryRepository: BudgetCategoryRepository,
+    private val validationUtil: ValidationUtil
 ) : BaseService() {
     suspend fun getListBudgetCategory(
         pageable: Pageable

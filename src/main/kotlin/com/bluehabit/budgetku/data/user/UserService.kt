@@ -27,6 +27,7 @@ import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
 import com.bluehabit.budgetku.config.JwtUtil
 import com.bluehabit.budgetku.data.BaseService
 import com.bluehabit.budgetku.common.utils.FileStorageUtils
+import com.bluehabit.budgetku.data.post.InMemorySseEmitterRepository
 import com.bluehabit.budgetku.data.role.permission.PermissionRepository
 import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
 import com.bluehabit.budgetku.data.user.UserAuthProvider.GOOGLE
@@ -64,6 +65,7 @@ class UserService(
     override val userCredentialRepository: UserCredentialRepository,
     override val i18n: ResourceBundleMessageSource,
     override val errorCode: Int = ErrorCode.CODE_USER,
+    override val inMemorySseEmitterRepository: InMemorySseEmitterRepository,
     private val userActivityRepository: UserActivityRepository,
     private val userVerificationRepository: UserVerificationRepository,
     private val userProfileRepository: UserProfileRepository,
