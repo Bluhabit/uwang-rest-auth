@@ -8,62 +8,70 @@
 package com.bluehabit.budgetku.data.user
 
 import com.bluehabit.budgetku.common.model.pagingResponse
-import com.bluehabit.budgetku.data.permission.Permission
-import com.bluehabit.budgetku.data.permission.PermissionReponse
-import com.bluehabit.budgetku.data.permission.toResponse
-import com.bluehabit.budgetku.data.role.RoleResponse
+import com.bluehabit.budgetku.data.role.permission.Permission
 import com.bluehabit.budgetku.data.role.toResponse
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
+import com.bluehabit.budgetku.data.user.userProfile.UserProfile
 import org.springframework.data.domain.Page
 import java.time.OffsetDateTime
 
 
-data class UserResponse(
+data class UserCredentialResponse(
     var userId: String? = null,
-    var userFullName: String,
-    var userCountryCode: String,
-    var userDateOfBirth: String,
     var userEmail: String,
-    var userAuthProvider: UserAuthProvider,
-    var userStatus: UserStatus,
-    var userPermission: List<PermissionReponse>,
-    var userRoles: List<RoleResponse>,
+    var userAuthProvider: String,
+    var userStatus: String,
+    var userPermission: List<Permission>,
+    var userProfile: UserProfileResponse?,
     var createdAt: OffsetDateTime,
     var updatedAt: OffsetDateTime,
 )
 
-fun User.getListPermission(): List<Permission> {
-    val permission = mutableListOf<Permission>()
-    userRoles.forEach{ permission += it.permissions.map {result-> result } }
-    return permission.toList()
+data class UserProfileResponse(
+    var userId: String? = null,
+    var userFullName: String,
+    var userCountryCode: String,
+    var userDateOfBirth: String,
+    var userProfilePicture: String,
+    var createdAt: OffsetDateTime,
+    var updatedAt: OffsetDateTime,
+)
+
+
+fun UserCredential.toResponse(): UserCredentialResponse = UserCredentialResponse(
+    userId = userId,
+    userEmail = userEmail,
+    userAuthProvider = userAuthProvider,
+    userStatus = userStatus,
+    userPermission = userPermissions.map { it },
+    userProfile = userProfile?.toResponse(),
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
+
+fun UserProfile.toResponse(): UserProfileResponse = UserProfileResponse(
+    userId = userId,
+    userFullName = userFullName,
+    userCountryCode = userCountryCode,
+    userDateOfBirth = userDateOfBirth.toString(),
+    userProfilePicture = userProfilePicture.orEmpty(),
+    createdAt = createdAt,
+    updatedAt = updatedAt
+)
+
+
+@JvmName("userCredentialPagingToResponse")
+fun Page<UserCredential>.toResponse() = pagingResponse {
+    page = number
+    currentSize = size
+    items = content.map { it.toResponse() }
+    totalData = totalElements
+    totalPagesCount = totalPages
 }
 
-
-fun User.toResponse(): UserResponse {
-    val permission = mutableListOf<PermissionReponse>()
-
-    val role = userRoles.map {
-        permission += it.permissions.map { p ->
-            p.toResponse()
-        }
-        it.toResponse()
-    }
-
-    return UserResponse(
-        userId = userId,
-        userFullName = userFullName,
-        userEmail = userEmail,
-        userAuthProvider = userAuthProvider,
-        userStatus = userStatus,
-        userCountryCode = userCountryCode,
-        userDateOfBirth = userDateOfBirth.toString(),
-        userPermission = permission,
-        userRoles = role,
-        createdAt = createdAt,
-        updatedAt = updatedAt
-    )
-}
-
-fun Page<User>.toResponse() = pagingResponse<UserResponse> {
+@JvmName("userProfilePagingToResponse")
+fun Page<UserProfile>.toResponse() = pagingResponse {
     page = number
     currentSize = size
     items = content.map { it.toResponse() }

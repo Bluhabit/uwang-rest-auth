@@ -7,29 +7,24 @@
 
 package com.bluehabit.budgetku
 
+import com.bluehabit.budgetku.common.Constants.BCrypt.STRENGTH
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.support.ResourceBundleMessageSource
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder
+import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.i18n.SessionLocaleResolver
 import java.util.*
 
 @SpringBootApplication
+@Controller
 class BudgetkuApplication{
-	@Bean
-	fun localResolver(): SessionLocaleResolver {
-		val resolver = SessionLocaleResolver()
-		resolver.setDefaultLocale(Locale.US)
-		return resolver
-	}
-
-	@Bean
-	fun bundleMessageSource(): ResourceBundleMessageSource {
-		val base = ResourceBundleMessageSource()
-		base.setBasename("message")
-
-		return base
-	}
+	@GetMapping
+	fun index()= "index"
 }
 
 fun main(args: Array<String>) {

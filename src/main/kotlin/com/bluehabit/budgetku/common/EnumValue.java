@@ -7,12 +7,9 @@
 
 package com.bluehabit.budgetku.common;
 
+import jakarta.validation.*;
 import org.assertj.core.util.Strings;
 
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

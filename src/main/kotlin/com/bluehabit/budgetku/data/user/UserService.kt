@@ -7,72 +7,111 @@
 
 package com.bluehabit.budgetku.data.user
 
-import com.bluehabit.budgetku.common.Constants
-import com.bluehabit.budgetku.common.GoogleAuthUtil
-import com.bluehabit.budgetku.common.ValidationUtil
+import com.bluehabit.budgetku.common.Constants.ErrorCode
+import com.bluehabit.budgetku.common.Constants.Permission.READ_USER
+import com.bluehabit.budgetku.common.Constants.Permission.WRITE_USER
+import com.bluehabit.budgetku.common.exception.DataNotFoundException
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import com.bluehabit.budgetku.common.model.AuthBaseResponse
+import com.bluehabit.budgetku.common.model.BaseResponse
+import com.bluehabit.budgetku.common.model.PagingDataResponse
 import com.bluehabit.budgetku.common.model.baseAuthResponse
-import com.bluehabit.budgetku.common.translate
-import com.bluehabit.budgetku.config.tokenMiddleware.JwtUtil
-import com.bluehabit.budgetku.data.role.RoleRepository
-import com.bluehabit.budgetku.data.userActivity.UserActivityRepository
+import com.bluehabit.budgetku.common.model.baseResponse
+import com.bluehabit.budgetku.common.utils.GoogleAuthUtil
+import com.bluehabit.budgetku.common.utils.ValidationUtil
+import com.bluehabit.budgetku.common.utils.allowTo
+import com.bluehabit.budgetku.common.utils.createFileName
+import com.bluehabit.budgetku.common.utils.getMimeTypes
+import com.bluehabit.budgetku.common.utils.getTodayDateTime
+import com.bluehabit.budgetku.common.utils.getTodayDateTimeOffset
+import com.bluehabit.budgetku.config.JwtUtil
+import com.bluehabit.budgetku.data.BaseService
+import com.bluehabit.budgetku.common.utils.FileStorageUtils
+import com.bluehabit.budgetku.data.post.InMemorySseEmitterRepository
+import com.bluehabit.budgetku.data.role.permission.PermissionRepository
+import com.bluehabit.budgetku.data.user.UserAuthProvider.BASIC
+import com.bluehabit.budgetku.data.user.UserAuthProvider.GOOGLE
+import com.bluehabit.budgetku.data.user.UserStatus.ACTIVE
+import com.bluehabit.budgetku.data.user.UserStatus.SUSPENDED
+import com.bluehabit.budgetku.data.user.UserStatus.WAITING_CONFIRMATION
+import com.bluehabit.budgetku.data.user.userActivity.UserActivity
+import com.bluehabit.budgetku.data.user.userActivity.UserActivityRepository
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
+import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
+import com.bluehabit.budgetku.data.user.userProfile.UserProfile
+import com.bluehabit.budgetku.data.user.userProfile.UserProfileRepository
+import com.bluehabit.budgetku.data.user.userVerification.UserVerification
+import com.bluehabit.budgetku.data.user.userVerification.UserVerificationRepository
+import jakarta.transaction.Transactional
 import org.springframework.context.support.ResourceBundleMessageSource
 import org.springframework.core.env.Environment
+import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
+import java.time.OffsetDateTime
+import java.time.Period
+import java.util.*
+
 
 @Service
 class UserService(
-    private val userRepository: UserRepository,
-    private val roleRepository: RoleRepository,
+    override val userCredentialRepository: UserCredentialRepository,
+    override val i18n: ResourceBundleMessageSource,
+    override val errorCode: Int = ErrorCode.CODE_USER,
+    override val inMemorySseEmitterRepository: InMemorySseEmitterRepository,
     private val userActivityRepository: UserActivityRepository,
+    private val userVerificationRepository: UserVerificationRepository,
+    private val userProfileRepository: UserProfileRepository,
     private val validationUtil: ValidationUtil,
-    private val jwtUtil: JwtUtil,
     private val environment: Environment,
-    private val message: ResourceBundleMessageSource
-) : UserDetailsService {
-    private val bcrypt = BCryptPasswordEncoder(Constants.BCrypt.STRENGTH)
+    private val scrypt: SCryptPasswordEncoder,
+    private val jwtUtil: JwtUtil, private val permissionRepository: PermissionRepository
+) : UserDetailsService, BaseService() {
 
     //region admin
     @Transactional
     override fun loadUserByUsername(username: String): UserDetails? {
 
-        val user = userRepository
+        val user = userCredentialRepository
             .findByUserEmail(username) ?: return null
         return User(
             username,
             user.userPassword,
-            user.userRoles.map {
-                SimpleGrantedAuthority(it.roleName)
-            }
+            user.userStatus == ACTIVE.name,
+            false,
+            false,
+            false,
+            user.userPermissions.map { SimpleGrantedAuthority(it.permissionType) }
         )
 
     }
     //end region
 
     //region user auth
-    fun signInWithEmailAndPassword(
-        body: LoginRequest
-    ): AuthBaseResponse<UserResponse> {
+    fun signInWithEmail(
+        body: SignInWithEmailRequest
+    ): AuthBaseResponse<UserCredentialResponse> {
         validationUtil.validate(body)
 
-        val login = userRepository
+        val login = userCredentialRepository
             .findByUserEmail(
                 body.email!!
-            ) ?: throw UnAuthorizedException(message.translate("auth.user.not.exist"))
+            ) ?: throw UnAuthorizedException(translate("auth.user.not.exist"))
 
-        if (!bcrypt.matches(
-                body.password,
-                login.userPassword
-            )
-        ) throw UnAuthorizedException(message.translate("auth.invalid"))
+        if (!scrypt.matches(body.password, login.userPassword)) {
+            throw UnAuthorizedException(translate("auth.invalid"))
+        }
+
+        if (login.userAuthProvider != BASIC.name) {
+            throw UnAuthorizedException(translate("auth.method.not.allowed"))
+        }
 
         val generatedToken = jwtUtil.generateToken(login.userEmail)
 
@@ -80,34 +119,340 @@ class UserService(
         return baseAuthResponse {
             code = OK.value()
             data = login.toResponse()
-            message = this@UserService.message.translate("auth.success")
+            message = translate("auth.success")
             token = generatedToken
         }
 
     }
 
     fun signInWithGoogle(
-        request: LoginGoogleRequest
-    ): AuthBaseResponse<UserResponse> {
+        request: SignInWithGoogleRequest
+    ): AuthBaseResponse<UserCredentialResponse> {
         validationUtil.validate(request)
-        val googleAuth = GoogleAuthUtil(environment,message)
+        val googleAuth = GoogleAuthUtil(environment, i18n)
         val verifyUser =
-            googleAuth.getProfile(request.token!!)
-        if (!verifyUser.first) throw UnAuthorizedException(verifyUser.third)
-        val findUser = userRepository.findByUserEmail(verifyUser.second?.userEmail.orEmpty())
-            ?: throw UnAuthorizedException(
-                message.translate("auth.user.not.exist")
-            )
+            googleAuth.getGoogleClaim(request.token!!)
+        if (!verifyUser.valid) {
+            throw UnAuthorizedException(verifyUser.message)
+        }
+        val findUser = userCredentialRepository.findByUserEmail(verifyUser.email)
+            ?: throw UnAuthorizedException(translate("auth.user.not.exist"))
+
+        if (findUser.userAuthProvider != GOOGLE.name) {
+            throw UnAuthorizedException(translate("auth.method.not.allowed"))
+        }
+
+        val generateToken = jwtUtil.generateToken(findUser.userEmail)
 
         return baseAuthResponse {
             code = OK.value()
             data = findUser.toResponse()
-            message = this@UserService.message.translate("auth.success")
+            message = translate("auth.success")
+            token = generateToken
         }
     }
 
-    fun signUpWithEmail():AuthBaseResponse<UserResponse>{
+    @Transactional
+    fun signUpWithEmail(
+        request: SignUpWithEmailRequest
+    ): AuthBaseResponse<UserCredentialResponse> {
+        validationUtil.validate(request)
 
-        return baseAuthResponse {  }
+        val isExist = userCredentialRepository.exist(request.email!!)
+        if (isExist) {
+            throw UnAuthorizedException(translate("auth.failed.user.exist"))
+        }
+
+        val uuid = UUID.randomUUID().toString()
+        val date = getTodayDateTimeOffset()
+        val activationToken = UUID.randomUUID().toString()
+        val userProfile = UserProfile(
+            userId = uuid,
+            userFullName = request.fullName!!,
+            userProfilePicture = null,
+            userDateOfBirth = null,
+            userCountryCode = "id",
+            userPhoneNumber = null,
+            createdAt = date,
+            updatedAt = date
+        )
+        val savedProfile = userProfileRepository.save(userProfile)
+        val userCredential = UserCredential(
+            userId = uuid,
+            userEmail = request.email!!,
+            userPassword = scrypt.encode(request.password),
+            userStatus = WAITING_CONFIRMATION.name,
+            userAuthProvider = BASIC.name,
+            userPermissions = listOf(),
+            userProfile = savedProfile,
+            userAuthTokenProvider = "",
+            userNotificationToken = "",
+            createdAt = date,
+            updatedAt = date
+        )
+        val savedCredential = userCredentialRepository.save(userCredential)
+
+        //create verification
+        val verification = UserVerification(
+            userActivationId = uuid,
+            userActivationToken = activationToken,
+            userId = uuid,
+            createdAt = date,
+            activationAt = null
+
+        )
+        userVerificationRepository.save(verification)
+        //todo send email
+
+
+        return baseAuthResponse {
+            code = OK.value()
+            data = savedCredential.toResponse()
+            message = translate("auth.success")
+        }
     }
+
+    @Transactional
+    fun signUpWithGoogle(
+        request: SignUpWithGoogleRequest
+    ): AuthBaseResponse<UserCredentialResponse> {
+        validationUtil.validate(request)
+
+        val claim = GoogleAuthUtil(
+            environment,
+            i18n
+        ).getGoogleClaim(request.token!!)
+
+        if (!claim.valid) {
+            throw UnAuthorizedException(claim.message)
+        }
+
+        val isExist = userCredentialRepository.exist(claim.email)
+
+        if (isExist) {
+            throw UnAuthorizedException(translate("auth.failed.user.exist"))
+        }
+
+        val uuid = UUID.randomUUID().toString()
+        val date = getTodayDateTimeOffset()
+        val userProfile = UserProfile(
+            userId = uuid,
+            userFullName = claim.fullName,
+            userProfilePicture = null,
+            userDateOfBirth = null,
+            userCountryCode = "id",
+            userPhoneNumber = null,
+            createdAt = date,
+            updatedAt = date
+        )
+        val savedProfile = userProfileRepository.save(userProfile)
+        val userCredential = UserCredential(
+            userId = uuid,
+            userEmail = claim.email,
+            userPassword = scrypt.encode(claim.email),
+            userStatus = ACTIVE.name,
+            userAuthProvider = GOOGLE.name,
+            userPermissions = listOf(),
+            userProfile = savedProfile,
+            userAuthTokenProvider = claim.fullName,
+            userNotificationToken = "",
+            createdAt = date,
+            updatedAt = date
+        )
+        val savedCredential = userCredentialRepository.save(userCredential)
+
+        return baseAuthResponse {
+            code = OK.value()
+            data = savedCredential.toResponse()
+            message = translate("auth.success")
+        }
+    }
+
+    @Transactional
+    fun userVerification(
+        token: String
+    ): BaseResponse<List<Any>> {
+        if (token.isEmpty()) {
+            throw UnAuthorizedException("Verification failed")
+        }
+
+        val verificationData = userVerificationRepository.findByUserActivationToken(token)
+            ?: throw UnAuthorizedException("Token not valid 1")
+
+        if (verificationData.activationAt != null) {
+            throw UnAuthorizedException("Token not valid 2")
+        }
+
+        if (Period.between(
+                verificationData.createdAt.toLocalDate(),
+                getTodayDateTime().toLocalDate()
+            ).days > 1
+        ) {
+            throw UnAuthorizedException("Token not valid or expired")
+        }
+
+        val findUser = userCredentialRepository.findByIdOrNull(verificationData.userId)
+            ?: throw UnAuthorizedException("User not found 3")
+
+        userCredentialRepository.save(
+            findUser.copy(
+                userStatus = ACTIVE.name
+            )
+        )
+        userVerificationRepository.save(
+            verificationData.copy(
+                activationAt = OffsetDateTime.now()
+            )
+        )
+
+        return baseResponse {
+            code = OK.value()
+            data = listOf()
+            message = translate("auth.verification.success")
+
+        }
+    }
+
+    fun refreshToken(
+        jwt: String?
+    ): AuthBaseResponse<List<Any>> {
+        if (jwt.isNullOrEmpty()) {
+            throw UnAuthorizedException("Token not valid")
+        }
+        val claims = jwtUtil.decode(jwt)
+        if (!claims.first) {
+            throw UnAuthorizedException(claims.second)
+        }
+
+        val generate = jwtUtil.generateToken(claims.second)
+
+        return baseAuthResponse {
+            code = OK.value()
+            data = listOf()
+            message = translate("auth.success")
+            token = generate
+        }
+    }
+
+    fun uploadProfilePicture(
+        request: UpdateProfilePictureRequest
+    ): BaseResponse<UserProfileResponse> = buildResponse {
+        val user = userCredentialRepository.findByUserEmail(it)
+            ?: throw UnAuthorizedException(translate("auth.user.not.exist"))
+
+        val mediaType = request.file?.getMimeTypes().orEmpty()
+        val fileNAme = user.createFileName(mediaType)
+
+        FileStorageUtils().save(
+            file = request.file!!,
+            fileName = fileNAme
+        )
+
+
+        baseResponse {
+            code = OK.value()
+            data = user.userProfile?.toResponse()
+            message = "Sukses"
+        }
+    }
+    //end region
+
+    //region admin
+    fun getAllUsers(
+        pageable: Pageable
+    ): BaseResponse<PagingDataResponse<UserProfileResponse>> = buildResponse(
+        checkAccess = { it.allowTo(READ_USER) }
+    ) {
+        val findAll = userProfileRepository.findAll(pageable)
+
+        baseResponse {
+            code = OK.value()
+            data = findAll.toResponse()
+            message = translate("users.found")
+        }
+    }
+
+    @Transactional
+    suspend fun assignPermission(
+        request: AssignPermissionRequest
+    ): BaseResponse<UserCredentialResponse> = buildResponse(
+        checkAccess = { it.allowTo(WRITE_USER) }
+    ) {
+        validationUtil.validate(request)
+        val findUser = userCredentialRepository.findByIdOrNull(request.userId!!)
+            ?: throw DataNotFoundException(
+                translate(""),
+                errorDataNotFound
+            )
+        val findPermission = permissionRepository.findAllById(request.permissions.orEmpty())
+
+        val savedUser = userCredentialRepository.save(
+            findUser.copy(
+                userPermissions = findPermission.toList()
+            )
+        )
+
+        baseResponse {
+            code = OK.value()
+            data = savedUser.toResponse()
+            message = "Sukses"
+        }
+    }
+
+    @Transactional
+    suspend fun bannedUser(
+        request: BannedUserRequest
+    ):BaseResponse<UserCredentialResponse> = buildResponse(
+        checkAccess = { it.allowTo(WRITE_USER) }
+    ) {
+        validationUtil.validate(request)
+
+        val findUser = userCredentialRepository.findByIdOrNull(request.userId!!)
+            ?: throw DataNotFoundException(
+                translate(""),
+                errorDataNotFound
+            )
+
+        val update = userCredentialRepository.save(
+            findUser.copy(
+                userStatus = SUSPENDED.name,
+                updatedAt = getTodayDateTimeOffset()
+            )
+        )
+
+        baseResponse {
+            code = OK.value()
+            data = update.toResponse()
+            message = "Success"
+        }
+    }
+
+    @Transactional
+    suspend fun activateUser(
+        request: BannedUserRequest
+    ):BaseResponse<UserCredentialResponse> = buildResponse(
+        checkAccess = { it.allowTo(WRITE_USER) }
+    ) {
+        validationUtil.validate(request)
+
+        val findUser = userCredentialRepository.findByIdOrNull(request.userId!!)
+            ?: throw DataNotFoundException(
+                translate(""),
+                errorDataNotFound
+            )
+
+        val update = userCredentialRepository.save(
+            findUser.copy(
+                userStatus = ACTIVE.name,
+                updatedAt = getTodayDateTimeOffset()
+            )
+        )
+
+        baseResponse {
+            code = OK.value()
+            data = update.toResponse()
+            message = "Success"
+        }
+    }
+    //end region
 }

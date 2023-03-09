@@ -8,10 +8,9 @@
 package com.bluehabit.budgetku.common.model
 
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
-import com.bluehabit.budgetku.common.isAllowed
-import com.bluehabit.budgetku.data.user.User
-import com.bluehabit.budgetku.data.user.UserRepository
-import com.bluehabit.budgetku.data.user.getListPermission
+import com.bluehabit.budgetku.data.role.permission.Permission
+import com.bluehabit.budgetku.data.user.userCredential.UserCredential
+import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import org.springframework.security.core.context.SecurityContextHolder
 
 data class BaseResponse<DATA>(
@@ -30,39 +29,36 @@ data class AuthBaseResponse<DATA>(
 fun <Data> baseResponse(lambda: BaseResponse<Data>.() -> Unit): BaseResponse<Data> =
     BaseResponse<Data>().apply(lambda)
 
-fun <Data> baseAuthResponse(lambda: AuthBaseResponse<Data>.() -> Unit) =
+fun <Data> baseAuthResponse(lambda: AuthBaseResponse<Data>.() -> Unit):AuthBaseResponse<Data> =
     AuthBaseResponse<Data>().apply(lambda)
 
 fun <Type> buildResponse(
-    userRepository: UserRepository,
-    permission: List<String> = listOf(),
-    whenValidAndAccepted: (currentUser: User) -> Type
+    userCredentialRepository: UserCredentialRepository,
+    allow: (Collection<Permission>) -> Boolean,
+    next: (currentUserCredential: UserCredential) -> Type
 ): Type {
     val email = SecurityContextHolder.getContext().authentication.principal.toString();
     if (email.isEmpty()) throw UnAuthorizedException("[98] You don't have access!")
 
     val user =
-        userRepository.findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
-    if (!user.getListPermission().isAllowed(
-            to = permission
-        )
-    ) throw UnAuthorizedException("User not allowed use this operations")
+        userCredentialRepository.findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
 
-    return whenValidAndAccepted(
-        user
-    )
+    if (!allow(user.userPermissions)) {
+        throw UnAuthorizedException("[98] You don't have access!")
+    }
+
+    return next(user)
 }
 
 fun <Type> buildResponse(
-    userRepository: UserRepository,
-    whenValidAndAccepted: (user: User) -> Type
+    userCredentialRepository: UserCredentialRepository,
+    next: (userCredential: UserCredential) -> Type
 ): Type {
     val email = SecurityContextHolder.getContext().authentication.principal.toString();
     if (email.isEmpty()) throw UnAuthorizedException("[98] You don't have access!")
 
-    val user = userRepository.findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
+    val user =
+        userCredentialRepository.findByUserEmail(email) ?: throw UnAuthorizedException("[98] You don't have permission")
 
-    return whenValidAndAccepted(
-        user
-    )
+    return next(user)
 }

@@ -7,4 +7,7 @@
 
 package com.bluehabit.budgetku.common.exception
 
-class DuplicateException(override val message: String?):Exception()
+class DuplicateException(
+    override val message: String?,
+    val errorCode:Int=0
+):Exception()

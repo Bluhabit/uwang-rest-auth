@@ -7,14 +7,14 @@
 
 package com.bluehabit.budgetku.config.tokenMiddleware
 
-import com.bluehabit.budgetku.data.user.UserRepository
+import com.bluehabit.budgetku.data.user.userCredential.UserCredentialRepository
 import com.bluehabit.budgetku.common.exception.UnAuthorizedException
 import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 
 class TokenAuthManager(
-    private val userRepository: UserRepository,
+    private val userCredentialRepository: UserCredentialRepository,
     private val environment: Environment
 ) : AuthenticationManager {
     val jwtKey = environment.getProperty("jwtSecret")
