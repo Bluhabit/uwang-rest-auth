@@ -19,7 +19,7 @@ services:
       POSTGRES_PASSWORD: bluehabit
       POSTGRES_DB: bluehabit
     ports:
-      - "33306:5432"
+      - "5432:5432"
     restart: always
 
 networks:
