@@ -26,11 +26,8 @@ import java.util.List;
 @EnableWebSecurity
 @EnableWebMvc
 public class WebSecurityConfiguration {
-
-
     @Autowired
     private UserDetailsService userDetailsService;
-
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
 
@@ -39,18 +36,8 @@ public class WebSecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(httpReq -> {
-                            httpReq.requestMatchers(
-                                    "/auth/**"
-                            ).permitAll();
-                        }
-                )
-                .authorizeHttpRequests(httpReq -> {
-                    httpReq.requestMatchers(
-                                    "/api/**"
-                            )
-                            .authenticated();
-                })
+                .authorizeHttpRequests(httpReq -> httpReq.requestMatchers("/auth/**").permitAll())
+                .authorizeHttpRequests(httpReq -> httpReq.requestMatchers("/api/**").authenticated())
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
@@ -58,13 +45,10 @@ public class WebSecurityConfiguration {
                     ex.authenticationEntryPoint(((request, response, authException) -> {
                         response.sendError(HttpStatus.BAD_REQUEST.value(), authException.getMessage());
                     }));
-                });
-
-        http.addFilterBefore(
-                jwtAuthFilter,
-                UsernamePasswordAuthenticationFilter.class
-        );
-
+                }).addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
@@ -95,7 +79,7 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public  BCryptPasswordEncoder encoder(){
+    public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 }
