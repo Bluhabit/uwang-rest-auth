@@ -1,22 +1,25 @@
-package com.bluehabit.budgetku.entity;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 
+package com.bluehabit.budgetku.component.user.entity;
+
+import com.bluehabit.budgetku.component.role.entity.Permission;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "tb_user_credential")
 @SQLDelete(
-        sql = "UPDATE tb_user_credential SET deleted=true WHERE id=?"
+        sql = "UPDATE tb_user_credential SET deleted=true WHERE user_id=?"
 )
 @Where(
         clause = "deleted = false"

@@ -1,12 +1,21 @@
-package com.bluehabit.budgetku.seeder;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+package com.bluehabit.budgetku;
 
 import com.bluehabit.budgetku.common.Constant;
-import com.bluehabit.budgetku.entity.Permission;
-import com.bluehabit.budgetku.entity.UserCredential;
-import com.bluehabit.budgetku.entity.UserProfile;
-import com.bluehabit.budgetku.repositories.PermissionRepository;
-import com.bluehabit.budgetku.repositories.UserCredentialRepository;
-import com.bluehabit.budgetku.repositories.UserProfileRepository;
+import com.bluehabit.budgetku.component.role.entity.Permission;
+import com.bluehabit.budgetku.component.role.entity.PermissionGroup;
+import com.bluehabit.budgetku.component.user.entity.UserCredential;
+import com.bluehabit.budgetku.component.user.entity.UserProfile;
+import com.bluehabit.budgetku.component.role.repo.PermissionGroupRepository;
+import com.bluehabit.budgetku.component.role.repo.PermissionRepository;
+import com.bluehabit.budgetku.component.user.repo.UserCredentialRepository;
+import com.bluehabit.budgetku.component.user.repo.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -27,6 +36,8 @@ public class Seeder implements ApplicationRunner {
     @Autowired
     private PermissionRepository permissionRepository;
 
+    @Autowired
+    private PermissionGroupRepository permissionGroupRepository;
     @Autowired
     private UserCredentialRepository userCredentialRepository;
 
@@ -120,11 +131,13 @@ public class Seeder implements ApplicationRunner {
         var password = bCryptPasswordEncoder.encode("12345678");
         var email = "admin@bluehabit.com";
         var email2 = "trian@bluehabit.com";
+        var idRole = "26ff6c62-a447-4e7f-941e-e3c866bd69bc";
 
         permissionRepository.saveAll(permission);
         List<Permission> permission = new ArrayList<>();
 
         permissionRepository.findAll().forEach(permission::add);
+
         if (userCredentialRepository.findByUserEmail(email).isEmpty()) {
             String userId1 = "26ff6c62-a447-4e7f-941e-e3c866bd69bc";
 
@@ -159,6 +172,22 @@ public class Seeder implements ApplicationRunner {
                     user1
             );
         }
+
+        if(!permissionGroupRepository.existsByRoleIdIgnoreCase((idRole))){
+            var role = new PermissionGroup(
+                    idRole,
+                    "ADMIN",
+                    "Buat Admin",
+                    permission,
+                    date,
+                    date
+            );
+            var saved =  permissionGroupRepository.save(role);
+
+            saved.setRolePermission(permission);
+            permissionGroupRepository.save(saved);
+        }
+
 
 
     }

@@ -1,17 +1,15 @@
 package com.bluehabit.budgetku.controller;
 
 import com.bluehabit.budgetku.common.BaseResponse;
-import com.bluehabit.budgetku.entity.UserCredential;
-import com.bluehabit.budgetku.model.user.*;
-import com.bluehabit.budgetku.services.UserService;
+import com.bluehabit.budgetku.component.user.entity.UserCredential;
+import com.bluehabit.budgetku.component.user.model.*;
+import com.bluehabit.budgetku.component.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
 public class AuthenticationController {
@@ -52,5 +50,15 @@ public class AuthenticationController {
     )
     public ResponseEntity<BaseResponse<UserCredential>> signUpWithGoogle(@NonNull @Valid @RequestBody SignUpWithGoogleRequest request) {
         return userService.signUpWithGoogle(request);
+    }
+
+    @GetMapping(
+            path = "/auth/refresh-token",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<BaseResponse<String>> refreshToken(
+            @RequestHeader("Authorization") String token
+    ){
+        return userService.refreshToken(token);
     }
 }

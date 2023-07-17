@@ -24,7 +24,7 @@ public class Constant {
 
 
         public static int BKA_1000 = 1000;
-        public static int BKA_1001 = 1001;
+        public static int BKA_1001_EXPIRED = 1001;
         public static int BKA_1002 = 1002;
         public static int BKA_1003 = 1003;
         public static int BKA_1004 = 1004;

@@ -1,8 +1,8 @@
 package com.bluehabit.budgetku.controller;
 
 import com.bluehabit.budgetku.common.BaseResponse;
-import com.bluehabit.budgetku.entity.UserProfile;
-import com.bluehabit.budgetku.services.UserService;
+import com.bluehabit.budgetku.component.user.entity.UserProfile;
+import com.bluehabit.budgetku.component.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;

@@ -1,8 +1,15 @@
-package com.bluehabit.budgetku.services;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 
-import com.bluehabit.budgetku.entity.UserCredential;
-import com.bluehabit.budgetku.model.user.UserInfoDetails;
-import com.bluehabit.budgetku.repositories.UserCredentialRepository;
+package com.bluehabit.budgetku.component.user.service;
+
+import com.bluehabit.budgetku.component.user.entity.UserCredential;
+import com.bluehabit.budgetku.component.user.model.UserInfoDetails;
+import com.bluehabit.budgetku.component.user.repo.UserCredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

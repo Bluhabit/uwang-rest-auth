@@ -1,4 +1,11 @@
-package com.bluehabit.budgetku.entity;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+package com.bluehabit.budgetku.component.role.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +23,7 @@ import java.time.OffsetDateTime;
         name = "tb_permission"
 )
 @SQLDelete(
-        sql = "UPDATE tb_permission SET deleted=true WHERE permissionId=?"
+        sql = "UPDATE tb_permission SET deleted=true WHERE permission_id=?"
 )
 @Where(
         clause = "deleted = false"

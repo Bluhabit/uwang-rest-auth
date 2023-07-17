@@ -1,14 +1,21 @@
-package com.bluehabit.budgetku.services;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+package com.bluehabit.budgetku.component.user.service;
 
 import com.bluehabit.budgetku.common.BaseResponse;
 import com.bluehabit.budgetku.common.GoogleAuthUtil;
+import com.bluehabit.budgetku.component.user.model.*;
 import com.bluehabit.budgetku.config.JwtService;
-import com.bluehabit.budgetku.entity.UserCredential;
-import com.bluehabit.budgetku.entity.UserProfile;
+import com.bluehabit.budgetku.component.user.entity.UserCredential;
+import com.bluehabit.budgetku.component.user.entity.UserProfile;
 import com.bluehabit.budgetku.exception.UnAuthorizedException;
-import com.bluehabit.budgetku.model.user.*;
-import com.bluehabit.budgetku.repositories.UserCredentialRepository;
-import com.bluehabit.budgetku.repositories.UserProfileRepository;
+import com.bluehabit.budgetku.component.user.repo.UserCredentialRepository;
+import com.bluehabit.budgetku.component.user.repo.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -71,12 +78,12 @@ public class UserService {
     public ResponseEntity<BaseResponse<UserCredential>> signUpWithGoogle(SignUpWithGoogleRequest req) {
         var claims = GoogleAuthUtil.getGoogleClaim(req.token());
         if (claims.isEmpty()) {
-            return BaseResponse.failed(1, "Token is invalid");
+            throw  new UnAuthorizedException(1, "Token is invalid");
         }
 
         var findUser = userCredentialRepository.exist(claims.get().email());
         if (findUser) {
-            return BaseResponse.failed(2, "Already registered");
+            throw  new UnAuthorizedException(2, "Already registered");
         }
         var uuid = UUID.randomUUID().toString();
         var currentDate = OffsetDateTime.now();
@@ -112,7 +119,7 @@ public class UserService {
 
         var findUser = userCredentialRepository.exist(req.email());
         if (findUser) {
-            return BaseResponse.failed(2, "Already registered");
+            throw new UnAuthorizedException(2, "Already registered");
         }
         var uuid = UUID.randomUUID().toString();
         var currentDate = OffsetDateTime.now();
@@ -148,4 +155,35 @@ public class UserService {
         var user = userProfileRepository.findAll(pageable);
         return BaseResponse.success("Get all users", user.toList());
     }
+
+    public ResponseEntity<BaseResponse<String>> refreshToken(String token){
+        try{
+            if (token == null || token.isEmpty()) {
+                throw  new UnAuthorizedException(401,"Token not provided");
+            }
+
+            if (!token.startsWith("Bearer")) {
+                throw  new UnAuthorizedException(401,"header doesn't contain Bearer");
+            }
+
+            String split = token.substring(7);
+            String username = jwtService.extractFromExpired(split);
+
+            if (username.isEmpty()) {
+                throw  new UnAuthorizedException(401,"failed extract claim");
+            }
+            var findUser = userCredentialRepository.findByUserEmail(username);
+
+            if(findUser.isEmpty()){
+                throw  new UnAuthorizedException(4000,"there is no user with "+username);
+            }
+
+            var generatedToken = jwtService.generateToken(findUser.get().getUserEmail());
+
+            return BaseResponse.success("Success",generatedToken);
+        }catch (Exception e){
+            throw  new UnAuthorizedException(401,e.getClass().getSimpleName());
+        }
+    }
+
 }

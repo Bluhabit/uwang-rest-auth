@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -30,34 +31,47 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userService;
 
+    private List<String> allowList = List.of(
+            "/auth/sign-in-email",
+            "/auth/sign-in-google",
+            "/auth/sign-up-email",
+            "/auth/sign-up-google",
+            "/auth/refresh-token"
+    );
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        if (request.getServletPath().contains("/auth")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+       // resolver.resolveException(request,response,null, new UnAuthorizedException("invalid"));
 
         try {
+
+            if (allowList.contains(request.getServletPath())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || authHeader.isEmpty()) {
-                throw new UnAuthorizedException("muehehehe");
+                throw new UnAuthorizedException("header empty");
             }
 
             if (!authHeader.startsWith("Bearer")) {
-                throw new UnAuthorizedException("muehehehe");
+                throw new UnAuthorizedException("header doesn't contain Bearer");
+            }
+
+            if(authHeader.length() <= 6){
+                throw new UnAuthorizedException("Header only contains 'Bearer'");
             }
 
             String token = authHeader.substring(7);
             String username = jwtService.extractUsername(token);
 
             if (username.isEmpty()) {
-                throw new UnAuthorizedException("muehehehe");
+                throw new UnAuthorizedException("failed extract claim");
             }
 
             UserDetails userDetails = userService.loadUserByUsername(username);
             if (!jwtService.validateToken(token, userDetails)) {
-                throw new UnAuthorizedException("muehehehe");
+                throw new UnAuthorizedException("user not found");
             }
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

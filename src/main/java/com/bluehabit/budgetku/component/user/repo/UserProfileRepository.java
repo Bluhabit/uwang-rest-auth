@@ -1,9 +1,13 @@
-package com.bluehabit.budgetku.repositories;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 
-import com.bluehabit.budgetku.entity.UserProfile;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
+package com.bluehabit.budgetku.component.user.repo;
+
+import com.bluehabit.budgetku.component.user.entity.UserProfile;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 

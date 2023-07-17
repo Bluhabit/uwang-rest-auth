@@ -2,14 +2,14 @@ package com.bluehabit.budgetku.exception;
 
 import org.springframework.security.core.AuthenticationException;
 
-public class UnAuthorizedException extends AuthenticationException {
+public class GeneralErrorException extends AuthenticationException {
     private int statusCode;
-    public UnAuthorizedException(int statusCode,String msg) {
+    public GeneralErrorException(int statusCode, String msg) {
         super(msg);
         this.statusCode = statusCode;
     }
 
-    public UnAuthorizedException(String msg) {
+    public GeneralErrorException(String msg) {
         super(msg);
         this.statusCode = 401;
     }

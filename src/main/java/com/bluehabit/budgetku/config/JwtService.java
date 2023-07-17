@@ -1,6 +1,7 @@
 package com.bluehabit.budgetku.config;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -25,6 +26,15 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractFromExpired(String token){
+        try {
+            return extractUsername(token);
+        }catch (ExpiredJwtException e){
+            return  e.getClaims().getSubject();
+        }
+
     }
 
     public Date extractExpiration(String token) {

@@ -1,7 +1,14 @@
-package com.bluehabit.budgetku.model.user;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 
-import com.bluehabit.budgetku.entity.Permission;
-import com.bluehabit.budgetku.entity.UserCredential;
+package com.bluehabit.budgetku.component.user.model;
+
+import com.bluehabit.budgetku.component.role.entity.Permission;
+import com.bluehabit.budgetku.component.user.entity.UserCredential;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
