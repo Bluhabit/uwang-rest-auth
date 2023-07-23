@@ -33,60 +33,7 @@ import java.util.List;
 @EnableWebSecurity
 @EnableWebMvc
 public class WebSecurityConfiguration {
-    @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private JwtAuthFilter jwtAuthFilter;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(cors->cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(httpReq -> httpReq.requestMatchers("/auth/**").permitAll())
-                .authorizeHttpRequests(httpReq -> httpReq.requestMatchers("/api/**").authenticated())
-                .sessionManagement(session -> {
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
-                .exceptionHandling(ex -> {
-                    ex.authenticationEntryPoint(((request, response, authException) -> {
-                        response.sendError(HttpStatus.BAD_REQUEST.value(), authException.getMessage());
-                    }));
-                }).addFilterBefore(
-                        jwtAuthFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
 
-        return http.build();
-    }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173","http://localhost:5174"));
-        configuration.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

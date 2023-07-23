@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 public class BaseResponse<T> {
     private final int statusCode;
     private final String message;
-    private  T data=null;
+    private final T data;
 
     private BaseResponse( int statusCode, String message, T data) {
         this.statusCode = statusCode;
@@ -22,16 +22,8 @@ public class BaseResponse<T> {
         this.data = data;
     }
 
-    private BaseResponse( int statusCode, String message) {
-        this.statusCode = statusCode;
-        this.message = message;
-    }
-
     public static <OUT> ResponseEntity<BaseResponse<OUT>> failed(int statusCode, String message){
-        return new ResponseEntity<BaseResponse<OUT>>(
-                (BaseResponse<OUT>) new BaseResponse<>(statusCode,message,null),
-                HttpStatus.BAD_REQUEST
-        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse<>(statusCode,message,null));
     }
 
     public static <OUT> BaseResponse<OUT> error(int statusCode, String message){
