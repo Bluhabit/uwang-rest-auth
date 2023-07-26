@@ -7,50 +7,42 @@
 
 package com.bluehabit.eureka.config;
 
+import com.bluehabit.eureka.UnAuthorizationException;
+import com.bluehabit.eureka.common.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class FilterRequest extends OncePerRequestFilter {
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
     @Autowired
-    private JwtService jwtService;
+    private JwtUtils jwtUtils;
 
     @Autowired
     private UserDetailsService userService;
 
-    private List<String> allowList = List.of(
-            "/auth/sign-in-email",
-            "/auth/sign-in-google",
-            "/auth/sign-up-email",
-            "/auth/sign-up-google",
-            "/auth/refresh-token"
-    );
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try {
-
-            if (allowList.contains(request.getServletPath())) {
-                filterChain.doFilter(request, response);
-                return;
+            if(request.getHeader("Authorization") == null){
+                throw new UnAuthorizationException("sahsah");
             }
-
             filterChain.doFilter(request, response);
         } catch (Exception e) {
             resolver.resolveException(request, response, null, e);

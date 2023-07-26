@@ -17,5 +17,25 @@ import java.util.Locale;
 
 @Configuration
 public class ApplicationConfig {
-
+    @Bean
+    public CommonsRequestLoggingFilter requestLoggingFilter() {
+        var loggingFilter = new  CommonsRequestLoggingFilter();
+        loggingFilter.setIncludeClientInfo(true);
+        loggingFilter.setIncludeQueryString(true);
+        loggingFilter.setIncludePayload(true);
+        loggingFilter.setMaxPayloadLength(64000);
+        return loggingFilter;
+    }
+    @Bean
+    public SessionLocaleResolver localResolver() {
+        var resolver = new SessionLocaleResolver();
+        resolver.setDefaultLocale(Locale.US);
+        return resolver;
+    }
+    @Bean
+    public ResourceBundleMessageSource bundleMessageSource(){
+        var message = new ResourceBundleMessageSource();
+        message.setBasename("message");
+        return message;
+    }
 }

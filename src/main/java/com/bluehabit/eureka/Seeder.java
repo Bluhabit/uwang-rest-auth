@@ -18,13 +18,6 @@ import java.time.OffsetDateTime;
 
 @Component
 public class Seeder implements ApplicationRunner {
-
-    @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private final OffsetDateTime date = OffsetDateTime.now();
-    private final LocalDate dateOfBirth = LocalDate.of(1998, 9, 16);
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
