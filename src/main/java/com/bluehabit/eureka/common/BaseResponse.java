@@ -16,7 +16,7 @@ public class BaseResponse<T> {
     private final String message;
     private final T data;
 
-    private BaseResponse( int statusCode, String message, T data) {
+    public BaseResponse( int statusCode, String message, T data) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;

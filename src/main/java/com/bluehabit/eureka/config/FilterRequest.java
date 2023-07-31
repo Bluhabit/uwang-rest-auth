@@ -22,6 +22,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class FilterRequest extends OncePerRequestFilter {
@@ -35,13 +37,17 @@ public class FilterRequest extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userService;
 
+    List<String> allowList = List.of(
+            "/auth/sign-in"
+    );
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            if(request.getHeader("Authorization") == null){
-                throw new UnAuthorizationException("sahsah");
+            if (allowList.contains(request.getServletPath())) {
+                filterChain.doFilter(request, response);
+                return;
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
