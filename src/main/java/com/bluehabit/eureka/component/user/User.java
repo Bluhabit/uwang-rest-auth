@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.component;
+package com.bluehabit.eureka.component.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,4 +50,6 @@ public class User {
             nullable = false
     )
     private boolean deleted;
+
+
 }

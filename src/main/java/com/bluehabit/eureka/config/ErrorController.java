@@ -9,10 +9,10 @@ package com.bluehabit.eureka.config;
 
 import com.bluehabit.eureka.UnAuthorizationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.Map;
 
 
@@ -25,7 +25,25 @@ public class ErrorController {
     @ResponseStatus(
             HttpStatus.BAD_REQUEST
     )
-    public Map<String,String> unauthorized(UnAuthorizationException e){
-        return Map.of("gehe",e.getMessage());
+    public Map<String, String> unauthorized(UnAuthorizationException e) {
+        return Map.ofEntries(
+                Map.entry("statusCode", "401"),
+                Map.entry("data", ""),
+                Map.entry("message", e.getMessage())
+        );
+    }
+
+    @ExceptionHandler(
+            value = MethodArgumentNotValidException.class
+    )
+    @ResponseStatus(
+            HttpStatus.BAD_REQUEST
+    )
+    public Map<String, String> invalid(MethodArgumentNotValidException e) {
+        return Map.ofEntries(
+                Map.entry("statusCode", "401"),
+                Map.entry("data", ""),
+                Map.entry("message", e.getMessage())
+        );
     }
 }
