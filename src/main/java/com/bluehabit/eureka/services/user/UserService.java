@@ -7,6 +7,7 @@
 
 package com.bluehabit.eureka.services.user;
 
+import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.common.GoogleAuthUtil;
 import com.bluehabit.eureka.common.JwtUtil;
@@ -34,7 +35,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService extends AbstractBaseService {
     @Autowired
     private UserCredentialRepository userCredentialRepository;
     @Autowired
@@ -45,6 +46,7 @@ public class UserService {
     private JwtUtil jwtUtil;
 
     public ResponseEntity<BaseResponse<SignInResponse>> signInWithEmail(SignInWithEmailRequest request) {
+        validate(request);
         return userCredentialRepository.findByUserEmail(request.email()).map(user -> {
             if (!encoder.matches(request.password(), user.getUserPassword())) {
                 throw new UnAuthorizedException("Email or Password invalid");
