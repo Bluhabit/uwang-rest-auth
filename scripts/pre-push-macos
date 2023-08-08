@@ -20,28 +20,28 @@ if [ -z "$dirToLint"]
 fi
 
 # Perform lint check
-echo "Performing pre-commit lint check of ""$dirToLint"
+echo "Performing pre-push lint check of ""$dirToLint"
 ./gradlew checkstyleMain --daemon
 detektStatus=$?
 
 lintStatus=1
 if [ $detektStatus -eq 0 ]
 then
-  echo "Android Detekt Success."
+  echo "Rest Checkstyle Success."
   lintStatus=$?
 
   if [ $lintStatus -ne 0 ]
   then
-    echo "Android Lint failure, git push aborted."
+    echo "Rest Lint failure, git push aborted."
     echo "Open ${projectDir}${lintReportPath} in a browser to see Lint Report"
     exit 1
   fi
 else
-  echo "Android Detekt failure, git push aborted."
+  echo "Rest Checkstyle failure, git push aborted."
   exit 1
 fi
 
 echo "LintStatus ${lintStatus}"
-echo "DetektStatus ${detektStatus}"
+echo "CheckstyleStatus ${detektStatus}"
 
 exit $lintStatus
