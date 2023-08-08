@@ -12,5 +12,10 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 public abstract class BaseService {
+    @Autowired
+    protected ResourceBundleMessageSource i81n;
 
+    protected String translate(String key,String...params){
+        return i81n.getMessage(key,params, LocaleContextHolder.getLocale());
+    }
 }

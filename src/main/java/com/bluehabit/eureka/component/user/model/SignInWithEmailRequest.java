@@ -7,10 +7,8 @@
 
 package com.bluehabit.eureka.component.user.model;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
-public record SignInRequest(
-        @NotEmpty String email,
-        @NotEmpty String password
-) {
-}
+public record SignInWithEmailRequest(
+        @NotBlank String email, @NotBlank String password
+) { }

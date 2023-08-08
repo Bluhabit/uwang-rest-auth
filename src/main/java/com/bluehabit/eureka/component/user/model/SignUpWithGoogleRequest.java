@@ -5,13 +5,8 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.common;
+package com.bluehabit.eureka.component.user.model;
 
-import org.springframework.stereotype.Component;
+import jakarta.validation.constraints.NotBlank;
 
-@Component
-public class ValidationUtil {
-
-
-
-}
+public record SignUpWithGoogleRequest(@NotBlank String token) { }
