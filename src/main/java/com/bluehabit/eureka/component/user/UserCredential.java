@@ -8,7 +8,14 @@
 package com.bluehabit.eureka.component.user;
 
 import com.bluehabit.eureka.component.role.Permission;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,16 +32,16 @@ import java.util.Collection;
 @Entity
 @Table(name = "tb_user_credential")
 @SQLDelete(
-        sql = "UPDATE tb_user_credential SET deleted=true WHERE user_id=?"
+    sql = "UPDATE tb_user_credential SET deleted=true WHERE user_id=?"
 )
 @Where(
-        clause = "deleted = false"
+    clause = "deleted = false"
 )
 public class UserCredential {
     @Id
     @GenericGenerator(
-            name = "UUID",
-            type = org.hibernate.id.uuid.UuidGenerator.class
+        name = "UUID",
+        type = org.hibernate.id.uuid.UuidGenerator.class
     )
     private String userId;
     @Column(unique = true)
@@ -47,34 +54,14 @@ public class UserCredential {
     private String userAuthProvider;
     @Column
     private String userNotificationToken;
-    @ManyToMany(
-            fetch = FetchType.EAGER,
-            cascade = {CascadeType.ALL}
-    )
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Collection<Permission> userPermission;
-    @OneToOne(
-            fetch = FetchType.EAGER,
-            cascade = {CascadeType.ALL}
-    )
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private UserProfile userProfile;
     @Column
     private OffsetDateTime createdAt;
     @Column
     private OffsetDateTime updatedAt;
-    @Column(
-            name = "deleted",
-            nullable = false
-    )
+    @Column(name = "deleted", nullable = false)
     private boolean deleted;
-
-    public UserCredential(String userId, String userEmail, String userPassword, String userStatus, String userAuthProvider, String userNotificationToken, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
-        this.userId = userId;
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
-        this.userStatus = userStatus;
-        this.userAuthProvider = userAuthProvider;
-        this.userNotificationToken = userNotificationToken;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 }

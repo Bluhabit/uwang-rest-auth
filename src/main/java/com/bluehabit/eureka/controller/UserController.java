@@ -19,16 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController()
+@RestController
 public class UserController {
     @Autowired
     private UserService userService;
 
-
-
     @GetMapping(
-            path = "/api/v1/users",
-            produces = MediaType.APPLICATION_JSON_VALUE
+        path = "/api/v1/users",
+        produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<List<UserProfile>>> getUsers(Pageable pageable) {
         return userService.getUsers(pageable);

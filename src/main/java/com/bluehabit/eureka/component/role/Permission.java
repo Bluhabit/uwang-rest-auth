@@ -25,44 +25,45 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @Entity
 @Table(
-        name = "tb_permission"
+    name = "tb_permission"
 )
 @SQLDelete(
-        sql = "UPDATE tb_permission SET deleted=true WHERE permission_id=?"
+    sql = "UPDATE tb_permission SET deleted=true WHERE permission_id=?"
 )
 @Where(
-        clause = "deleted = false"
+    clause = "deleted = false"
 )
-public class Permission{
-        @Id
-        @GenericGenerator(
-                name = "UUID",
-                type = org.hibernate.id.uuid.UuidGenerator.class
-        )
-        private String permissionId;
-        @Column(nullable = false)
-        private String permissionName;
-        @Column(nullable = false)
-        private String permissionType;
-        @Column
-        private String permissionGroup;
-        @Column
-        private OffsetDateTime createdAt;
-        @Column
-        private OffsetDateTime updatedAt;
-        @Column(
-                name = "deleted",
-                nullable = false
-        )
-        private boolean deleted;
-        public Permission(String permissionId, String permissionName, String permissionType, String permissionGroup, OffsetDateTime createdAt, OffsetDateTime updatedAt, boolean deleted) {
-                this.permissionId = permissionId;
-                this.permissionName = permissionName;
-                this.permissionType = permissionType;
-                this.permissionGroup = permissionGroup;
-                this.createdAt = createdAt;
-                this.updatedAt = updatedAt;
-                this.deleted = deleted;
-        }
+public class Permission {
+    @Id
+    @GenericGenerator(
+        name = "UUID",
+        type = org.hibernate.id.uuid.UuidGenerator.class
+    )
+    private String permissionId;
+    @Column(nullable = false)
+    private String permissionName;
+    @Column(nullable = false)
+    private String permissionType;
+    @Column
+    private String permissionGroup;
+    @Column
+    private OffsetDateTime createdAt;
+    @Column
+    private OffsetDateTime updatedAt;
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    private boolean deleted;
+
+    public Permission(String permissionId, String permissionName, String permissionType, String permissionGroup, OffsetDateTime createdAt, OffsetDateTime updatedAt, boolean deleted) {
+        this.permissionId = permissionId;
+        this.permissionName = permissionName;
+        this.permissionType = permissionType;
+        this.permissionGroup = permissionGroup;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deleted = deleted;
+    }
 
 }

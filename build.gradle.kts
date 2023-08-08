@@ -13,6 +13,12 @@ checkstyle {
     isIgnoreFailures = false
     toolVersion = "10.3.3"
     configFile = file("${rootDir}/config/checkstyle.xml")
+    setConfigProperties(
+        Pair(
+            "suppressionFile",
+            "${rootDir}/config/suppressed-checkstyle.xml"
+        )
+    )
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_17

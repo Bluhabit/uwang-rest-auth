@@ -9,4 +9,5 @@ package com.bluehabit.eureka.component.user.model;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record SignInWithGoogleRequest(@NotBlank String token) { }
+public record SignInWithGoogleRequest(@NotBlank String token) {
+}
