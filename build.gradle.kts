@@ -63,3 +63,25 @@ tasks.withType<Checkstyle>().configureEach {
         html.required.set(true)
     }
 }
+
+tasks.create<Copy>("installGitHook") {
+    var suffix = "macos"
+    if (org.apache.tools.ant.taskdefs.condition.Os.isFamily(org.apache.tools.ant.taskdefs.condition.Os.FAMILY_WINDOWS)) {
+        suffix = "windows"
+    }
+
+    copy {
+        from(File(rootProject.rootDir, "scripts/pre-push-$suffix"))
+        into { File(rootProject.rootDir, ".git/hooks") }
+        rename("pre-push-$suffix", "pre-push")
+    }
+    copy {
+        from(File(rootProject.rootDir, "scripts/pre-commit-$suffix"))
+        into { File(rootProject.rootDir, ".git/hooks") }
+        rename("pre-commit-$suffix", "pre-commit")
+    }
+    fileMode = "775".toInt(8)
+}
+
+
+tasks.getByPath(":init").dependsOn("installGitHook")
