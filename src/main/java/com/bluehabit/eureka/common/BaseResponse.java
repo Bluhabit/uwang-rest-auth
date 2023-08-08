@@ -7,8 +7,12 @@
 
 package com.bluehabit.eureka.common;
 
+import jakarta.validation.ConstraintViolation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.Map;
 
 public final class BaseResponse<T> {
     private final int statusCode;
@@ -31,6 +35,15 @@ public final class BaseResponse<T> {
 
     public static <O> ResponseEntity<BaseResponse<O>> success(String message, O data) {
         return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), message, data));
+    }
+
+    public static Map<String, Object> validationFailed(List<ConstraintViolation<?>> violations) {
+        return Map.ofEntries(
+            Map.entry("statusCode", Constant.BKA_1008),
+            Map.entry("data", ""),
+            Map.entry("message", "Validation"),
+            Map.entry("errorField", violations.stream().map(value -> Map.of(value.getPropertyPath(), value.getMessage())))
+        );
     }
 
     public int getStatusCode() {

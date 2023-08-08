@@ -15,16 +15,25 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.validation.ConstraintViolationException;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Map;
+
 @RestControllerAdvice
 public class ErrorController {
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> validation(ConstraintViolationException violationException) {
+        return BaseResponse.validationFailed(
+            violationException.getConstraintViolations().stream().toList()
+        );
+    }
 
     @ExceptionHandler(value = SignatureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -72,14 +81,6 @@ public class ErrorController {
         );
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseResponse<String> validation(MethodArgumentNotValidException methodArgumentNotValidException) {
-        return BaseResponse.error(
-            Constant.BKA_1006, methodArgumentNotValidException.getMessage()
-        );
-    }
-
     @ExceptionHandler(value = FileUploadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<String> contentTypeFormDataNotMatch(FileUploadException fileUploadException) {
@@ -103,5 +104,4 @@ public class ErrorController {
             HttpStatus.UNAUTHORIZED.value(), malformedJwtException.getMessage()
         );
     }
-
 }

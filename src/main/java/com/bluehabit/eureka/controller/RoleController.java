@@ -13,7 +13,6 @@ import com.bluehabit.eureka.component.role.Role;
 import com.bluehabit.eureka.component.role.model.CreateRoleRequest;
 import com.bluehabit.eureka.component.role.model.DeleteRolesRequest;
 import com.bluehabit.eureka.services.user.RoleServiceAbstract;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,7 +65,7 @@ public class RoleController {
     )
     public ResponseEntity<BaseResponse<Role>> updateRole(
         @PathVariable("roleId") String roleId,
-        @Valid @RequestBody CreateRoleRequest request
+         @RequestBody CreateRoleRequest request
     ) {
         return roleService.updateNewRole(roleId, request);
     }
@@ -77,7 +76,7 @@ public class RoleController {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<Role>> createNewRole(
-        @Valid @RequestBody CreateRoleRequest request
+         @RequestBody CreateRoleRequest request
     ) {
         return roleService.createNewRole(request);
     }
@@ -99,7 +98,7 @@ public class RoleController {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<List<String>>> deleteRoles(
-        @Valid @RequestBody DeleteRolesRequest request
+         @RequestBody DeleteRolesRequest request
     ) {
         return roleService.deleteRoles(request);
     }

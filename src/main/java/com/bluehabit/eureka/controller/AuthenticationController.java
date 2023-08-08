@@ -15,7 +15,6 @@ import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
 import com.bluehabit.eureka.component.user.model.SignUpWithGoogleRequest;
 import com.bluehabit.eureka.services.user.UserService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +35,7 @@ public class AuthenticationController {
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<BaseResponse<SignInResponse>> signInWithEmail(@NonNull @Valid @RequestBody SignInWithEmailRequest req) {
+    public ResponseEntity<BaseResponse<SignInResponse>> signInWithEmail(@NonNull @RequestBody SignInWithEmailRequest req) {
         return userService.signInWithEmail(req);
     }
 
@@ -45,7 +44,7 @@ public class AuthenticationController {
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(@NonNull @Valid @RequestBody SignInWithGoogleRequest req) {
+    public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(@NonNull @RequestBody SignInWithGoogleRequest req) {
         return userService.signInWithGoogle(req);
     }
 
@@ -54,7 +53,7 @@ public class AuthenticationController {
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<BaseResponse<UserCredential>> signUpWithEmail(@NonNull @Valid @RequestBody SignUpWithEmailRequest request) {
+    public ResponseEntity<BaseResponse<UserCredential>> signUpWithEmail(@NonNull @RequestBody SignUpWithEmailRequest request) {
         return userService.signUpWithEmail(request);
     }
 
@@ -63,7 +62,7 @@ public class AuthenticationController {
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<BaseResponse<UserCredential>> signUpWithGoogle(@NonNull @Valid @RequestBody SignUpWithGoogleRequest request) {
+    public ResponseEntity<BaseResponse<UserCredential>> signUpWithGoogle(@NonNull @RequestBody SignUpWithGoogleRequest request) {
         return userService.signUpWithGoogle(request);
     }
 
