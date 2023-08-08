@@ -7,28 +7,25 @@
 
 package com.bluehabit.eureka.services.user;
 
-import com.bluehabit.eureka.component.user.User;
-import com.bluehabit.eureka.component.user.UserInfoDetails;
-import com.bluehabit.eureka.component.user.UserRepository;
+import com.bluehabit.eureka.component.user.UserCredentialRepository;
+import com.bluehabit.eureka.component.user.model.UserInfoDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class UserInfoService implements UserDetailsService {
     @Autowired
-    private UserRepository userRepository;
+    private UserCredentialRepository userCredentialRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userInfo = userRepository.findByUserEmail(username);
-
-        return userInfo.map(UserInfoDetails::new)
+        return userCredentialRepository.findByUserEmail(username)
+                .map(UserInfoDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found " + username));
 
     }
+
 }

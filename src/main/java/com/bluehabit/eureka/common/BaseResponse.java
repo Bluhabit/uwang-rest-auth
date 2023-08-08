@@ -8,7 +8,6 @@
 package com.bluehabit.eureka.common;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 public class BaseResponse<T> {
@@ -16,7 +15,7 @@ public class BaseResponse<T> {
     private final String message;
     private final T data;
 
-    public BaseResponse( int statusCode, String message, T data) {
+    private BaseResponse( int statusCode, String message, T data) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;

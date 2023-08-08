@@ -5,13 +5,10 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.component.user;
+package com.bluehabit.eureka.component.role;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.Optional;
-
-public interface UserRepository extends PagingAndSortingRepository<User, String>, CrudRepository<User, String> {
-    Optional<User> findByUserEmail(String userEmail);
+public interface PermissionRepository extends PagingAndSortingRepository<Permission, String>, CrudRepository<Permission, String> {
 }

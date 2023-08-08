@@ -5,13 +5,14 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.component.user;
+package com.bluehabit.eureka.component.user.model;
 
+import com.bluehabit.eureka.component.role.Permission;
+import com.bluehabit.eureka.component.user.UserCredential;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,21 +21,19 @@ public class UserInfoDetails implements UserDetails {
     private final String password;
     private final List<SimpleGrantedAuthority> authorities;
 
-    public UserInfoDetails(User user) {
+    public UserInfoDetails(UserCredential user) {
         this.name = user.getUserEmail();
         this.password = user.getUserPassword();
-        this.authorities = new ArrayList<>();
-
-//        user
-//                .getUserPermission()
-//                .stream()
-//                .map(Permission::getPermissionType)
-//                .map(SimpleGrantedAuthority::new)
-//                .toList();
+        this.authorities = user
+                .getUserPermission()
+                .stream()
+                .map(Permission::getPermissionType)
+                .map(SimpleGrantedAuthority::new)
+                .toList();
 
     }
 
-    public List<? extends GrantedAuthority> getAuth(){
+    public List<? extends  GrantedAuthority> getAuth(){
         return authorities;
     }
 
