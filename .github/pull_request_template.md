@@ -1,12 +1,10 @@
-**example:** [WIP][BUGFIX][FEATURE][BKA-601] - Security Credentials
-
 #### Description
 
 > Description of features, bugs, improvements or any changes in this MR.
 
 #### Ticket Reference(s)
 
-[BKA-XXX](https://bluehabit.youtrack.cloud/issue/<TICKET_NUMBER>)
+[GAWE-XXX](https://bluehabit.atlassian.net/browse/<TICKET_NUMBER>)
 
 #### Validation
 
