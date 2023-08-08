@@ -5,14 +5,9 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.common;
+package com.bluehabit.eureka.component.user.model;
 
-public record GoogleClaim(
-    String email,
-    String picture,
-    String fullName,
-    String locale,
-    String message
-) {
+import jakarta.validation.constraints.NotBlank;
 
+public record SignInWithGoogleRequest(@NotBlank String token) {
 }

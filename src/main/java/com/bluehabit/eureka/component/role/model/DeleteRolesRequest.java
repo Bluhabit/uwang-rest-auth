@@ -5,12 +5,14 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.component.user.model;
+package com.bluehabit.eureka.component.role.model;
 
 import jakarta.validation.constraints.NotEmpty;
 
-public record SignInRequest(
-        @NotEmpty String email,
-        @NotEmpty String password
+import java.util.List;
+
+public record DeleteRolesRequest(
+    @NotEmpty List<String> ids
 ) {
+
 }

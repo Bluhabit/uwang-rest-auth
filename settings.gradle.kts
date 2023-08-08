@@ -1,1 +1,1 @@
-rootProject.name = "Blue Habit"
+rootProject.name = "GAWEAN"
