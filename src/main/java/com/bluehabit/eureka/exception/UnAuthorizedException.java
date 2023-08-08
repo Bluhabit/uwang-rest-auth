@@ -7,18 +7,20 @@
 
 package com.bluehabit.eureka.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
 public class UnAuthorizedException extends AuthenticationException {
-    private int statusCode;
-    public UnAuthorizedException(int statusCode,String msg) {
+    private final int statusCode;
+
+    public UnAuthorizedException(int statusCode, String msg) {
         super(msg);
         this.statusCode = statusCode;
     }
 
     public UnAuthorizedException(String msg) {
         super(msg);
-        this.statusCode = 401;
+        this.statusCode = HttpStatus.UNAUTHORIZED.value();
     }
 
     public int getStatusCode() {

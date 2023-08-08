@@ -13,6 +13,6 @@ public record GoogleClaim(
     String fullName,
     String locale,
     String message
-){
+) {
 
 }

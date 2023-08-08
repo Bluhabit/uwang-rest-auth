@@ -7,10 +7,12 @@
 
 package com.bluehabit.eureka.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
 public class GeneralErrorException extends AuthenticationException {
-    private int statusCode;
+    private final int statusCode;
+
     public GeneralErrorException(int statusCode, String msg) {
         super(msg);
         this.statusCode = statusCode;
@@ -18,7 +20,7 @@ public class GeneralErrorException extends AuthenticationException {
 
     public GeneralErrorException(String msg) {
         super(msg);
-        this.statusCode = 401;
+        this.statusCode = HttpStatus.UNAUTHORIZED.value();
     }
 
     public int getStatusCode() {

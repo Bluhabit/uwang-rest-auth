@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
-public abstract class BaseService {
+public abstract class AbstractBaseService {
     @Autowired
-    protected ResourceBundleMessageSource i81n;
+    private ResourceBundleMessageSource i81n;
 
-    protected String translate(String key,String...params){
-        return i81n.getMessage(key,params, LocaleContextHolder.getLocale());
+    protected String translate(String key, String... params) {
+        return i81n.getMessage(key, params, LocaleContextHolder.getLocale());
     }
 }

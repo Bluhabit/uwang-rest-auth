@@ -22,87 +22,85 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import java.util.Map;
-
 
 @RestControllerAdvice
 public class ErrorController {
 
     @ExceptionHandler(value = SignatureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public BaseResponse<String> signatureException(SignatureException e) {
+    public BaseResponse<String> signatureException(SignatureException signatureException) {
         return BaseResponse.error(
-                Constant.BKA_1000, "Authentication failed, token expired or invalid"
+            Constant.BKA_1000, "Authentication failed, token expired or invalid"
         );
     }
 
     @ExceptionHandler(value = ExpiredJwtException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public BaseResponse<String> expiredException(ExpiredJwtException e) {
-        return BaseResponse.error(Constant.BKA_1001_EXPIRED,e.getMessage());
+    public BaseResponse<String> expiredException(ExpiredJwtException expiredJwtException) {
+        return BaseResponse.error(Constant.BKA_1001_EXPIRED, expiredJwtException.getMessage());
     }
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public BaseResponse<String> tokenNotMatchToAnyUser(UsernameNotFoundException e) {
+    public BaseResponse<String> tokenNotMatchToAnyUser(UsernameNotFoundException usernameNotFoundException) {
         return BaseResponse.error(
-                Constant.BKA_1002, e.getMessage()
+            Constant.BKA_1002, usernameNotFoundException.getMessage()
         );
     }
 
     @ExceptionHandler(value = DecodingException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public BaseResponse<String> decodeException(DecodingException e) {
+    public BaseResponse<String> decodeException(DecodingException decodingException) {
         return BaseResponse.error(
-                Constant.BKA_1003, "Authentication failed, token expired or invalid"
+            Constant.BKA_1003, "Authentication failed, token expired or invalid"
         );
     }
 
     @ExceptionHandler(value = NullPointerException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseResponse<String> nullPointer(NullPointerException e) {
+    public BaseResponse<String> nullPointer(NullPointerException nullPointerException) {
         return BaseResponse.error(
-                Constant.BKA_1004, e.getMessage()
+            Constant.BKA_1004, nullPointerException.getMessage()
         );
     }
 
     @ExceptionHandler(value = UnAuthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public BaseResponse<String> unAuth(UnAuthorizedException e) {
+    public BaseResponse<String> unAuth(UnAuthorizedException unAuthorizedException) {
         return BaseResponse.error(
-                e.getStatusCode(), e.getMessage()
+            unAuthorizedException.getStatusCode(), unAuthorizedException.getMessage()
         );
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseResponse<String> validation(MethodArgumentNotValidException e) {
+    public BaseResponse<String> validation(MethodArgumentNotValidException methodArgumentNotValidException) {
         return BaseResponse.error(
-                Constant.BKA_1006, e.getMessage()
+            Constant.BKA_1006, methodArgumentNotValidException.getMessage()
         );
     }
 
     @ExceptionHandler(value = FileUploadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseResponse<String> contentTypeFormDataNotMatch(FileUploadException e) {
+    public BaseResponse<String> contentTypeFormDataNotMatch(FileUploadException fileUploadException) {
         return BaseResponse.error(
-                Constant.BKA_1006, e.getMessage()
+            Constant.BKA_1006, fileUploadException.getMessage()
         );
     }
 
     @ExceptionHandler(value = GeneralErrorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BaseResponse<String> contentTypeFormDataNotMatch(GeneralErrorException e) {
+    public BaseResponse<String> contentTypeFormDataNotMatch(GeneralErrorException generalErrorException) {
         return BaseResponse.error(
-                e.getStatusCode(), e.getMessage()
+            generalErrorException.getStatusCode(), generalErrorException.getMessage()
         );
     }
 
     @ExceptionHandler(value = MalformedJwtException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public BaseResponse<String> malformed(MalformedJwtException e) {
+    public BaseResponse<String> malformed(MalformedJwtException malformedJwtException) {
         return BaseResponse.error(
-                401, e.getMessage()
+            HttpStatus.UNAUTHORIZED.value(), malformedJwtException.getMessage()
         );
     }
 

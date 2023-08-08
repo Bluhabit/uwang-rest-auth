@@ -8,7 +8,7 @@
 package com.bluehabit.eureka.services.user;
 
 import com.bluehabit.eureka.common.BaseResponse;
-import com.bluehabit.eureka.common.BaseService;
+import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.Constant;
 import com.bluehabit.eureka.common.PermissionUtils;
 import com.bluehabit.eureka.component.role.Permission;
@@ -22,16 +22,17 @@ import com.bluehabit.eureka.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RoleService extends BaseService {
+public class RoleServiceAbstract extends AbstractBaseService {
     @Autowired
     private PermissionRepository permissionRepository;
 
@@ -40,43 +41,41 @@ public class RoleService extends BaseService {
 
     public ResponseEntity<BaseResponse<Page<Permission>>> getPermissions(Pageable pageable) {
         return PermissionUtils.hasAccess(Constant.READ_ROLE)
-                .map((granted) -> {
-                    var findAllPermission = permissionRepository.findAll(pageable);
+                .map(granted -> {
+                    final Page<Permission> findAllPermission = permissionRepository.findAll(pageable);
 
                     return BaseResponse.success(translate("auth.success"), findAllPermission);
                 })
-                .orElseThrow(() -> new UnAuthorizedException(1008, "User does not have access!"));
-
-
+                .orElseThrow(() -> new UnAuthorizedException(Constant.BKA_1008, "User does not have access!"));
     }
 
     public ResponseEntity<BaseResponse<Page<Role>>> getRole(Pageable pageable) {
         return PermissionUtils.hasAccess(Constant.READ_ROLE)
-                .map((granted) -> {
-                    var findAllRole = roleRepository.findAll(pageable);
+                .map(granted -> {
+                    final Page<Role> findAllRole = roleRepository.findAll(pageable);
 
                     return BaseResponse.success(translate("auth.success"), findAllRole);
                 })
-                .orElseThrow(() -> new UnAuthorizedException(1008, "User does not have access!"));
+                .orElseThrow(() -> new UnAuthorizedException(Constant.BKA_1008, "User does not have access!"));
     }
 
     public ResponseEntity<BaseResponse<List<Role>>> searchRole(String query) {
         return PermissionUtils.hasAccess(Constant.READ_ROLE)
-                .map((granted) -> {
-                    var findAllRole = roleRepository.searchByName(query);
+                .map(granted -> {
+                    final List<Role> findAllRole = roleRepository.searchByName(query);
 
                     return BaseResponse.success(translate("auth.success"), findAllRole);
                 })
-                .orElseThrow(() -> new UnAuthorizedException(1008, "User does not have access!"));
+                .orElseThrow(() -> new UnAuthorizedException(Constant.BKA_1008, "User does not have access!"));
     }
 
     public ResponseEntity<BaseResponse<Role>> createNewRole(CreateRoleRequest createRoleRequest) {
         return PermissionUtils.hasAccess(Constant.READ_ROLE)
-                .map((granted) -> {
-                    List<Permission> permissions = new ArrayList<>();
-                    var date = OffsetDateTime.now();
+                .map(granted -> {
+                    final List<Permission> permissions = new ArrayList<>();
+                    final OffsetDateTime date = OffsetDateTime.now();
                     permissionRepository.findAllById(createRoleRequest.permission()).forEach(permissions::add);
-                    var permissionGroup = new Role(
+                    final Role permissionGroup = new Role(
                             UUID.randomUUID().toString(),
                             createRoleRequest.roleName(),
                             createRoleRequest.roleDescription(),
@@ -85,58 +84,55 @@ public class RoleService extends BaseService {
                             date
                     );
 
-                    var savedData = roleRepository.save(permissionGroup);
+                    final Role savedData = roleRepository.save(permissionGroup);
                     return BaseResponse.success(translate("auth.success"), savedData);
                 })
-                .orElseThrow(() -> new UnAuthorizedException(1008, "User does not have access!"));
-
+                .orElseThrow(() -> new UnAuthorizedException(Constant.BKA_1008, "User does not have access!"));
     }
 
     public ResponseEntity<BaseResponse<Role>> updateNewRole(String roleId, CreateRoleRequest request) {
         return PermissionUtils.hasAccess(Constant.READ_ROLE)
-                .map((granted) -> {
+                .map(granted -> {
 
-                    var findRole = roleRepository.findById(roleId);
+                    final Optional<Role> findRole = roleRepository.findById(roleId);
                     if (findRole.isEmpty()) {
-                        throw new GeneralErrorException(400, "Cannot find role!");
+                        throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), "Cannot find role!");
                     }
 
-                    List<Permission> permissions = new ArrayList<>();
-                    var date = OffsetDateTime.now();
+                    final List<Permission> permissions = new ArrayList<>();
+                    final OffsetDateTime date = OffsetDateTime.now();
                     permissionRepository.findAllById(request.permission()).forEach(permissions::add);
 
-                    var role = findRole.get();
+                    final Role role = findRole.get();
                     role.setUpdatedAt(date);
                     role.setRoleName(request.roleName());
                     role.setRoleDescription(request.roleDescription());
                     role.setRolePermission(permissions);
 
-                    var savedData = roleRepository.save(role);
+                    final Role savedData = roleRepository.save(role);
                     return BaseResponse.success(translate("auth.success"), savedData);
                 })
-                .orElseThrow(() -> new UnAuthorizedException(1008, "User does not have access!"));
+                .orElseThrow(() -> new UnAuthorizedException(Constant.BKA_1008, "User does not have access!"));
     }
 
     public ResponseEntity<BaseResponse<String>> deleteRole(String roleId) {
         return PermissionUtils.hasAccess(Constant.WRITE_ROLE)
-                .map((granted)->{
-                    var findPermissionGroup = roleRepository.existsByIdIgnoreCase(roleId);
+                .map(granted -> {
+                    final boolean findPermissionGroup = roleRepository.existsByIdIgnoreCase(roleId);
                     if (findPermissionGroup) {
-                        throw new GeneralErrorException(100,"");
+                        throw new GeneralErrorException(HttpStatus.FORBIDDEN.value(), "");
                     }
                     roleRepository.deleteById(roleId);
-                    return BaseResponse.success("","");
+                    return BaseResponse.success("", "");
                 })
-                .orElseThrow(()->new UnAuthorizedException(1008,""));
+                .orElseThrow(() -> new UnAuthorizedException(Constant.BKA_1008, ""));
     }
 
     public ResponseEntity<BaseResponse<List<String>>> deleteRoles(DeleteRolesRequest request) {
-        return PermissionUtils.hasAccess(Constant.WRITE_ROLE).map((granted)->{
+        return PermissionUtils.hasAccess(Constant.WRITE_ROLE).map(granted -> {
             roleRepository.deleteAllById(request.ids());
-
             return BaseResponse.success(translate("auth.success"), request.ids());
-        }).orElseThrow(()->new UnAuthorizedException(1008, "User does not have access!"));
-
+        }).orElseThrow(() -> new UnAuthorizedException(Constant.BKA_1008, "User does not have access!"));
     }
 
 }

@@ -25,15 +25,15 @@ public class UserInfoDetails implements UserDetails {
         this.name = user.getUserEmail();
         this.password = user.getUserPassword();
         this.authorities = user
-                .getUserPermission()
-                .stream()
-                .map(Permission::getPermissionType)
-                .map(SimpleGrantedAuthority::new)
-                .toList();
+            .getUserPermission()
+            .stream()
+            .map(Permission::getPermissionType)
+            .map(SimpleGrantedAuthority::new)
+            .toList();
 
     }
 
-    public List<? extends  GrantedAuthority> getAuth(){
+    public List<? extends GrantedAuthority> getAuth() {
         return authorities;
     }
 

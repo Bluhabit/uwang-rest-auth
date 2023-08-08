@@ -7,7 +7,10 @@
 
 package com.bluehabit.eureka.config;
 
-import com.bluehabit.eureka.common.JwtUtils;
+import java.io.IOException;
+import java.util.List;
+
+import com.bluehabit.eureka.common.JwtUtil;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,7 +18,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,40 +27,35 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import java.io.IOException;
-import java.util.List;
-
 @Component
 public class FilterRequest extends OncePerRequestFilter {
+    private static final int LENGTH_BEARER = 6;
 
     @Autowired
     @Qualifier("handlerExceptionResolver")
     private HandlerExceptionResolver resolver;
     @Autowired
-    private JwtService jwtService;
+    private JwtUtil jwtUtil;
 
     @Autowired
     private UserDetailsService userService;
 
     private List<String> allowList = List.of(
-            "/auth/sign-in-email",
-            "/auth/sign-in-google",
-            "/auth/sign-up-email",
-            "/auth/sign-up-google",
-            "/auth/refresh-token"
+        "/auth/sign-in-email",
+        "/auth/sign-in-google",
+        "/auth/sign-up-email",
+        "/auth/sign-up-google",
+        "/auth/refresh-token"
     );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // resolver.resolveException(request,response,null, new UnAuthorizedException("invalid"));
-
         try {
-
             if (allowList.contains(request.getServletPath())) {
                 filterChain.doFilter(request, response);
                 return;
             }
-            String authHeader = request.getHeader("Authorization");
+            final String authHeader = request.getHeader("Authorization");
             if (authHeader == null || authHeader.isEmpty()) {
                 throw new UnAuthorizedException("header empty");
             }
@@ -67,33 +64,33 @@ public class FilterRequest extends OncePerRequestFilter {
                 throw new UnAuthorizedException("header doesn't contain Bearer");
             }
 
-            if(authHeader.length() <= 6){
+            if (authHeader.length() <= LENGTH_BEARER) {
                 throw new UnAuthorizedException("Header only contains 'Bearer'");
             }
 
-            String token = authHeader.substring(7);
-            String username = jwtService.extractUsername(token);
+            final String token = authHeader.substring(7);
+            final String username = jwtUtil.extractUsername(token);
 
             if (username.isEmpty()) {
                 throw new UnAuthorizedException("failed extract claim");
             }
 
-            UserDetails userDetails = userService.loadUserByUsername(username);
-            if (!jwtService.validateToken(token, userDetails)) {
+            final UserDetails userDetails = userService.loadUserByUsername(username);
+            if (!jwtUtil.validateToken(token, userDetails)) {
                 throw new UnAuthorizedException("user not found");
             }
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
+            final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
             );
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            resolver.resolveException(request, response, null, e);
+        } catch (UnAuthorizedException exception) {
+            resolver.resolveException(request, response, null, exception);
         }
 
     }
