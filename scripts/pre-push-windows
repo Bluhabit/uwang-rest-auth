@@ -21,7 +21,7 @@ fi
 
 # Perform lint check
 echo "Performing pre-push lint check of ""$dirToLint"
-$dirToLint/gradlew checkstyleMain--daemon
+$dirToLint/gradlew checkstyleMain
 detektStatus=$?
 
 lintStatus=1
