@@ -20,7 +20,7 @@ public class ApplicationConfig {
     private final int maxPayload = 64000;
 
     @Bean
-    public final CommonsRequestLoggingFilter requestLoggingFilter() {
+    public CommonsRequestLoggingFilter requestLoggingFilter() {
         final CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
         loggingFilter.setIncludeClientInfo(true);
         loggingFilter.setIncludeQueryString(true);
@@ -30,14 +30,14 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public final SessionLocaleResolver localResolver() {
+    public SessionLocaleResolver localResolver() {
         final SessionLocaleResolver resolver = new SessionLocaleResolver();
         resolver.setDefaultLocale(Locale.US);
         return resolver;
     }
 
     @Bean
-    public final ResourceBundleMessageSource bundleMessageSource() {
+    public ResourceBundleMessageSource bundleMessageSource() {
         final ResourceBundleMessageSource message = new ResourceBundleMessageSource();
         message.setBasename("message");
         return message;
