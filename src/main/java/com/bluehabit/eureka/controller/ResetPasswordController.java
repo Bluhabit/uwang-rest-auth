@@ -11,7 +11,6 @@ import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.services.ResetPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,12 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResetPasswordController {
     @Autowired
     private ResetPasswordService resetPasswordService;
-    @PostMapping(
-        path= "/api/v1/auth/reset-password",
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<BaseResponse<Object>> resetPassword (@RequestHeader("4adf-3ed") String token, @RequestBody ResetPasswordRequest request) {
-        System.out.println("jalan");
+
+    @PostMapping(path = "/api/v1/auth/reset-password")
+    public ResponseEntity<BaseResponse<Object>> resetPassword(@RequestHeader("4adf-3ed") String token, @RequestBody ResetPasswordRequest request) {
         return resetPasswordService.reset(token, request.getNewPassword());
     }
 }
