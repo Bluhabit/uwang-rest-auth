@@ -26,7 +26,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class FilterRequest extends OncePerRequestFilter {
@@ -40,18 +39,6 @@ public class FilterRequest extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsService userService;
-
-    private List<String> allowList = List.of(
-        "/api/v1/auth/sign-in-email",
-        "/api/v1/auth/sign-in-google",
-        "/api/v1/auth/sign-up-email",
-        "/api/v1/auth/otp-confirmation",
-        "/api/v1/auth/complete-profile",
-        "/api/v1/auth/request-reset-password",
-        "/api/v1/auth/link-confirmation",
-        "/api/v1/auth/reset-password",
-        "/api/v1/auth/refresh-token"
-    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
