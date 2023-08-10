@@ -10,6 +10,10 @@
 .idea/uiDesigner.xml
 .idea/vcs.xml
 .idea/workspace.xml
+.idea/modules/GAWEAN.main.iml
+.idea/modules/GAWEAN.test.iml
+.idea/modules.xml
+.idea/Project_Default.xml
 
 .vscode
 /build
