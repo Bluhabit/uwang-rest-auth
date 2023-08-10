@@ -10,7 +10,6 @@ package com.bluehabit.eureka.controller;
 import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.services.ResetPasswordService;
-import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
