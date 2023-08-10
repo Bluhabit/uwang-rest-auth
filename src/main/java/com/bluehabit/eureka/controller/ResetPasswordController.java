@@ -24,7 +24,7 @@ public class ResetPasswordController {
 
     @PostMapping(path = "/api/v1/auth/reset-password")
     public ResponseEntity<BaseResponse<Object>> resetPassword(
-        @RequestHeader(value = "4adf-3ed",required = false) String token,
+        @RequestHeader(value = "4adf-3ed", required = false) String token,
         @RequestBody ResetPasswordRequest request
     ) {
         return resetPasswordService.reset(token, request.getNewPassword());
