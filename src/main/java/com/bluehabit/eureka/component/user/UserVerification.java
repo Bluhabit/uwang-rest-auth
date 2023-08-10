@@ -26,14 +26,14 @@ import java.time.OffsetDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "tb_user_profile")
+@Table(name = "tb_user_verification")
 @SQLDelete(
     sql = "UPDATE tb_user_profile SET deleted=true WHERE user_id=?"
 )
 @Where(
     clause = "deleted = false"
 )
-public class UserProfile {
+public class UserVerification {
     @Id
     @GenericGenerator(
         name = "UUID",
@@ -41,9 +41,9 @@ public class UserProfile {
     )
     private String id;
     @Column
-    private String key;
+    private String token;
     @Column
-    private String value;
+    private String type;
 
     @ManyToOne
     @JoinColumn(name = "userId", referencedColumnName = "id")
