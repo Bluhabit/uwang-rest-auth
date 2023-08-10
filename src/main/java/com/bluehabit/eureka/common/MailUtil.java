@@ -18,8 +18,10 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component
 public class MailUtil {
@@ -31,26 +33,82 @@ public class MailUtil {
     @Autowired
     private TemplateEngine templateEngine;
 
-    public void sendEmail(
-        String to,
+    public boolean sendEmail(
+        String recipients,
         String subject,
         String folder,
-        Map<String, Object> map
-    ) throws MessagingException {
-        final Locale locale = Locale.forLanguageTag("ID");
-        final Context ctx = new Context(locale);
-        map.forEach(ctx::setVariable);
-        final String html = this.templateEngine.process("/email/" + folder +"/"+ ctx.getLocale().getLanguage(), ctx);
-
-        MimeMessage mailMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
-
-        mailMessage.setFrom(new InternetAddress(sender));
-        helper.addTo(to);
-        helper.setSubject(subject);
-        helper.setText(html, true);
-
-        javaMailSender.send(mailMessage);
+        Map<String, Object> data
+    ) {
+        return sendEmail(
+            List.of(recipients),
+            subject,
+            folder,
+            data,
+            (success) -> success
+        );
     }
 
+    public boolean sendEmail(
+        String recipients,
+        String subject,
+        String folder,
+        Map<String, Object> data,
+        Function<Boolean, Boolean> callback
+    ) {
+        return sendEmail(
+            List.of(recipients),
+            subject,
+            folder,
+            data,
+            callback
+        );
+    }
+
+    public boolean sendEmail(
+        List<String> recipients,
+        String subject,
+        String folder,
+        Map<String, Object> data
+    ) {
+        return sendEmail(
+            recipients,
+            subject,
+            folder,
+            data,
+            (success) -> success
+        );
+    }
+
+    public boolean sendEmail(
+        List<String> recipients,
+        String subject,
+        String folder,
+        Map<String, Object> data,
+        Function<Boolean, Boolean> callback
+    ) {
+        try {
+            final Locale locale = Locale.forLanguageTag("ID");
+            final Context ctx = new Context(locale);
+            data.forEach(ctx::setVariable);
+            final String html = this.templateEngine.process(
+                "/email/" + folder + "/" + ctx.getLocale().getLanguage(),
+                ctx
+            );
+
+            MimeMessage mailMessage = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
+
+            mailMessage.setFrom(new InternetAddress(sender));
+            for (String to : recipients) {
+                helper.addTo(to);
+            }
+            helper.setSubject(subject);
+            helper.setText(html, true);
+
+            javaMailSender.send(mailMessage);
+            return callback.apply(true);
+        } catch (MessagingException messagingException) {
+            return callback.apply(false);
+        }
+    }
 }
