@@ -40,7 +40,7 @@ public class UserService extends AbstractBaseService {
     private JwtUtil jwtUtil;
 
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
-        if(userCredentialRepository.existsByEmail(req.email())){
+        if (userCredentialRepository.existsByEmail(req.email())) {
             throw new UnAuthorizedException(2, "Email already exist");
         }
 
@@ -62,5 +62,5 @@ public class UserService extends AbstractBaseService {
     public ResponseEntity<BaseResponse<List<UserProfile>>> getUsers(Pageable pageable) {
         final Page<UserProfile> user = userProfileRepository.findAll(pageable);
         return BaseResponse.success("Get all users", user.toList());
-    }    
+    }
 }

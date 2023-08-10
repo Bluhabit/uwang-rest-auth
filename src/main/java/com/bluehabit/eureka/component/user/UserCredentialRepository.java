@@ -14,5 +14,6 @@ import java.util.Optional;
 
 public interface UserCredentialRepository extends PagingAndSortingRepository<UserCredential, String>, CrudRepository<UserCredential, String> {
     Optional<UserCredential> findByEmail(String email);
+
     boolean existsByEmail(String email);
 }
