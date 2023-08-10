@@ -39,13 +39,7 @@ public class MailUtil {
         String folder,
         Map<String, Object> data
     ) {
-        return sendEmail(
-            List.of(recipients),
-            subject,
-            folder,
-            data,
-            (success) -> success
-        );
+        return sendEmail(List.of(recipients), subject, folder, data, (success) -> success);
     }
 
     public boolean sendEmail(
@@ -55,13 +49,7 @@ public class MailUtil {
         Map<String, Object> data,
         Function<Boolean, Boolean> callback
     ) {
-        return sendEmail(
-            List.of(recipients),
-            subject,
-            folder,
-            data,
-            callback
-        );
+        return sendEmail(List.of(recipients), subject, folder, data, callback);
     }
 
     public boolean sendEmail(
@@ -70,13 +58,7 @@ public class MailUtil {
         String folder,
         Map<String, Object> data
     ) {
-        return sendEmail(
-            recipients,
-            subject,
-            folder,
-            data,
-            (success) -> success
-        );
+        return sendEmail(recipients, subject, folder, data, (success) -> success);
     }
 
     public boolean sendEmail(
@@ -99,8 +81,8 @@ public class MailUtil {
             MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
 
             mailMessage.setFrom(new InternetAddress(sender));
-            for (String to : recipients) {
-                helper.addTo(to);
+            for (String sendTo : recipients) {
+                helper.addTo(sendTo);
             }
             helper.setSubject(subject);
             helper.setText(html, true);
