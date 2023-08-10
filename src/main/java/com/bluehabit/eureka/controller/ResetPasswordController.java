@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,8 +26,8 @@ public class ResetPasswordController {
         path= "/api/v1/auth/reset-password",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public String resetPassword () {
+    public ResponseEntity<BaseResponse<Object>> resetPassword (@RequestHeader("4adf-3ed") String token, @RequestBody ResetPasswordRequest request) {
         System.out.println("jalan");
-        return "success";
+        return resetPasswordService.reset(token, request.getNewPassword());
     }
 }
