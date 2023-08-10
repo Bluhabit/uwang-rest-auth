@@ -77,8 +77,8 @@ public class MailUtil {
                 ctx
             );
 
-            MimeMessage mailMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
+            final MimeMessage mailMessage = javaMailSender.createMimeMessage();
+            final MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
 
             mailMessage.setFrom(new InternetAddress(sender));
             for (String sendTo : recipients) {
