@@ -22,8 +22,8 @@ public class UserInfoDetails implements UserDetails {
     private final List<SimpleGrantedAuthority> authorities;
 
     public UserInfoDetails(UserCredential user) {
-        this.name = user.getUserEmail();
-        this.password = user.getUserPassword();
+        this.name = user.getEmail();
+        this.password = user.getPassword();
         this.authorities = user
             .getUserPermission()
             .stream()
