@@ -7,9 +7,6 @@
 
 package com.bluehabit.eureka.config;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.bluehabit.eureka.common.JwtUtil;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import jakarta.servlet.FilterChain;
@@ -24,8 +21,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.io.IOException;
+import java.util.List;
 
 @Component
 public class FilterRequest extends OncePerRequestFilter {
@@ -41,20 +42,26 @@ public class FilterRequest extends OncePerRequestFilter {
     private UserDetailsService userService;
 
     private List<String> allowList = List.of(
-        "/auth/sign-in-email",
-        "/auth/sign-in-google",
-        "/auth/sign-up-email",
-        "/auth/sign-up-google",
-        "/auth/refresh-token"
+        "/api/v1/auth/sign-in-email",
+        "/api/v1/auth/sign-in-google",
+        "/api/v1/auth/sign-up-email",
+        "/api/v1/auth/otp-confirmation",
+        "/api/v1/auth/complete-profile",
+        "/api/v1/auth/request-reset-password",
+        "/api/v1/auth/link-confirmation",
+        "/api/v1/auth/reset-password",
+        "/api/v1/auth/refresh-token"
     );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (allowList.contains(request.getServletPath())) {
+
+            if (new AntPathMatcher().match("/api/v1/auth/**", request.getServletPath())) {
                 filterChain.doFilter(request, response);
                 return;
             }
+
             final String authHeader = request.getHeader("Authorization");
             if (authHeader == null || authHeader.isEmpty()) {
                 throw new UnAuthorizedException("header empty");

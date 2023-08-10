@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.Map;
 
@@ -102,6 +103,15 @@ public class ErrorController {
     public BaseResponse<String> malformed(MalformedJwtException malformedJwtException) {
         return BaseResponse.error(
             HttpStatus.UNAUTHORIZED.value(), malformedJwtException.getMessage()
+        );
+    }
+
+    @ExceptionHandler(value = NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public BaseResponse<String> noHandler(NoHandlerFoundException noHandlerFoundException) {
+        return BaseResponse.error(
+            HttpStatus.NOT_FOUND.value(),
+            noHandlerFoundException.getMessage()
         );
     }
 }
