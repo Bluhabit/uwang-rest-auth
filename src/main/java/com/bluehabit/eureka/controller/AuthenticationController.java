@@ -8,7 +8,10 @@
 package com.bluehabit.eureka.controller;
 
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.component.user.model.SignInResponse;
+import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
+import com.bluehabit.eureka.services.SignInService;
 import com.bluehabit.eureka.services.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,6 +26,9 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SignInService signInService;
+
     @PostMapping(
         path = "/api/v1/auth/sign-up-email",
         produces = MediaType.APPLICATION_JSON_VALUE,
@@ -30,5 +36,16 @@ public class AuthenticationController {
     )
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(@NonNull @RequestBody SignUpWithEmailRequest request) {
         return userService.signUpWithEmail(request);
+    }
+
+    @PostMapping(
+        path = "/api/v1/auth/sign-in-google",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(
+        @NonNull @RequestBody SignInWithGoogleRequest request
+    ) {
+        return signInService.signInWithGoogle(request);
     }
 }
