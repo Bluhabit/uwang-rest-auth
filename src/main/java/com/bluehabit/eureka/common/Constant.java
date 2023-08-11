@@ -33,4 +33,9 @@ public class Constant {
     public static int BKA_1006 = 1006;
     public static int BKA_1007 = 1007;
     public static int BKA_1008 = 1008;
+    public static String USER_ACTIVE = "true";
+    public static String USER_NONACTIVE = "false";
+    public static String AUTH_BASIC = "BASIC";
+    public static String AUTH_GOOGLE = "GOOGLE";
+
 }
