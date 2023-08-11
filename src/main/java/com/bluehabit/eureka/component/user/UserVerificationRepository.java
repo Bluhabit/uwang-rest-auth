@@ -10,10 +10,6 @@ package com.bluehabit.eureka.component.user;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.Optional;
+public interface UserVerificationRepository extends PagingAndSortingRepository<UserVerification, String>, CrudRepository<UserVerification, String> {
 
-public interface UserCredentialRepository extends PagingAndSortingRepository<UserCredential, String>, CrudRepository<UserCredential, String> {
-    Optional<UserCredential> findByEmail(String email);
-
-    boolean existsByEmail(String email);
 }
