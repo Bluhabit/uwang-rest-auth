@@ -7,6 +7,7 @@
 
 package com.bluehabit.eureka.services.user;
 
+import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.component.user.UserCredential;
@@ -23,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class ResetPasswordService {
+public class ResetPasswordService extends AbstractBaseService {
 
     private UserVerificationRepository userVerificationRepository;
     private UserCredentialRepository userCredentialRepository;
@@ -33,14 +34,14 @@ public class ResetPasswordService {
         try {
 
             if (userVerification.isEmpty()) {
-                throw new UnAuthorizedException(HttpStatus.NOT_FOUND.value(), "Token Not Found");
+                throw new UnAuthorizedException(HttpStatus.NOT_FOUND.value(), translate("auth.token.invalid"));
             }
             final UserVerification userVerified = userVerification.get();
             final UserCredential userCredential = userVerified.getUser();
             userCredential.setUserPassword(request.newPassword());
             userCredentialRepository.save(userCredential);
 
-            return BaseResponse.success("success update password", new HashMap<>());
+            return BaseResponse.success(translate("auth.success"), new HashMap<>());
 
         } catch (UnAuthorizedException exception) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.error(exception.getStatusCode(), exception.getMessage()));
