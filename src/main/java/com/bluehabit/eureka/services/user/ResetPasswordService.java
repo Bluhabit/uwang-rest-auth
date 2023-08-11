@@ -9,6 +9,7 @@ package com.bluehabit.eureka.services.user;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.component.user.UserCredential;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.component.user.UserCredentialRepository;
 import com.bluehabit.eureka.component.user.UserVerification;
@@ -35,7 +36,9 @@ public class ResetPasswordService extends AbstractBaseService {
             throw new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.token.invalid"));
         }
         final UserVerification userVerified = userVerification.get();
-
+        final UserCredential userCredential = userVerified.getUser();
+        userCredential.setPassword(request.newPassword());
+        userCredentialRepository.save(userCredential);
         return BaseResponse.success(translate("auth.success"), new HashMap<>());
 
     }
