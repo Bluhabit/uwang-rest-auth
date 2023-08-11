@@ -10,6 +10,6 @@ package com.bluehabit.eureka.component.user.model;
 import jakarta.validation.constraints.NotBlank;
 
 public record SignUpWithEmailRequest(
-        @NotBlank String email, @NotBlank String password, @NotBlank String fullName
+        @NotBlank String email
 ) {
 }
