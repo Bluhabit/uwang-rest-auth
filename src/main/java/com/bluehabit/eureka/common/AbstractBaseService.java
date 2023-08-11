@@ -1,4 +1,3 @@
-
 package com.bluehabit.eureka.common;
 
 import com.bluehabit.eureka.exception.UnAuthorizedException;
