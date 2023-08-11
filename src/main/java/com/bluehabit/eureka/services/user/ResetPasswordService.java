@@ -8,17 +8,18 @@
 package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.component.user.UserVerificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import java.util.HashMap;
 
 @Service
 public class ResetPasswordService {
+
+    private UserVerificationRepository userVerificationRepository;
     public ResponseEntity<BaseResponse<Object>> reset(String token, String newPassword) {
-        System.out.println(token);
-        System.out.println(newPassword);
-        return BaseResponse.success(
-            "success",
-            new Object()
-        );
+
+        return  BaseResponse.success("password berhasil diupdate", new HashMap<>());
     }
 }
