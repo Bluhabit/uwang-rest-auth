@@ -57,7 +57,7 @@ public class UserCredential {
 
     @OneToMany(mappedBy = "userCredential")
     private List<UserProfile> userInfo;
-    @OneToMany
+    @OneToMany(mappedBy = "userCredential")
     private List<UserVerification> userVerification;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
