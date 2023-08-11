@@ -13,5 +13,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Optional;
 
 public interface UserCredentialRepository extends PagingAndSortingRepository<UserCredential, String>, CrudRepository<UserCredential, String> {
-    Optional<UserCredential> findByUserEmail(String userEmail);
+    Optional<UserCredential> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

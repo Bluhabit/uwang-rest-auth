@@ -10,9 +10,9 @@ package com.bluehabit.eureka.component.user;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +20,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -40,17 +39,16 @@ public class UserProfile {
         name = "UUID",
         type = org.hibernate.id.uuid.UuidGenerator.class
     )
-    private String userId;
+    private String id;
     @Column
-    private String userFullName;
-    @Temporal(TemporalType.DATE)
-    private LocalDate userDateOfBirth;
+    private String key;
     @Column
-    private String userPhoneUmber;
-    @Column
-    private String userCountryCode;
-    @Column
-    private String userProfilePicture;
+    private String value;
+
+    @ManyToOne
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    private UserCredential userCredential;
+
     @Column
     private OffsetDateTime createdAt;
     @Column
@@ -60,15 +58,4 @@ public class UserProfile {
         nullable = false
     )
     private boolean deleted;
-
-    public UserProfile(String userId, String userFullName, LocalDate userDateOfBirth, String userPhoneUmber, String userCountryCode, String userProfilePicture, OffsetDateTime createdAt, OffsetDateTime updatedAt) {
-        this.userId = userId;
-        this.userFullName = userFullName;
-        this.userDateOfBirth = userDateOfBirth;
-        this.userPhoneUmber = userPhoneUmber;
-        this.userCountryCode = userCountryCode;
-        this.userProfilePicture = userProfilePicture;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 }
