@@ -9,7 +9,7 @@ package com.bluehabit.eureka.controller;
 
 import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
-import com.bluehabit.eureka.services.ResetPasswordService;
+import com.bluehabit.eureka.services.user.ResetPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +27,6 @@ public class ResetPasswordController {
         @RequestHeader(value = "4adf-3ed", required = false) String token,
         @RequestBody ResetPasswordRequest request
     ) {
-        return resetPasswordService.reset(token, request.getNewPassword());
+        return resetPasswordService.reset(token, request);
     }
 }

@@ -5,21 +5,46 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.services;
+package com.bluehabit.eureka.services.user;
 
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
+import com.bluehabit.eureka.component.user.UserCredential;
+import com.bluehabit.eureka.component.user.UserCredentialRepository;
+import com.bluehabit.eureka.component.user.UserVerification;
 import com.bluehabit.eureka.component.user.UserVerificationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.bluehabit.eureka.exception.UnAuthorizedException;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ResetPasswordService {
 
     private UserVerificationRepository userVerificationRepository;
-    public ResponseEntity<BaseResponse<Object>> reset(String token, String newPassword) {
+    private UserCredentialRepository userCredentialRepository;
 
-        return  BaseResponse.success("password berhasil diupdate", new HashMap<>());
+    public ResponseEntity<BaseResponse<Object>> reset(String token, ResetPasswordRequest request) {
+        final Optional<UserVerification> userVerification = userVerificationRepository.findByToken(token);
+        try {
+
+            if (userVerification.isEmpty()) {
+                throw new UnAuthorizedException(HttpStatus.NOT_FOUND.value(), "Token Not Found");
+            }
+            final UserVerification userVerified = userVerification.get();
+            final UserCredential userCredential = userVerified.getUser();
+            userCredential.setUserPassword(request.newPassword());
+            userCredentialRepository.save(userCredential);
+
+            return BaseResponse.success("success update password", new HashMap<>());
+
+        } catch (UnAuthorizedException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BaseResponse.error(exception.getStatusCode(), exception.getMessage()));
+        }
+
     }
 }
