@@ -43,7 +43,7 @@ public class UserService extends AbstractBaseService {
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
         validate(req);
         if (userCredentialRepository.existsByEmail(req.email())) {
-            throw new UnAuthorizedException(2, "Email already exist");
+            throw new UnAuthorizedException(2, translate("auth.failed.user.exist"));
         }
 
         final String uuid = UUID.randomUUID().toString();
@@ -58,7 +58,7 @@ public class UserService extends AbstractBaseService {
         userCredential.setUpdatedAt(currentDate);
         userCredentialRepository.save(userCredential);
 
-        return BaseResponse.success("Success", Map.of());
+        return BaseResponse.success(translate("auth.success"), Map.of());
     }
 
     public ResponseEntity<BaseResponse<List<UserProfile>>> getUsers(Pageable pageable) {
