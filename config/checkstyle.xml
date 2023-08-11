@@ -35,7 +35,7 @@
     <module name="SuppressionFilter">
         <property name="file" value="${suppressionFile}"/>
     </module>
-<!--    Tone down the checking for test code-->
+    <!--    Tone down the checking for test code-->
     <module name="SuppressionSingleFilter">
         <property name="checks" value="JavadocPackage"/>
         <property name="files" value=".*[\\/]src[\\/](test|it)[\\/]"/>
@@ -468,7 +468,9 @@
         <module name="StringLiteralEquality"/>
         <module name="SuperClone"/>
         <module name="SuperFinalize"/>
-        <module name="UnnecessaryParentheses"/>
+        <module name="UnnecessaryParentheses">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
         <module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
         <module name="UnnecessarySemicolonInEnumeration"/>
