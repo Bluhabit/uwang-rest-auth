@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -40,6 +41,7 @@ public class UserService extends AbstractBaseService {
     private JwtUtil jwtUtil;
 
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
+        validate(req);
         if (userCredentialRepository.existsByEmail(req.email())) {
             throw new UnAuthorizedException(2, "Email already exist");
         }
@@ -56,7 +58,7 @@ public class UserService extends AbstractBaseService {
         userCredential.setUpdatedAt(currentDate);
         userCredentialRepository.save(userCredential);
 
-        return BaseResponse.success("Success", new Object());
+        return BaseResponse.success("Success", Map.of());
     }
 
     public ResponseEntity<BaseResponse<List<UserProfile>>> getUsers(Pageable pageable) {
