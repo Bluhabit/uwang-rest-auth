@@ -12,11 +12,10 @@ import com.bluehabit.eureka.component.user.model.SignInResponse;
 import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
 import com.bluehabit.eureka.services.SignInService;
-import com.bluehabit.eureka.services.user.UserService;
+import com.bluehabit.eureka.services.SignUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthenticationController {
     @Autowired
-    private UserService userService;
+    private SignUpService signUpService;
 
     @Autowired
     private SignInService signInService;
@@ -34,8 +33,10 @@ public class AuthenticationController {
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<BaseResponse<Object>> signUpWithEmail(@NonNull @RequestBody SignUpWithEmailRequest request) {
-        return userService.signUpWithEmail(request);
+    public ResponseEntity<BaseResponse<Object>> signUpWithEmail(
+        @RequestBody SignUpWithEmailRequest request
+    ) {
+        return signUpService.signUpWithEmail(request);
     }
 
     @PostMapping(
@@ -44,7 +45,7 @@ public class AuthenticationController {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(
-        @NonNull @RequestBody SignInWithGoogleRequest request
+        @RequestBody SignInWithGoogleRequest request
     ) {
         return signInService.signInWithGoogle(request);
     }
