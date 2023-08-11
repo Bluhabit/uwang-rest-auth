@@ -17,13 +17,27 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "tb_user_verification")
+@SQLDelete(
+    sql = "UPDATE tb_user_profile SET deleted=true WHERE userVerificationId=?"
+)
+@Where(
+    clause = "deleted = false"
+)
 public class UserVerification {
     @Id
     @GeneratedValue(
@@ -48,6 +62,11 @@ public class UserVerification {
     @Column
     @LastModifiedDate
     private OffsetDateTime updatedAt;
+    @Column(
+        name = "deleted",
+        nullable = false
+    )
+    private boolean deleted;
 
     public UserVerification(String token, UserCredential user, VerificationType type) {
         this.token = token;
@@ -55,27 +74,4 @@ public class UserVerification {
         this.type = type;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public UserCredential getUser() {
-        return user;
-    }
-
-    public void setUser(UserCredential user) {
-        this.user = user;
-    }
-
-    public VerificationType getType() {
-        return type;
-    }
-
-    public void setType(VerificationType type) {
-        this.type = type;
-    }
 }
