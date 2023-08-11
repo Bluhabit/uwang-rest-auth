@@ -36,9 +36,6 @@ public class ResetPasswordService extends AbstractBaseService {
             throw new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.token.invalid"));
         }
         final UserVerification userVerified = userVerification.get();
-        final UserCredential userCredential = userVerified.getUser();
-        userCredential.setUserPassword(request.newPassword());
-        userCredentialRepository.save(userCredential);
 
         return BaseResponse.success(translate("auth.success"), new HashMap<>());
 
