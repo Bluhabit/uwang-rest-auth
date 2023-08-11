@@ -28,7 +28,6 @@ public class AuthenticationController {
     @Autowired
     private ResetPasswordService resetPasswordService;
 
-
     @PostMapping(
         path = "/api/v1/auth/sign-up-email",
         produces = MediaType.APPLICATION_JSON_VALUE,
@@ -37,7 +36,10 @@ public class AuthenticationController {
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(@NonNull @RequestBody SignUpWithEmailRequest request) {
         return userService.signUpWithEmail(request);
     }
-    @PostMapping(path = "/api/v1/auth/reset-password")
+
+    @PostMapping(
+        path = "/api/v1/auth/reset-password"
+    )
     public ResponseEntity<BaseResponse<Object>> resetPassword(
         @RequestHeader(value = "4adf-3ed", required = false) String token,
         @RequestBody ResetPasswordRequest request
