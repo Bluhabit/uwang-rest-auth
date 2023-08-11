@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.services.user;
+package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
@@ -26,7 +26,8 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class UserService extends AbstractBaseService {
+public class SignUpService extends AbstractBaseService {
+
     @Autowired
     private UserCredentialRepository userCredentialRepository;
     @Autowired
