@@ -21,7 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Service
 public class SignInService extends AbstractBaseService {
@@ -35,19 +36,36 @@ public class SignInService extends AbstractBaseService {
     public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(SignInWithGoogleRequest request) {
         validate(request);
         return GoogleAuthUtil.getGoogleClaim(request.token()).map(googleClaim -> {
-            final Optional<UserCredential> userCredential = userCredentialRepository
-                .findByEmail(googleClaim.email());
+                final String jwtToken = jwtUtil.generateToken(googleClaim.email());
+                return userCredentialRepository
+                    .findByEmail(googleClaim.email()).map(user -> {
+                        if (!user.getAuthProvider().equals(Constant.AUTH_GOOGLE)) {
+                            throw new UnAuthorizedException(translate("auth.method.provider.not.match"));
+                        }
 
-            if (userCredential.isEmpty()) {
-                throw new UnAuthorizedException(translate("auth.user.not.exist"));
+                        return BaseResponse.success(
+                            translate("auth.success"),
+                            new SignInResponse(jwtToken, user)
+                        );
+                    }).orElseGet(() -> {
+                        final String uuid = UUID.randomUUID().toString();
+                        final OffsetDateTime currentDate = OffsetDateTime.now();
+
+                        final UserCredential userCredential = new UserCredential();
+                        userCredential.setId(uuid);
+                        userCredential.setEmail(googleClaim.email());
+                        userCredential.setAuthProvider(Constant.AUTH_GOOGLE);
+                        userCredential.setActive(Constant.USER_ACTIVE);
+                        userCredential.setCreatedAt(currentDate);
+                        userCredential.setUpdatedAt(currentDate);
+                        final UserCredential saved = userCredentialRepository.save(userCredential);
+
+                        return BaseResponse.success(
+                            translate("auth.success"),
+                            new SignInResponse(jwtToken, saved)
+                        );
+                    });
             }
-
-            if (userCredential.get().getAuthProvider().equals(Constant.AUTH_BASIC)) {
-                throw new UnAuthorizedException(translate("auth.method.not.match"));
-            }
-
-            final String jwtToken = jwtUtil.generateToken(googleClaim.email());
-            return BaseResponse.success(translate("auth.success"), new SignInResponse(jwtToken, userCredential.get()));
-        }).orElseThrow(() -> new UnAuthorizedException(translate("auth.token.invalid")));
+        ).orElseThrow(() -> new UnAuthorizedException(translate("auth.token.invalid")));
     }
 }
