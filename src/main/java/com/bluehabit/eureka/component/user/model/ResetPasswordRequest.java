@@ -7,14 +7,8 @@
 
 package com.bluehabit.eureka.component.user.model;
 
-public class ResetPasswordRequest {
-    private String newPassword;
+import jakarta.validation.constraints.NotBlank;
 
-    public String getNewPassword() {
-        return newPassword;
-    }
+public record ResetPasswordRequest(@NotBlank String newPassword) {
 
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
 }
