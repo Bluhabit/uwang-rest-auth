@@ -44,11 +44,6 @@ public class UserProfile {
     private String key;
     @Column
     private String value;
-
-    @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "id")
-    private UserCredential userCredential;
-
     @Column
     private OffsetDateTime createdAt;
     @Column

@@ -1,5 +1,12 @@
 
-package com.bluehabit.eureka.services.user;
+/*
+ * Copyright © 2023 Blue Habit.
+ *
+ * Unauthorized copying, publishing of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
@@ -28,7 +35,7 @@ public class ResetPasswordService extends AbstractBaseService {
     @Autowired
     private MailUtil mailUtil;
 
-    public ResponseEntity<BaseResponse<Object>> reset(String token, ResetPasswordRequest request) {
+    public ResponseEntity<BaseResponse<Object>> resetPassword(String token, ResetPasswordRequest request) {
         final Optional<UserVerification> userVerification = userVerificationRepository.findByToken(token);
 
         if (userVerification.isEmpty()) {
@@ -44,9 +51,7 @@ public class ResetPasswordService extends AbstractBaseService {
             translate("auth.reset_password.subject"),
             "reset-password-notification",
             Map.of("user", "user name"),
-            (success) -> {
-                return success;
-            }
+            (success) -> success
         );
 
         if (!isMailed) {
