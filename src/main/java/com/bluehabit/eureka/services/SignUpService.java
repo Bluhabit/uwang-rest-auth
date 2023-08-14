@@ -11,6 +11,7 @@ import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.common.Constant;
 import com.bluehabit.eureka.common.JwtUtil;
+import com.bluehabit.eureka.common.MailUtil;
 import com.bluehabit.eureka.common.OtpGenerator;
 import com.bluehabit.eureka.component.user.UserCredential;
 import com.bluehabit.eureka.component.user.UserCredentialRepository;
@@ -49,6 +50,8 @@ public class SignUpService extends AbstractBaseService {
     private JwtUtil jwtUtil;
     @Autowired
     private OtpGenerator otpGenerator;
+    @Autowired
+    private MailUtil mailUtil;
 
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
         validate(req);
@@ -69,14 +72,26 @@ public class SignUpService extends AbstractBaseService {
 
         final UserCredential userCredentialSaved = userCredentialRepository.save(userCredential);
 
+        final String otpGen = OtpGenerator.generateOtp();
+
         final UserVerification otp = new UserVerification();
-        otp.setToken(OtpGenerator.generateOtp());
+        otp.setToken(otpGen);
         otp.setUser(userCredentialSaved);
         otp.setType(VerificationType.OTP);
         otp.setCreatedAt(currentDate);
         otp.setUpdatedAt(currentDate);
 
         userVerificationRepository.save(otp);
+
+        mailUtil.sendEmail(
+            userCredential.getEmail(),
+            translate("auth.send_otp.subject"),
+            "otp",
+            Map.of(
+                "name", "Gawean User",
+                "otp", otpGen
+            )
+        );
 
         return BaseResponse.success(translate("auth.success"), Map.of());
     }
