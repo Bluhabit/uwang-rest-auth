@@ -124,7 +124,6 @@ public class SignUpService extends AbstractBaseService {
                 user.setUserInfo(List.of(profile));
                 user.setPassword(newPassword);
 
-
                 final String jwtToken = jwtUtil.generateToken(user.getEmail());
                 final UserCredential credential = userCredentialRepository.save(user);
                 return BaseResponse.success(
