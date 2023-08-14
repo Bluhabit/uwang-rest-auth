@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.services.user;
+package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
@@ -13,24 +13,21 @@ import com.bluehabit.eureka.common.Constant;
 import com.bluehabit.eureka.common.JwtUtil;
 import com.bluehabit.eureka.component.user.UserCredential;
 import com.bluehabit.eureka.component.user.UserCredentialRepository;
-import com.bluehabit.eureka.component.user.UserProfile;
 import com.bluehabit.eureka.component.user.UserProfileRepository;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class UserService extends AbstractBaseService {
+public class SignUpService extends AbstractBaseService {
+
     @Autowired
     private UserCredentialRepository userCredentialRepository;
     @Autowired
@@ -59,10 +56,5 @@ public class UserService extends AbstractBaseService {
         userCredentialRepository.save(userCredential);
 
         return BaseResponse.success(translate("auth.success"), Map.of());
-    }
-
-    public ResponseEntity<BaseResponse<List<UserProfile>>> getUsers(Pageable pageable) {
-        final Page<UserProfile> user = userProfileRepository.findAll(pageable);
-        return BaseResponse.success("Get all users", user.toList());
     }
 }
