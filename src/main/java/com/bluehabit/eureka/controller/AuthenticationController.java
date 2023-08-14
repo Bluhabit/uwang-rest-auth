@@ -8,6 +8,8 @@
 package com.bluehabit.eureka.controller;
 
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
+import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.component.user.model.SignInResponse;
 import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
@@ -66,5 +68,14 @@ public class AuthenticationController {
         @RequestBody ResetPasswordRequest request
     ) {
         return resetPasswordService.reset(token, request);
+    }
+
+    @PostMapping(
+        path = "/api/v1/auth/otp-confirmation"
+    )
+    public ResponseEntity<BaseResponse<OtpConfirmationResponse>> otpConfirmation(
+        @RequestBody OtpConfirmationRequest request
+    ) {
+        return signUpService.otpConfirmation(request);
     }
 }
