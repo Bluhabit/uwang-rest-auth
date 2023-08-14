@@ -15,7 +15,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,15 +53,12 @@ public class UserCredential {
     private String authProvider;
     @Column
     private String active;
-
-    @OneToMany(mappedBy = "userCredential")
+    @OneToMany
     private List<UserProfile> userInfo;
     @OneToMany
     private List<UserVerification> userVerification;
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Collection<Permission> userPermission;
-
     @Column
     private OffsetDateTime createdAt;
     @Column
