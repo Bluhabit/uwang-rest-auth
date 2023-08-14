@@ -118,16 +118,22 @@ public class SignUpService extends AbstractBaseService {
                 userProfile.setValue(request.fullName());
 
                 final UserProfile profile = userProfileRepository.save(userProfile);
+                final String newPassword = encoder.encode(request.password());
 
                 final UserCredential user = userVerification.getUser();
                 user.setUserInfo(List.of(profile));
+                user.setPassword(newPassword);
+
 
                 final String jwtToken = jwtUtil.generateToken(user.getEmail());
                 final UserCredential credential = userCredentialRepository.save(user);
-                return BaseResponse.success(translate("auth.success"), new SignUpResponse(
-                    jwtToken,
-                    credential
-                ));
+                return BaseResponse.success(
+                    translate("auth.success"),
+                    new SignUpResponse(
+                        jwtToken,
+                        credential
+                    )
+                );
             })
             .orElseThrow(() -> new UnAuthorizedException(translate("auth.session.not.valid")));
     }
