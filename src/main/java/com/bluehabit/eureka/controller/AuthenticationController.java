@@ -8,13 +8,15 @@
 package com.bluehabit.eureka.controller;
 
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.component.user.model.SignInResponse;
 import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
+import com.bluehabit.eureka.component.user.model.SignUpResponse;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
 import com.bluehabit.eureka.services.SignInService;
 import com.bluehabit.eureka.services.SignUpService;
-import com.bluehabit.eureka.services.user.ResetPasswordService;
+import com.bluehabit.eureka.services.ResetPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,8 @@ public class AuthenticationController {
 
     private final String tokenResetPassword = "4adf-3ed";
 
+    //region sign up
+
     @PostMapping(
         path = "/api/v1/auth/sign-up-email",
         produces = MediaType.APPLICATION_JSON_VALUE,
@@ -48,6 +52,20 @@ public class AuthenticationController {
     }
 
     @PostMapping(
+        path = "/api/v1/auth/complete-profile",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<BaseResponse<SignUpResponse>> completeProfile(
+        @RequestBody CompleteProfileRequest request
+    ) {
+        return signUpService.completeProfile(request);
+    }
+
+    //end region
+    //region sign in
+
+    @PostMapping(
         path = "/api/v1/auth/sign-in-google",
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
@@ -58,6 +76,8 @@ public class AuthenticationController {
         return signInService.signInWithGoogle(request);
     }
 
+    //end region
+    //region reset password
     @PostMapping(
         path = "/api/v1/auth/reset-password"
     )
@@ -65,6 +85,7 @@ public class AuthenticationController {
         @RequestHeader(value = tokenResetPassword, required = false) String token,
         @RequestBody ResetPasswordRequest request
     ) {
-        return resetPasswordService.reset(token, request);
+        return resetPasswordService.resetPassword(token, request);
     }
+    //end region
 }

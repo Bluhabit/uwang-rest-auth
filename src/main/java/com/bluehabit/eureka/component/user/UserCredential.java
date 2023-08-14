@@ -62,8 +62,6 @@ public class UserCredential {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private Collection<Permission> userPermission;
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    private UserProfile userProfile;
 
     @Column
     private OffsetDateTime createdAt;
