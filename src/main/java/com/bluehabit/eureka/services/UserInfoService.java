@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.eureka.services.user;
+package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.component.user.UserCredentialRepository;
 import com.bluehabit.eureka.component.user.model.UserInfoDetails;
