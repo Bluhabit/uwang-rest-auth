@@ -29,6 +29,7 @@ public class ResetPasswordService extends AbstractBaseService {
     private MailUtil mailUtil;
 
     public ResponseEntity<BaseResponse<Object>> reset(String token, ResetPasswordRequest request) {
+        validate(request);
         final Optional<UserVerification> userVerification = userVerificationRepository.findByToken(token);
 
         if (userVerification.isEmpty()) {
