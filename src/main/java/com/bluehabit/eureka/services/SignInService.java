@@ -38,6 +38,9 @@ public class SignInService extends AbstractBaseService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(SignInWithGoogleRequest request) {
         validate(request);
         return GoogleAuthUtil.getGoogleClaim(request.token()).map(googleClaim -> {
@@ -75,19 +78,27 @@ public class SignInService extends AbstractBaseService {
     }
 
     public ResponseEntity<BaseResponse<SignInResponse>> signIn(@RequestBody SignInWithEmailRequest request) {
-        final UserCredential user = userCredentialRepository.findByEmail(request.email()).orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.invalid")));
+        validate(request);
+        return userCredentialRepository.findByEmail(request.email()).map(
+            (user) -> {
 
-        final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        final boolean isPasswordMatched = bCryptPasswordEncoder.matches(request.password(), user.getPassword());
+                final boolean isPasswordMatched = bCryptPasswordEncoder.matches(request.password(), user.getPassword());
 
-        if (!isPasswordMatched) {
-            throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
-        }
+                if (!isPasswordMatched) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                }
 
-        final String token = jwtUtil.generateToken(request.email());
-        return BaseResponse.success(
-            translate("auth.success"),
-            new SignInResponse(token, user)
-        );
+                if (!user.getAuthProvider().equals(Constant.AUTH_BASIC)) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                }
+
+                final String token = jwtUtil.generateToken(request.email());
+                return BaseResponse.success(
+                    translate("auth.success"),
+                    new SignInResponse(token, user)
+                );
+            }
+        ).orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.invalid")));
+
     }
 }
