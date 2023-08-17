@@ -113,10 +113,13 @@ public class SignUpService extends AbstractBaseService {
         validate(request);
         return userVerificationRepository.findById(request.sessionId())
             .map(userVerification -> {
+                final OffsetDateTime currentDate = OffsetDateTime.now();
                 final UserProfile userProfile = new UserProfile();
                 userProfile.setId(userVerification.getUser().getId());
                 userProfile.setKey(keyFullName);
                 userProfile.setValue(request.fullName());
+                userProfile.setUpdatedAt(currentDate);
+                userProfile.setCreatedAt(currentDate);
 
                 final UserProfile profile = userProfileRepository.save(userProfile);
                 final String newPassword = encoder.encode(request.password());
@@ -126,6 +129,7 @@ public class SignUpService extends AbstractBaseService {
                 profileList.add(profile);
                 user.setUserInfo(profileList);
                 user.setPassword(newPassword);
+                user.setUpdatedAt(currentDate);
 
                 final String jwtToken = jwtUtil.generateToken(user.getEmail());
                 final UserCredential credential = userCredentialRepository.save(user);
