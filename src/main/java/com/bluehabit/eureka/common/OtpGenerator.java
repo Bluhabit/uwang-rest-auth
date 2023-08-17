@@ -19,6 +19,10 @@ public class OtpGenerator {
     public static String generateOtp() {
         final Random random = new Random();
         final int otp = MIN_OTP_VALUE + random.nextInt(MAX_OTP_VALUE);
-        return String.valueOf(otp);
+        final String resultOtp = String.valueOf(otp);
+        if (resultOtp.length() > 4) {
+            return resultOtp.substring(3, resultOtp.length() - 1);
+        }
+        return resultOtp;
     }
 }
