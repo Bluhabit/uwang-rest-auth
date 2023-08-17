@@ -79,8 +79,7 @@ public class SignInService extends AbstractBaseService {
 
     public ResponseEntity<BaseResponse<SignInResponse>> signIn(@RequestBody SignInWithEmailRequest request) {
         validate(request);
-        return userCredentialRepository.findByEmail(request.email()).map(
-            (user) -> {
+        return userCredentialRepository.findByEmail(request.email()).map(user -> {
 
                 final boolean isPasswordMatched = bCryptPasswordEncoder.matches(request.password(), user.getPassword());
 
