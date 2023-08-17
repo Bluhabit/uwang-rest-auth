@@ -15,11 +15,14 @@ import com.bluehabit.eureka.common.MailUtil;
 import com.bluehabit.eureka.common.OtpGenerator;
 import com.bluehabit.eureka.component.user.UserCredential;
 import com.bluehabit.eureka.component.user.UserCredentialRepository;
+import com.bluehabit.eureka.component.user.UserProfile;
 import com.bluehabit.eureka.component.user.UserProfileRepository;
 import com.bluehabit.eureka.component.user.UserVerification;
 import com.bluehabit.eureka.component.user.UserVerificationRepository;
+import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
+import com.bluehabit.eureka.component.user.model.SignUpResponse;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
 import com.bluehabit.eureka.component.user.verification.VerificationType;
 import com.bluehabit.eureka.exception.GeneralErrorException;
@@ -31,6 +34,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,8 +46,10 @@ public class SignUpService extends AbstractBaseService {
     private UserCredentialRepository userCredentialRepository;
     @Autowired
     private UserProfileRepository userProfileRepository;
+
     @Autowired
     private UserVerificationRepository userVerificationRepository;
+
     @Autowired
     private BCryptPasswordEncoder encoder;
     @Autowired
@@ -52,6 +58,10 @@ public class SignUpService extends AbstractBaseService {
     private OtpGenerator otpGenerator;
     @Autowired
     private MailUtil mailUtil;
+
+    private final String keyFullName = "fullName";
+
+    //region sign up
 
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
         validate(req);
@@ -96,6 +106,37 @@ public class SignUpService extends AbstractBaseService {
         return BaseResponse.success(translate("auth.success"), Map.of());
     }
 
+    public ResponseEntity<BaseResponse<SignUpResponse>> completeProfile(
+        CompleteProfileRequest request
+    ) {
+        validate(request);
+        return userVerificationRepository.findByToken(request.sessionId())
+            .map(userVerification -> {
+                final UserProfile userProfile = new UserProfile();
+                userProfile.setId(userVerification.getUser().getId());
+                userProfile.setKey(keyFullName);
+                userProfile.setValue(request.fullName());
+
+                final UserProfile profile = userProfileRepository.save(userProfile);
+                final String newPassword = encoder.encode(request.password());
+
+                final UserCredential user = userVerification.getUser();
+                user.setUserInfo(List.of(profile));
+                user.setPassword(newPassword);
+
+                final String jwtToken = jwtUtil.generateToken(user.getEmail());
+                final UserCredential credential = userCredentialRepository.save(user);
+                return BaseResponse.success(
+                    translate("auth.success"),
+                    new SignUpResponse(
+                        jwtToken,
+                        credential
+                    )
+                );
+            })
+            .orElseThrow(() -> new UnAuthorizedException(translate("auth.session.not.valid")));
+    }
+
     public ResponseEntity<BaseResponse<OtpConfirmationResponse>> otpConfirmation(OtpConfirmationRequest req) {
         validate(req);
         final Optional<UserVerification> userVerification = userVerificationRepository.findByToken(req.otp());
@@ -111,4 +152,5 @@ public class SignUpService extends AbstractBaseService {
                 .getUserVerificationId())
         );
     }
+    //end region
 }
