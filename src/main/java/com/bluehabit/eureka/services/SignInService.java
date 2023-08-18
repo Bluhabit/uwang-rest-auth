@@ -15,11 +15,16 @@ import com.bluehabit.eureka.common.JwtUtil;
 import com.bluehabit.eureka.component.user.UserCredential;
 import com.bluehabit.eureka.component.user.UserCredentialRepository;
 import com.bluehabit.eureka.component.user.model.SignInResponse;
+import com.bluehabit.eureka.component.user.model.SignInWithEmailRequest;
 import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
+import com.bluehabit.eureka.exception.GeneralErrorException;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -32,6 +37,9 @@ public class SignInService extends AbstractBaseService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(SignInWithGoogleRequest request) {
         validate(request);
@@ -67,5 +75,29 @@ public class SignInService extends AbstractBaseService {
                     });
             }
         ).orElseThrow(() -> new UnAuthorizedException(translate("auth.token.invalid")));
+    }
+
+    public ResponseEntity<BaseResponse<SignInResponse>> signIn(@RequestBody SignInWithEmailRequest request) {
+        validate(request);
+        return userCredentialRepository.findByEmail(request.email()).map(user -> {
+
+                final boolean isPasswordMatched = bCryptPasswordEncoder.matches(request.password(), user.getPassword());
+
+                if (!isPasswordMatched) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                }
+
+                if (!user.getAuthProvider().equals(Constant.AUTH_BASIC)) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                }
+
+                final String token = jwtUtil.generateToken(request.email());
+                return BaseResponse.success(
+                    translate("auth.success"),
+                    new SignInResponse(token, user)
+                );
+            }
+        ).orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.invalid")));
+
     }
 }
