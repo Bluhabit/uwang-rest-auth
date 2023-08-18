@@ -8,17 +8,18 @@
 package com.bluehabit.eureka.controller;
 
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
-import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.component.user.model.SignInResponse;
+import com.bluehabit.eureka.component.user.model.SignInWithEmailRequest;
 import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
 import com.bluehabit.eureka.component.user.model.SignUpResponse;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
+import com.bluehabit.eureka.services.ResetPasswordService;
 import com.bluehabit.eureka.services.SignInService;
 import com.bluehabit.eureka.services.SignUpService;
-import com.bluehabit.eureka.services.ResetPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -99,4 +100,11 @@ public class AuthenticationController {
         return resetPasswordService.resetPassword(token, request);
     }
     //end region
+
+    @PostMapping(
+        path = "/api/v1/auth/sign-in"
+    )
+    public ResponseEntity<BaseResponse<SignInResponse>> signIn(@RequestBody SignInWithEmailRequest request) {
+        return signInService.signIn(request);
+    }
 }

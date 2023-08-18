@@ -34,6 +34,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,19 +111,25 @@ public class SignUpService extends AbstractBaseService {
         CompleteProfileRequest request
     ) {
         validate(request);
-        return userVerificationRepository.findByToken(request.sessionId())
+        return userVerificationRepository.findById(request.sessionId())
             .map(userVerification -> {
+                final OffsetDateTime currentDate = OffsetDateTime.now();
                 final UserProfile userProfile = new UserProfile();
                 userProfile.setId(userVerification.getUser().getId());
                 userProfile.setKey(keyFullName);
                 userProfile.setValue(request.fullName());
+                userProfile.setUpdatedAt(currentDate);
+                userProfile.setCreatedAt(currentDate);
 
                 final UserProfile profile = userProfileRepository.save(userProfile);
                 final String newPassword = encoder.encode(request.password());
 
                 final UserCredential user = userVerification.getUser();
-                user.setUserInfo(List.of(profile));
+                final List<UserProfile> profileList = new ArrayList<>();
+                profileList.add(profile);
+                user.setUserInfo(profileList);
                 user.setPassword(newPassword);
+                user.setUpdatedAt(currentDate);
 
                 final String jwtToken = jwtUtil.generateToken(user.getEmail());
                 final UserCredential credential = userCredentialRepository.save(user);
@@ -147,9 +154,11 @@ public class SignUpService extends AbstractBaseService {
 
         return BaseResponse.success(
             translate("auth.success"),
-            new OtpConfirmationResponse(userVerification
-                .get()
-                .getUserVerificationId())
+            new OtpConfirmationResponse(
+                userVerification
+                    .get()
+                    .getUserVerificationId()
+            )
         );
     }
     //end region

@@ -114,4 +114,13 @@ public class ErrorController {
             noHandlerFoundException.getMessage()
         );
     }
+
+    @ExceptionHandler(value = UnsupportedOperationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public BaseResponse<String> unSupportedException(UnsupportedOperationException noHandlerFoundException) {
+        return BaseResponse.error(
+            HttpStatus.NOT_FOUND.value(),
+            "Something wrong"
+        );
+    }
 }
