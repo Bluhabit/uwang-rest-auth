@@ -10,6 +10,7 @@ package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
+import com.bluehabit.eureka.common.Constant;
 import com.bluehabit.eureka.common.MailUtil;
 import com.bluehabit.eureka.common.TokenGenerator;
 import com.bluehabit.eureka.component.user.UserCredential;
@@ -80,7 +81,7 @@ public class ResetPasswordService extends AbstractBaseService {
                 final boolean isMailed = mailUtil.sendEmail(
                     userCredential.getEmail(),
                     translate("auth.request.reset.password.subject"),
-                    "reset-password-request",
+                    Constant.RESET_PASSWORD_REQUEST_FOLDER,
                     Map.of("link", String.format("https://gawean.com/%s", userVerification.getToken())),
                     (success) -> success
                 );
