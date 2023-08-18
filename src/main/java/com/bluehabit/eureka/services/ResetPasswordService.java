@@ -11,11 +11,14 @@ package com.bluehabit.eureka.services;
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.common.MailUtil;
+import com.bluehabit.eureka.common.TokenGenerator;
 import com.bluehabit.eureka.component.user.UserCredential;
 import com.bluehabit.eureka.component.user.UserCredentialRepository;
 import com.bluehabit.eureka.component.user.UserVerification;
 import com.bluehabit.eureka.component.user.UserVerificationRepository;
+import com.bluehabit.eureka.component.user.model.RequestResetPasswordRequest;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
+import com.bluehabit.eureka.component.user.verification.VerificationType;
 import com.bluehabit.eureka.exception.GeneralErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +38,8 @@ public class ResetPasswordService extends AbstractBaseService {
 
     @Autowired
     private MailUtil mailUtil;
+    @Autowired
+    private TokenGenerator tokenGenerator;
 
     public ResponseEntity<BaseResponse<Object>> resetPassword(String token, ResetPasswordRequest request) {
         validate(request);
@@ -53,6 +58,33 @@ public class ResetPasswordService extends AbstractBaseService {
             translate("auth.reset_password.subject"),
             "reset-password-notification",
             Map.of("user", "user name"),
+            (success) -> success
+        );
+
+        if (!isMailed) {
+            throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+        }
+
+        return BaseResponse.success(translate("auth.success"), new HashMap<>());
+    }
+
+    public ResponseEntity<BaseResponse<Object>> requestResetPassword(RequestResetPasswordRequest request) {
+        validate(request);
+        final UserCredential userCredential = userCredentialRepository
+            .findByEmail(request.email())
+            .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.user.not.exist")));
+
+        final UserVerification userVerification = new UserVerification();
+        userVerification.setUser(userCredential);
+        userVerification.setType(VerificationType.RESET);
+        userVerification.setToken(TokenGenerator.generateToken());
+        userVerificationRepository.save(userVerification);
+
+        final boolean isMailed = mailUtil.sendEmail(
+            userCredential.getEmail(),
+            translate("auth.request.reset.password.subject"),
+            "reset-password-request",
+            Map.of("link", String.format("https://gawean.com/%s", userVerification.getToken())),
             (success) -> success
         );
 
