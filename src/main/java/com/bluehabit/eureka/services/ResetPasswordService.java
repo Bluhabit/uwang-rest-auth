@@ -70,28 +70,25 @@ public class ResetPasswordService extends AbstractBaseService {
 
     public ResponseEntity<BaseResponse<Object>> requestResetPassword(RequestResetPasswordRequest request) {
         validate(request);
-        final UserCredential userCredential = userCredentialRepository
-            .findByEmail(request.email())
+        return userCredentialRepository.findByEmail(request.email())
+            .map(userCredential -> {
+                final UserVerification userVerification = new UserVerification();
+                userVerification.setUser(userCredential);
+                userVerification.setType(VerificationType.RESET);
+                userVerification.setToken(TokenGenerator.generateToken());
+                userVerificationRepository.save(userVerification);
+                final boolean isMailed = mailUtil.sendEmail(
+                    userCredential.getEmail(),
+                    translate("auth.request.reset.password.subject"),
+                    "reset-password-request",
+                    Map.of("link", String.format("https://gawean.com/%s", userVerification.getToken())),
+                    (success) -> success
+                );
+                if (!isMailed) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.user.not.exist"));
+                }
+                return BaseResponse.success(translate("auth.success"), new Object());
+            })
             .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.user.not.exist")));
-
-        final UserVerification userVerification = new UserVerification();
-        userVerification.setUser(userCredential);
-        userVerification.setType(VerificationType.RESET);
-        userVerification.setToken(TokenGenerator.generateToken());
-        userVerificationRepository.save(userVerification);
-
-        final boolean isMailed = mailUtil.sendEmail(
-            userCredential.getEmail(),
-            translate("auth.request.reset.password.subject"),
-            "reset-password-request",
-            Map.of("link", String.format("https://gawean.com/%s", userVerification.getToken())),
-            (success) -> success
-        );
-
-        if (!isMailed) {
-            throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
-        }
-
-        return BaseResponse.success(translate("auth.success"), new HashMap<>());
     }
 }
