@@ -11,6 +11,7 @@ import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
+import com.bluehabit.eureka.component.user.model.RequestResetPasswordRequest;
 import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.component.user.model.SignInResponse;
 import com.bluehabit.eureka.component.user.model.SignInWithEmailRequest;
@@ -107,4 +108,15 @@ public class AuthenticationController {
     public ResponseEntity<BaseResponse<SignInResponse>> signIn(@RequestBody SignInWithEmailRequest request) {
         return signInService.signIn(request);
     }
+
+    // region request reset password
+    @PostMapping(
+        path = "/api/v1/auth/request-reset-password"
+    )
+    public ResponseEntity<BaseResponse<Object>> requestResetPassword(
+        @RequestBody RequestResetPasswordRequest request
+    ) {
+        return resetPasswordService.requestResetPassword(request);
+    }
+    // end region
 }
