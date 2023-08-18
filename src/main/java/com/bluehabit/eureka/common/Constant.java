@@ -37,5 +37,6 @@ public class Constant {
     public static String USER_NONACTIVE = "false";
     public static String AUTH_BASIC = "BASIC";
     public static String AUTH_GOOGLE = "GOOGLE";
+    public static String RESET_PASSWORD_REQUEST_FOLDER = "reset-password-request";
 
 }
