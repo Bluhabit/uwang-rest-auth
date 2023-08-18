@@ -17,11 +17,11 @@ public class TokenGenerator {
     private static final int TOKEN_LENGTH = 32;
 
     public static String generateToken() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] tokenBytes = new byte[TOKEN_LENGTH];
+        final SecureRandom secureRandom = new SecureRandom();
+        final byte[] tokenBytes = new byte[TOKEN_LENGTH];
         secureRandom.nextBytes(tokenBytes);
 
-        StringBuilder tokenBuilder = new StringBuilder();
+        final StringBuilder tokenBuilder = new StringBuilder();
         for (byte b : tokenBytes) {
             tokenBuilder.append(String.format("%02x", b));
         }
