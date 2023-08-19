@@ -9,6 +9,8 @@ package com.bluehabit.eureka.controller;
 
 import com.bluehabit.eureka.common.BaseResponse;
 import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
+import com.bluehabit.eureka.component.user.model.LinkResetPasswordConfirmationRequest;
+import com.bluehabit.eureka.component.user.model.LinkResetPasswordConfirmationResponse;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
 import com.bluehabit.eureka.component.user.model.RequestResetPasswordRequest;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 public class AuthenticationController {
@@ -92,6 +96,24 @@ public class AuthenticationController {
     //end region
     //region reset password
     @PostMapping(
+        path = "/api/v1/auth/request-reset-password"
+    )
+    public ResponseEntity<BaseResponse<Map<Object, Object>>> requestResetPassword(
+        @RequestBody RequestResetPasswordRequest request
+    ) {
+        return resetPasswordService.requestResetPassword(request);
+    }
+
+    @PostMapping(
+        path = "/api/v1/auth/link-confirmation"
+    )
+    public ResponseEntity<BaseResponse<LinkResetPasswordConfirmationResponse>> linkResetPasswordConfirmation(
+        @RequestBody LinkResetPasswordConfirmationRequest request
+    ) {
+        return resetPasswordService.linkConfirmation(request);
+    }
+
+    @PostMapping(
         path = "/api/v1/auth/reset-password"
     )
     public ResponseEntity<BaseResponse<Object>> resetPassword(
@@ -109,14 +131,4 @@ public class AuthenticationController {
         return signInService.signIn(request);
     }
 
-    // region request reset password
-    @PostMapping(
-        path = "/api/v1/auth/request-reset-password"
-    )
-    public ResponseEntity<BaseResponse<Object>> requestResetPassword(
-        @RequestBody RequestResetPasswordRequest request
-    ) {
-        return resetPasswordService.requestResetPassword(request);
-    }
-    // end region
 }
