@@ -26,7 +26,6 @@ public class GoogleAuthUtil {
             if (LocalDate.now().isAfter(LocalDate.ofEpochDay(expired))) {
                 return Optional.empty();
             }
-
             return Optional.of(
                 new GoogleClaim(
                     claims.get("email").asString(),
