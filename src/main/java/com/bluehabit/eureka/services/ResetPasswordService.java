@@ -29,9 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class ResetPasswordService extends AbstractBaseService {
@@ -81,39 +79,34 @@ public class ResetPasswordService extends AbstractBaseService {
         return userVerificationRepository.findByToken(request.token())
             .map(userVerification -> {
                     return BaseResponse.success(translate("auth.success"),
-                        new LinkResetPasswordConfirmationResponse(
-                            request.token()
-                        )
+                        new LinkResetPasswordConfirmationResponse(request.token())
                     );
                 }
             )
             .orElseThrow(() -> new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.token.invalid")));
     }
 
-    public ResponseEntity<BaseResponse<Object>> resetPassword(String token, ResetPasswordRequest request) {
+    public ResponseEntity<BaseResponse<Map<Object, Object>>> setNewPassword(String token, ResetPasswordRequest request) {
         validate(request);
-        final Optional<UserVerification> userVerification = userVerificationRepository.findByToken(token);
+        return userVerificationRepository.findByToken(token).map(userVerification -> {
+                final UserCredential userCredential = userVerification.getUser();
+                userCredential.setPassword(encoder.encode(request.newPassword()));
+                userCredentialRepository.save(userCredential);
 
-        if (userVerification.isEmpty()) {
-            throw new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.token.invalid"));
-        }
-        final UserVerification userVerified = userVerification.get();
-        final UserCredential userCredential = userVerified.getUser();
-        userCredential.setPassword(encoder.encode(request.newPassword()));
-        userCredentialRepository.save(userCredential);
+                final boolean isMailed = mailUtil.sendEmail(
+                    userCredential.getEmail(),
+                    translate("auth.reset_password.subject"),
+                    "reset-password-notification",
+                    Map.of("user", "user name"),
+                    (success) -> success
+                );
 
-        final boolean isMailed = mailUtil.sendEmail(
-            userCredential.getEmail(),
-            translate("auth.reset_password.subject"),
-            "reset-password-notification",
-            Map.of("user", "user name"),
-            (success) -> success
-        );
-
-        if (!isMailed) {
-            throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
-        }
-
-        return BaseResponse.success(translate("auth.success"), new HashMap<>());
+                if (!isMailed) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                }
+                userVerificationRepository.deleteById(userVerification.getUserVerificationId());
+                return BaseResponse.success(translate("auth.success"), Map.of());
+            })
+            .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.token.invalid")));
     }
 }

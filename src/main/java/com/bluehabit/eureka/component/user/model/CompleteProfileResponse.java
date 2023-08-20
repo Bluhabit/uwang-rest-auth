@@ -7,10 +7,10 @@
 
 package com.bluehabit.eureka.component.user.model;
 
-import jakarta.validation.constraints.NotBlank;
+import com.bluehabit.eureka.component.user.UserCredential;
 
-public record OtpConfirmationRequest(
-    @NotBlank String otp,
-    @NotBlank String sessionId
+public record CompleteProfileResponse(
+       String token,
+       UserCredential credential
 ) {
 }
