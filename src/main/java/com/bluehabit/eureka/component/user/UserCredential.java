@@ -33,7 +33,7 @@ import java.util.List;
 @Entity
 @Table(name = "tb_user_credential")
 @SQLDelete(
-    sql = "UPDATE tb_user_credential SET deleted=true WHERE user_id=?"
+    sql = "UPDATE tb_user_credential SET deleted=true WHERE id=?"
 )
 @Where(
     clause = "deleted = false"
