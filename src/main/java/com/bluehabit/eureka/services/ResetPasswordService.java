@@ -104,7 +104,7 @@ public class ResetPasswordService extends AbstractBaseService {
                 if (!isMailed) {
                     throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
                 }
-                userVerificationRepository.deleteById(userVerification.getUserVerificationId());
+                userVerificationRepository.deleteById(userVerification.getId());
                 return BaseResponse.success(translate("auth.success"), Map.of());
             })
             .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.token.invalid")));

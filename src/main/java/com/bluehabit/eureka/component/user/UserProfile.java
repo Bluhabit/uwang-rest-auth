@@ -26,7 +26,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "tb_user_profile")
 @SQLDelete(
-    sql = "UPDATE tb_user_profile SET deleted=true WHERE user_id=?"
+    sql = "UPDATE tb_user_profile SET deleted=true WHERE id=?"
 )
 @Where(
     clause = "deleted = false"

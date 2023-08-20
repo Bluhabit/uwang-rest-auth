@@ -28,7 +28,7 @@ import java.time.OffsetDateTime;
     name = "tb_permission"
 )
 @SQLDelete(
-    sql = "UPDATE tb_permission SET deleted=true WHERE permission_id=?"
+    sql = "UPDATE tb_permission SET deleted=true WHERE id=?"
 )
 @Where(
     clause = "deleted = false"
@@ -39,7 +39,7 @@ public class Permission {
         name = "UUID",
         type = org.hibernate.id.uuid.UuidGenerator.class
     )
-    private String permissionId;
+    private String id;
     @Column(nullable = false)
     private String permissionName;
     @Column(nullable = false)
@@ -56,8 +56,8 @@ public class Permission {
     )
     private boolean deleted;
 
-    public Permission(String permissionId, String permissionName, String permissionType, String permissionGroup, OffsetDateTime createdAt, OffsetDateTime updatedAt, boolean deleted) {
-        this.permissionId = permissionId;
+    public Permission(String id, String permissionName, String permissionType, String permissionGroup, OffsetDateTime createdAt, OffsetDateTime updatedAt, boolean deleted) {
+        this.id = id;
         this.permissionName = permissionName;
         this.permissionType = permissionType;
         this.permissionGroup = permissionGroup;

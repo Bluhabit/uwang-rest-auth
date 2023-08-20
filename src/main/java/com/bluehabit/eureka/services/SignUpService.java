@@ -105,7 +105,7 @@ public class SignUpService extends AbstractBaseService {
 
         return BaseResponse.success(
             translate("auth.success"),
-            new SignUpWithEmailResponse(otp.getUserVerificationId())
+            new SignUpWithEmailResponse(otp.getId())
         );
     }
 
@@ -119,7 +119,7 @@ public class SignUpService extends AbstractBaseService {
                     translate("auth.success"),
                     new OtpConfirmationResponse(
                         userVerification
-                            .getUserVerificationId()
+                            .getId()
                     )
                 );
             })

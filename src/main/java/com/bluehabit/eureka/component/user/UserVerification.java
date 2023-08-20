@@ -36,7 +36,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "tb_user_verification")
 @SQLDelete(
-    sql = "UPDATE tb_user_verification SET deleted=true WHERE userVerificationId=?"
+    sql = "UPDATE tb_user_verification SET deleted=true WHERE id=?"
 )
 @Where(
     clause = "deleted = false"
@@ -46,7 +46,7 @@ public class UserVerification {
     @GeneratedValue(
         strategy = GenerationType.UUID
     )
-    private String userVerificationId;
+    private String id;
 
     @Column(
         unique = true,
