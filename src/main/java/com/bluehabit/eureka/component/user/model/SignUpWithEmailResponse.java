@@ -7,10 +7,7 @@
 
 package com.bluehabit.eureka.component.user.model;
 
-import com.bluehabit.eureka.component.user.UserCredential;
-
-public record SignUpResponse(
-       String token,
-       UserCredential credential
+public record SignUpWithEmailResponse(
+    String sessionId
 ) {
 }

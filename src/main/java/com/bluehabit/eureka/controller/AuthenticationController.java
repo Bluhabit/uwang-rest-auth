@@ -18,7 +18,7 @@ import com.bluehabit.eureka.component.user.model.ResetPasswordRequest;
 import com.bluehabit.eureka.component.user.model.SignInResponse;
 import com.bluehabit.eureka.component.user.model.SignInWithEmailRequest;
 import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
-import com.bluehabit.eureka.component.user.model.SignUpResponse;
+import com.bluehabit.eureka.component.user.model.CompleteProfileResponse;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
 import com.bluehabit.eureka.services.ResetPasswordService;
 import com.bluehabit.eureka.services.SignInService;
@@ -73,7 +73,7 @@ public class AuthenticationController {
         produces = MediaType.APPLICATION_JSON_VALUE,
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<BaseResponse<SignUpResponse>> completeProfile(
+    public ResponseEntity<BaseResponse<CompleteProfileResponse>> completeProfile(
         @RequestBody CompleteProfileRequest request
     ) {
         return signUpService.completeProfile(request);
@@ -116,11 +116,11 @@ public class AuthenticationController {
     @PostMapping(
         path = "/api/v1/auth/reset-password"
     )
-    public ResponseEntity<BaseResponse<Object>> resetPassword(
+    public ResponseEntity<BaseResponse<Map<Object, Object>>> resetPassword(
         @RequestHeader(value = tokenResetPassword, required = false) String token,
         @RequestBody ResetPasswordRequest request
     ) {
-        return resetPasswordService.resetPassword(token, request);
+        return resetPasswordService.setNewPassword(token, request);
     }
     //end region
 

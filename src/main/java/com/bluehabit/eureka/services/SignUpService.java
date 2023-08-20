@@ -20,10 +20,11 @@ import com.bluehabit.eureka.component.user.UserProfileRepository;
 import com.bluehabit.eureka.component.user.UserVerification;
 import com.bluehabit.eureka.component.user.UserVerificationRepository;
 import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
+import com.bluehabit.eureka.component.user.model.CompleteProfileResponse;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
 import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
-import com.bluehabit.eureka.component.user.model.SignUpResponse;
 import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
+import com.bluehabit.eureka.component.user.model.SignUpWithEmailResponse;
 import com.bluehabit.eureka.component.user.verification.VerificationType;
 import com.bluehabit.eureka.exception.GeneralErrorException;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
@@ -37,7 +38,6 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -61,7 +61,6 @@ public class SignUpService extends AbstractBaseService {
     private MailUtil mailUtil;
 
     private final String keyFullName = "fullName";
-
     //region sign up
 
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
@@ -104,10 +103,30 @@ public class SignUpService extends AbstractBaseService {
             )
         );
 
-        return BaseResponse.success(translate("auth.success"), Map.of());
+        return BaseResponse.success(
+            translate("auth.success"),
+            new SignUpWithEmailResponse(otp.getUserVerificationId())
+        );
     }
 
-    public ResponseEntity<BaseResponse<SignUpResponse>> completeProfile(
+    public ResponseEntity<BaseResponse<OtpConfirmationResponse>> otpConfirmation(OtpConfirmationRequest req) {
+        validate(req);
+        return userVerificationRepository.findById(req.sessionId()).map(userVerification -> {
+                if (!userVerification.getToken().equals(req.otp())) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.otp.invalid"));
+                }
+                return BaseResponse.success(
+                    translate("auth.success"),
+                    new OtpConfirmationResponse(
+                        userVerification
+                            .getUserVerificationId()
+                    )
+                );
+            })
+            .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.otp.invalid")));
+    }
+
+    public ResponseEntity<BaseResponse<CompleteProfileResponse>> completeProfile(
         CompleteProfileRequest request
     ) {
         validate(request);
@@ -133,33 +152,16 @@ public class SignUpService extends AbstractBaseService {
 
                 final String jwtToken = jwtUtil.generateToken(user.getEmail());
                 final UserCredential credential = userCredentialRepository.save(user);
+                userVerificationRepository.deleteById(request.sessionId());
                 return BaseResponse.success(
                     translate("auth.success"),
-                    new SignUpResponse(
+                    new CompleteProfileResponse(
                         jwtToken,
                         credential
                     )
                 );
             })
             .orElseThrow(() -> new UnAuthorizedException(translate("auth.session.not.valid")));
-    }
-
-    public ResponseEntity<BaseResponse<OtpConfirmationResponse>> otpConfirmation(OtpConfirmationRequest req) {
-        validate(req);
-        final Optional<UserVerification> userVerification = userVerificationRepository.findByToken(req.otp());
-
-        if (userVerification.isEmpty()) {
-            throw new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.otp.invalid"));
-        }
-
-        return BaseResponse.success(
-            translate("auth.success"),
-            new OtpConfirmationResponse(
-                userVerification
-                    .get()
-                    .getUserVerificationId()
-            )
-        );
     }
     //end region
 }
