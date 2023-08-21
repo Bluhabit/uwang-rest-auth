@@ -9,23 +9,24 @@ package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
-import com.bluehabit.eureka.common.Constant;
 import com.bluehabit.eureka.common.JwtUtil;
 import com.bluehabit.eureka.common.MailUtil;
 import com.bluehabit.eureka.common.OtpGenerator;
-import com.bluehabit.eureka.component.user.UserCredential;
-import com.bluehabit.eureka.component.user.UserCredentialRepository;
-import com.bluehabit.eureka.component.user.UserProfile;
-import com.bluehabit.eureka.component.user.UserProfileRepository;
-import com.bluehabit.eureka.component.user.UserVerification;
-import com.bluehabit.eureka.component.user.UserVerificationRepository;
-import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
-import com.bluehabit.eureka.component.user.model.CompleteProfileResponse;
-import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
-import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
-import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
-import com.bluehabit.eureka.component.user.model.SignUpWithEmailResponse;
-import com.bluehabit.eureka.component.user.verification.VerificationType;
+import com.bluehabit.eureka.component.AuthProvider;
+import com.bluehabit.eureka.component.UserStatus;
+import com.bluehabit.eureka.component.data.UserCredential;
+import com.bluehabit.eureka.component.data.UserCredentialRepository;
+import com.bluehabit.eureka.component.data.UserProfile;
+import com.bluehabit.eureka.component.data.UserProfileRepository;
+import com.bluehabit.eureka.component.data.UserVerification;
+import com.bluehabit.eureka.component.data.UserVerificationRepository;
+import com.bluehabit.eureka.component.model.CompleteProfileRequest;
+import com.bluehabit.eureka.component.model.CompleteProfileResponse;
+import com.bluehabit.eureka.component.model.OtpConfirmationRequest;
+import com.bluehabit.eureka.component.model.OtpConfirmationResponse;
+import com.bluehabit.eureka.component.model.SignUpWithEmailRequest;
+import com.bluehabit.eureka.component.model.SignUpWithEmailResponse;
+import com.bluehabit.eureka.component.VerificationType;
 import com.bluehabit.eureka.exception.GeneralErrorException;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +76,8 @@ public class SignUpService extends AbstractBaseService {
         final UserCredential userCredential = new UserCredential();
         userCredential.setId(uuid);
         userCredential.setEmail(req.email());
-        userCredential.setAuthProvider(Constant.AUTH_BASIC);
-        userCredential.setActive(Constant.USER_ACTIVE);
+        userCredential.setAuthProvider(AuthProvider.BASIC);
+        userCredential.setStatus(UserStatus.INACTIVE);
         userCredential.setCreatedAt(currentDate);
         userCredential.setUpdatedAt(currentDate);
 
@@ -157,7 +158,7 @@ public class SignUpService extends AbstractBaseService {
                     translate("auth.success"),
                     new CompleteProfileResponse(
                         jwtToken,
-                        credential
+                        credential.toResponse()
                     )
                 );
             })

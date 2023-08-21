@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,8 +25,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.io.IOException;
+import java.util.Locale;
 
 @Component
 public class FilterRequest extends OncePerRequestFilter {
@@ -40,10 +43,13 @@ public class FilterRequest extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userService;
 
+    @Autowired
+    private SessionLocaleResolver localeResolver;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-
+            setLocale(request);
             if (new AntPathMatcher().match("/api/v1/auth/**", request.getServletPath())) {
                 filterChain.doFilter(request, response);
                 return;
@@ -86,6 +92,14 @@ public class FilterRequest extends OncePerRequestFilter {
         } catch (UnAuthorizedException exception) {
             resolver.resolveException(request, response, null, exception);
         }
+    }
 
+    private void setLocale(HttpServletRequest request) {
+        final String locale = request.getHeader("Accept-Language");
+        if (!locale.isEmpty() && !locale.isBlank()) {
+            LocaleContextHolder.setLocale(Locale.forLanguageTag(locale));
+        } else {
+            LocaleContextHolder.setLocale(Locale.forLanguageTag("ID"));
+        }
     }
 }

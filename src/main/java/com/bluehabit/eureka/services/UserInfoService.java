@@ -7,8 +7,8 @@
 
 package com.bluehabit.eureka.services;
 
-import com.bluehabit.eureka.component.user.UserCredentialRepository;
-import com.bluehabit.eureka.component.user.model.UserInfoDetails;
+import com.bluehabit.eureka.component.data.UserCredentialRepository;
+import com.bluehabit.eureka.component.model.UserInfoDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
