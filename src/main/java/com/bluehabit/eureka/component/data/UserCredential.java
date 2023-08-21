@@ -54,7 +54,7 @@ public class UserCredential {
     @Column(columnDefinition = "int2")
     private AuthProvider authProvider;
     @Enumerated(EnumType.ORDINAL)
-    @Column
+    @Column(columnDefinition = "int2")
     private UserStatus status;
     @OneToMany
     private List<UserProfile> userInfo;
