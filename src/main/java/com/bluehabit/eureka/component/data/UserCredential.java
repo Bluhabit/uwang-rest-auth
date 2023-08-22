@@ -68,7 +68,9 @@ public class UserCredential {
     public Map<String, Object> toResponse() {
         final Map<String, Object> data = new HashMap<>();
         final Map<String, Object> profile = new HashMap<>();
-        getUserInfo().forEach(userProfile -> profile.put(userProfile.getKey(), userProfile.getValue()));
+        if (getUserInfo() != null) {
+            getUserInfo().forEach(userProfile -> profile.put(userProfile.getKey(), userProfile.getValue()));
+        }
         data.put("id", getId());
         data.put("email", getEmail());
         data.put("status", getStatus());
