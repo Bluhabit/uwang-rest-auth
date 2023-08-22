@@ -25,7 +25,7 @@ public class ApplicationConfig {
         loggingFilter.setMaxPayloadLength(maxPayload);
         return loggingFilter;
     }
-    
+
     @Bean
     public ResourceBundleMessageSource bundleMessageSource() {
         final ResourceBundleMessageSource message = new ResourceBundleMessageSource();
