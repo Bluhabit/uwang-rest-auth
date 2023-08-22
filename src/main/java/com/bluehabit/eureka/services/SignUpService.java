@@ -67,7 +67,7 @@ public class SignUpService extends AbstractBaseService {
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
         validate(req);
         if (userCredentialRepository.existsByEmail(req.email())) {
-            throw new UnAuthorizedException(2, translate("auth.failed.user.exist"));
+            throw new UnAuthorizedException(2, translate("auth.sign_up.email.exist"));
         }
 
         final String uuid = UUID.randomUUID().toString();
@@ -114,17 +114,17 @@ public class SignUpService extends AbstractBaseService {
         validate(req);
         return userVerificationRepository.findById(req.sessionId()).map(userVerification -> {
                 if (!userVerification.getToken().equals(req.otp())) {
-                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.otp.invalid"));
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.sign_up.otp.failed"));
                 }
                 return BaseResponse.success(
-                    translate("auth.success"),
+                    translate("auth.sign_up.otp.success"),
                     new OtpConfirmationResponse(
                         userVerification
                             .getId()
                     )
                 );
             })
-            .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.otp.invalid")));
+            .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.sign_up.otp.failed")));
     }
 
     public ResponseEntity<BaseResponse<CompleteProfileResponse>> completeProfile(
