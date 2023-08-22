@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -42,9 +41,6 @@ public class FilterRequest extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsService userService;
-
-    @Autowired
-    private SessionLocaleResolver localeResolver;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -97,7 +93,7 @@ public class FilterRequest extends OncePerRequestFilter {
     private void setLocale(HttpServletRequest request) {
         final String locale = request.getHeader("Accept-Language");
         if (!locale.isEmpty() && !locale.isBlank()) {
-            LocaleContextHolder.setLocale(Locale.forLanguageTag(locale));
+            LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(locale));
         } else {
             LocaleContextHolder.setLocale(Locale.forLanguageTag("ID"));
         }
