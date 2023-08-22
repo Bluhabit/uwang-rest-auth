@@ -15,6 +15,8 @@ import com.bluehabit.eureka.component.AuthProvider;
 import com.bluehabit.eureka.component.UserStatus;
 import com.bluehabit.eureka.component.data.UserCredential;
 import com.bluehabit.eureka.component.data.UserCredentialRepository;
+import com.bluehabit.eureka.component.data.UserProfile;
+import com.bluehabit.eureka.component.data.UserProfileRepository;
 import com.bluehabit.eureka.component.model.SignInResponse;
 import com.bluehabit.eureka.component.model.SignInWithEmailRequest;
 import com.bluehabit.eureka.component.model.SignInWithGoogleRequest;
@@ -28,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,10 +41,15 @@ public class SignInService extends AbstractBaseService {
     private UserCredentialRepository userCredentialRepository;
 
     @Autowired
+    private UserProfileRepository userProfileRepository;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    private final String keyFullName = "fullName";
 
     public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(SignInWithGoogleRequest request) {
         validate(request);
@@ -62,13 +71,26 @@ public class SignInService extends AbstractBaseService {
                             final String uuid = UUID.randomUUID().toString();
                             final OffsetDateTime currentDate = OffsetDateTime.now();
 
+                            final UserProfile userProfile = new UserProfile();
+                            userProfile.setId(uuid);
+                            userProfile.setKey(keyFullName);
+                            userProfile.setValue(googleClaim.fullName());
+                            userProfile.setUpdatedAt(currentDate);
+                            userProfile.setCreatedAt(currentDate);
+
+                            final UserProfile profile = userProfileRepository.save(userProfile);
+                            final List<UserProfile> profileList = new ArrayList<>();
+                            profileList.add(profile);
+
                             final UserCredential userCredential = new UserCredential();
                             userCredential.setId(uuid);
                             userCredential.setEmail(googleClaim.email());
                             userCredential.setAuthProvider(AuthProvider.GOOGLE);
                             userCredential.setStatus(UserStatus.ACTIVE);
+                            userCredential.setUserInfo(profileList);
                             userCredential.setCreatedAt(currentDate);
                             userCredential.setUpdatedAt(currentDate);
+
                             final UserCredential saved = userCredentialRepository.save(userCredential);
 
                             return BaseResponse.success(
