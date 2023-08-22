@@ -55,7 +55,7 @@ public class SignInService extends AbstractBaseService {
                             }
 
                             return BaseResponse.success(
-                                translate("auth.success"),
+                                translate("auth.sign_in.success"),
                                 new SignInResponse(jwtToken, user.toResponse())
                             );
                         }).orElseGet(() -> {
@@ -72,7 +72,7 @@ public class SignInService extends AbstractBaseService {
                             final UserCredential saved = userCredentialRepository.save(userCredential);
 
                             return BaseResponse.success(
-                                translate("auth.success"),
+                                translate("auth.sign_in.success"),
                                 new SignInResponse(jwtToken, saved.toResponse())
                             );
                         });
@@ -87,20 +87,20 @@ public class SignInService extends AbstractBaseService {
                 final boolean isPasswordMatched = bCryptPasswordEncoder.matches(request.password(), user.getPassword());
 
                 if (!isPasswordMatched) {
-                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.sign_in.failed"));
                 }
 
                 if (!user.getAuthProvider().equals(AuthProvider.BASIC)) {
-                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.sign_in.failed"));
                 }
 
                 final String token = jwtUtil.generateToken(request.email());
                 return BaseResponse.success(
-                    translate("auth.success"),
+                    translate("auth.sign_in.success"),
                     new SignInResponse(token, user.toResponse())
                 );
             }
-        ).orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.invalid")));
+        ).orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.sign_in.failed")));
 
     }
 }
