@@ -22,10 +22,31 @@ jobs:
           java-version: 17
       - name: Configure application.properties
         run: |
-          echo "APPLICATION_PROPERTIES" > application.properties.b64
-          base64 -d -i application.properties.b64 > "$APP_PATH"/application.properties
+          echo "APPLICATION_PROPERTIES" > "$APP_PATH"/application.properties
+          echo "spring.datasource.username=test" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.password=test" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.url=test" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.driver-class-name=org.postgresql.Driver" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.idleTimeout=60000" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.connectionTimeout=30000" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.maxLifetime=50000" >> "$APP_PATH"/application.properties
+          
+          echo "spring.jpa.hibernate.ddl-auto=none" >> "$APP_PATH"/application.properties
+          echo "spring.jpa.show-sql=true" >> "$APP_PATH"/application.properties
+          echo "spring.jpa.open-in-view=true" >> "$APP_PATH"/application.properties
+          
+          echo "debug=true" >> "$APP_PATH"/application.properties
+          echo "server.port=8000" >> "$APP_PATH"/application.properties
+          
+          echo "spring.mail.host=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.port=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.username=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.password=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.properties.mail.smtp.auth=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.properties.mail.smtp.starttls.enable=true" >> "$APP_PATH"/application.properties
+
         env:
-          APPLICATION_PROPERTIES: ${{secrets.APPLICATION_PROPERTIES}}
+          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
