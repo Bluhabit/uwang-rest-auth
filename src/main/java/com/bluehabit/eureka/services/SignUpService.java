@@ -138,6 +138,7 @@ public class SignUpService extends AbstractBaseService {
                 userProfile.setId(userVerification.getUser().getId());
                 userProfile.setKey(keyFullName);
                 userProfile.setValue(request.fullName());
+                userProfile.setUserId(userVerification.getUser().getId());
                 userProfile.setUpdatedAt(currentDate);
                 userProfile.setCreatedAt(currentDate);
 

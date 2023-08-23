@@ -17,6 +17,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedBy;
 
 import java.time.OffsetDateTime;
 
@@ -38,6 +39,9 @@ public class UserProfile {
         type = org.hibernate.id.uuid.UuidGenerator.class
     )
     private String id;
+    @Column
+    @CreatedBy
+    private String userId;
     @Column
     private String key;
     @Column

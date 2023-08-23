@@ -75,6 +75,7 @@ public class SignInService extends AbstractBaseService {
                             userProfile.setId(uuid);
                             userProfile.setKey(keyFullName);
                             userProfile.setValue(googleClaim.fullName());
+                            userProfile.setUserId(uuid);
                             userProfile.setUpdatedAt(currentDate);
                             userProfile.setCreatedAt(currentDate);
 
