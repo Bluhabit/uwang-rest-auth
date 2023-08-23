@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -75,10 +74,13 @@ public abstract class AbstractBaseService {
     }
 
     protected <T> T getAuthenticatedUser(Function<UserCredential, T> userExist, Supplier<T> userNotFound) {
-        return getAuthenticated(authentication -> userCredentialRepository
-            .findByEmail(((UserDetails) authentication.getPrincipal()).getUsername())
-            .map(userExist)
-            .orElseGet(userNotFound));
+        return getAuthenticated(authentication -> {
+            final UserDetails userDetails = ((UserDetails) authentication.getPrincipal());
+            return userCredentialRepository
+                .findByEmail(userDetails.getUsername())
+                .map(userExist)
+                .orElseGet(userNotFound);
+        });
     }
 
     private <T> T getAuthenticated(Function<Authentication, T> callback) {
