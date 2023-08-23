@@ -91,5 +91,10 @@ tasks.create<Copy>("installGitHook") {
     fileMode = "775".toInt(8)
 }
 
-
 tasks.getByPath(":init").dependsOn("installGitHook")
+
+//fun getTimestamp():String{
+//    val formatter = SimpleDateFormat()
+//    formatter.applyPattern("yyyyMMddHHmmss")
+//    return formatter.format(Date())
+//}
