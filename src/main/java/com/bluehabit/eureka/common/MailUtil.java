@@ -7,11 +7,13 @@
 
 package com.bluehabit.eureka.common;
 
+import com.sun.mail.util.MailConnectException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -69,26 +71,30 @@ public class MailUtil {
         Function<Boolean, Boolean> callback
     ) {
         try {
-            final Locale locale = Locale.forLanguageTag("ID");
-            final Context ctx = new Context(locale);
-            data.forEach(ctx::setVariable);
-            final String html = this.templateEngine.process(
-                "/email/" + folder + "/" + ctx.getLocale().getLanguage(),
-                ctx
-            );
+            try {
+                final Locale locale = LocaleContextHolder.getLocale();
+                final Context ctx = new Context(locale);
+                data.forEach(ctx::setVariable);
+                final String html = this.templateEngine.process(
+                    "/email/" + folder + "/" + ctx.getLocale().getLanguage(),
+                    ctx
+                );
 
-            final MimeMessage mailMessage = javaMailSender.createMimeMessage();
-            final MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
+                final MimeMessage mailMessage = javaMailSender.createMimeMessage();
+                final MimeMessageHelper helper = new MimeMessageHelper(mailMessage);
 
-            mailMessage.setFrom(new InternetAddress(sender));
-            for (String sendTo : recipients) {
-                helper.addTo(sendTo);
+                mailMessage.setFrom(new InternetAddress(sender));
+                for (String sendTo : recipients) {
+                    helper.addTo(sendTo);
+                }
+                helper.setSubject(subject);
+                helper.setText(html, true);
+
+                javaMailSender.send(mailMessage);
+                return callback.apply(true);
+            } catch (MailConnectException socketException) {
+                return callback.apply(false);
             }
-            helper.setSubject(subject);
-            helper.setText(html, true);
-
-            javaMailSender.send(mailMessage);
-            return callback.apply(true);
         } catch (MessagingException messagingException) {
             return callback.apply(false);
         }

@@ -1,6 +1,8 @@
 
 package com.bluehabit.eureka.common;
 
+import com.bluehabit.eureka.component.data.UserCredential;
+import com.bluehabit.eureka.component.data.UserCredentialRepository;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
@@ -15,12 +17,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class AbstractBaseService {
     @Autowired
     private ValidationUtil validation;
     @Autowired
     private ResourceBundleMessageSource i81n;
+
+    @Autowired
+    private UserCredentialRepository userCredentialRepository;
 
     protected void validate(Object obj) {
         validation.validate(obj);
@@ -44,21 +50,41 @@ public abstract class AbstractBaseService {
     }
 
     protected <T> T checkAccess(List<String> required, Function<UserDetails, T> onCheck) {
-        final Authentication user = SecurityContextHolder.getContext().getAuthentication();
-
-        final List<String> authority = user
-            .getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .toList();
-
-        if (new HashSet<>(authority).containsAll(required)) {
-            if (user.getPrincipal() instanceof UserDetails) {
-                return onCheck.apply((UserDetails) user.getPrincipal());
+        return getAuthenticated(authentication -> {
+            final List<String> authority = authentication
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+            if (new HashSet<>(authority).containsAll(required)) {
+                if (authentication.getPrincipal() instanceof UserDetails) {
+                    return onCheck.apply((UserDetails) authentication.getPrincipal());
+                }
+                return onCheck.apply(null);
+            } else {
+                throw new UnAuthorizedException(HttpStatus.UNAUTHORIZED.value(), translate("default.permission.denied"));
             }
-            return onCheck.apply(null);
-        } else {
-            throw new UnAuthorizedException(HttpStatus.UNAUTHORIZED.value(), translate("default.permission.denied"));
-        }
+        });
+    }
+
+    protected <T> T getAuthenticatedUser(Function<UserCredential, T> userExist) {
+        return getAuthenticatedUser(userExist, () -> {
+            throw new UnAuthorizedException(HttpStatus.UNAUTHORIZED.value(), translate(""));
+        });
+    }
+
+    protected <T> T getAuthenticatedUser(Function<UserCredential, T> userExist, Supplier<T> userNotFound) {
+        return getAuthenticated(authentication -> {
+            final UserDetails userDetails = ((UserDetails) authentication.getPrincipal());
+            return userCredentialRepository
+                .findByEmail(userDetails.getUsername())
+                .map(userExist)
+                .orElseGet(userNotFound);
+        });
+    }
+
+    private <T> T getAuthenticated(Function<Authentication, T> callback) {
+        final Authentication user = SecurityContextHolder.getContext().getAuthentication();
+        return callback.apply(user);
     }
 }
