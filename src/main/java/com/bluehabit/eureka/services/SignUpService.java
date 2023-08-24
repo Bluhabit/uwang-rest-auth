@@ -9,23 +9,24 @@ package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
-import com.bluehabit.eureka.common.Constant;
 import com.bluehabit.eureka.common.JwtUtil;
 import com.bluehabit.eureka.common.MailUtil;
 import com.bluehabit.eureka.common.OtpGenerator;
-import com.bluehabit.eureka.component.user.UserCredential;
-import com.bluehabit.eureka.component.user.UserCredentialRepository;
-import com.bluehabit.eureka.component.user.UserProfile;
-import com.bluehabit.eureka.component.user.UserProfileRepository;
-import com.bluehabit.eureka.component.user.UserVerification;
-import com.bluehabit.eureka.component.user.UserVerificationRepository;
-import com.bluehabit.eureka.component.user.model.CompleteProfileRequest;
-import com.bluehabit.eureka.component.user.model.CompleteProfileResponse;
-import com.bluehabit.eureka.component.user.model.OtpConfirmationRequest;
-import com.bluehabit.eureka.component.user.model.OtpConfirmationResponse;
-import com.bluehabit.eureka.component.user.model.SignUpWithEmailRequest;
-import com.bluehabit.eureka.component.user.model.SignUpWithEmailResponse;
-import com.bluehabit.eureka.component.user.verification.VerificationType;
+import com.bluehabit.eureka.component.AuthProvider;
+import com.bluehabit.eureka.component.UserStatus;
+import com.bluehabit.eureka.component.data.UserCredential;
+import com.bluehabit.eureka.component.data.UserCredentialRepository;
+import com.bluehabit.eureka.component.data.UserProfile;
+import com.bluehabit.eureka.component.data.UserProfileRepository;
+import com.bluehabit.eureka.component.data.UserVerification;
+import com.bluehabit.eureka.component.data.UserVerificationRepository;
+import com.bluehabit.eureka.component.model.CompleteProfileRequest;
+import com.bluehabit.eureka.component.model.CompleteProfileResponse;
+import com.bluehabit.eureka.component.model.OtpConfirmationRequest;
+import com.bluehabit.eureka.component.model.OtpConfirmationResponse;
+import com.bluehabit.eureka.component.model.SignUpWithEmailRequest;
+import com.bluehabit.eureka.component.model.SignUpWithEmailResponse;
+import com.bluehabit.eureka.component.VerificationType;
 import com.bluehabit.eureka.exception.GeneralErrorException;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class SignUpService extends AbstractBaseService {
     public ResponseEntity<BaseResponse<Object>> signUpWithEmail(SignUpWithEmailRequest req) {
         validate(req);
         if (userCredentialRepository.existsByEmail(req.email())) {
-            throw new UnAuthorizedException(2, translate("auth.failed.user.exist"));
+            throw new UnAuthorizedException(2, translate("auth.sign_up.email.exist"));
         }
 
         final String uuid = UUID.randomUUID().toString();
@@ -75,8 +76,8 @@ public class SignUpService extends AbstractBaseService {
         final UserCredential userCredential = new UserCredential();
         userCredential.setId(uuid);
         userCredential.setEmail(req.email());
-        userCredential.setAuthProvider(Constant.AUTH_BASIC);
-        userCredential.setActive(Constant.USER_ACTIVE);
+        userCredential.setAuthProvider(AuthProvider.BASIC);
+        userCredential.setStatus(UserStatus.INACTIVE);
         userCredential.setCreatedAt(currentDate);
         userCredential.setUpdatedAt(currentDate);
 
@@ -113,17 +114,17 @@ public class SignUpService extends AbstractBaseService {
         validate(req);
         return userVerificationRepository.findById(req.sessionId()).map(userVerification -> {
                 if (!userVerification.getToken().equals(req.otp())) {
-                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.otp.invalid"));
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.sign_up.otp.failed"));
                 }
                 return BaseResponse.success(
-                    translate("auth.success"),
+                    translate("auth.sign_up.otp.success"),
                     new OtpConfirmationResponse(
                         userVerification
                             .getId()
                     )
                 );
             })
-            .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.otp.invalid")));
+            .orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.sign_up.otp.failed")));
     }
 
     public ResponseEntity<BaseResponse<CompleteProfileResponse>> completeProfile(
@@ -137,6 +138,7 @@ public class SignUpService extends AbstractBaseService {
                 userProfile.setId(userVerification.getUser().getId());
                 userProfile.setKey(keyFullName);
                 userProfile.setValue(request.fullName());
+                userProfile.setUserId(userVerification.getUser().getId());
                 userProfile.setUpdatedAt(currentDate);
                 userProfile.setCreatedAt(currentDate);
 
@@ -157,7 +159,7 @@ public class SignUpService extends AbstractBaseService {
                     translate("auth.success"),
                     new CompleteProfileResponse(
                         jwtToken,
-                        credential
+                        credential.toResponse()
                     )
                 );
             })

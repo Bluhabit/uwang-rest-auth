@@ -1,0 +1,70 @@
+name: CI with Gradle
+
+on:
+  push:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+env:
+  APP_PATH: src/main/resources
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Configure application.properties
+        run: |
+          echo "APPLICATION_PROPERTIES" > "$APP_PATH"/application.properties
+          echo "spring.datasource.username=test" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.password=test" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.url=test" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.driver-class-name=org.postgresql.Driver" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.idleTimeout=60000" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.connectionTimeout=30000" >> "$APP_PATH"/application.properties
+          echo "spring.datasource.hikari.maxLifetime=50000" >> "$APP_PATH"/application.properties
+          
+          echo "spring.jpa.hibernate.ddl-auto=none" >> "$APP_PATH"/application.properties
+          echo "spring.jpa.show-sql=true" >> "$APP_PATH"/application.properties
+          echo "spring.jpa.open-in-view=true" >> "$APP_PATH"/application.properties
+          
+          echo "debug=true" >> "$APP_PATH"/application.properties
+          echo "server.port=8000" >> "$APP_PATH"/application.properties
+          
+          echo "spring.mail.host=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.port=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.username=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.password=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.properties.mail.smtp.auth=test" >> "$APP_PATH"/application.properties
+          echo "spring.mail.properties.mail.smtp.starttls.enable=true" >> "$APP_PATH"/application.properties
+
+        env:
+          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Execute Gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bootJar          
+
+      - name: Execute Gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bootJar          
+
+      - name: Copy Jar file
+        run: mv build/libs/$(ls build/libs) app.jar
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: jar-file
+          path: app.jar

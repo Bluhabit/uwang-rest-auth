@@ -9,14 +9,17 @@ package com.bluehabit.eureka.services;
 
 import com.bluehabit.eureka.common.AbstractBaseService;
 import com.bluehabit.eureka.common.BaseResponse;
-import com.bluehabit.eureka.common.Constant;
 import com.bluehabit.eureka.common.GoogleAuthUtil;
 import com.bluehabit.eureka.common.JwtUtil;
-import com.bluehabit.eureka.component.user.UserCredential;
-import com.bluehabit.eureka.component.user.UserCredentialRepository;
-import com.bluehabit.eureka.component.user.model.SignInResponse;
-import com.bluehabit.eureka.component.user.model.SignInWithEmailRequest;
-import com.bluehabit.eureka.component.user.model.SignInWithGoogleRequest;
+import com.bluehabit.eureka.component.AuthProvider;
+import com.bluehabit.eureka.component.UserStatus;
+import com.bluehabit.eureka.component.data.UserCredential;
+import com.bluehabit.eureka.component.data.UserCredentialRepository;
+import com.bluehabit.eureka.component.data.UserProfile;
+import com.bluehabit.eureka.component.data.UserProfileRepository;
+import com.bluehabit.eureka.component.model.SignInResponse;
+import com.bluehabit.eureka.component.model.SignInWithEmailRequest;
+import com.bluehabit.eureka.component.model.SignInWithGoogleRequest;
 import com.bluehabit.eureka.exception.GeneralErrorException;
 import com.bluehabit.eureka.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,45 +41,66 @@ public class SignInService extends AbstractBaseService {
     private UserCredentialRepository userCredentialRepository;
 
     @Autowired
+    private UserProfileRepository userProfileRepository;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final String keyFullName = "fullName";
+
     public ResponseEntity<BaseResponse<SignInResponse>> signInWithGoogle(SignInWithGoogleRequest request) {
         validate(request);
-        return GoogleAuthUtil.getGoogleClaim(request.token()).map(googleClaim -> {
-                final String jwtToken = jwtUtil.generateToken(googleClaim.email());
-                return userCredentialRepository
-                    .findByEmail(googleClaim.email()).map(user -> {
-                        if (!user.getAuthProvider().equals(Constant.AUTH_GOOGLE)) {
-                            throw new UnAuthorizedException(translate("auth.method.provider.not.match"));
-                        }
+        return GoogleAuthUtil.getGoogleClaim(request.token())
+            .map(googleClaim -> {
+                    final String jwtToken = jwtUtil.generateToken(googleClaim.email());
+                    return userCredentialRepository
+                        .findByEmail(googleClaim.email())
+                        .map(user -> {
+                            if (!user.getAuthProvider().equals(AuthProvider.GOOGLE)) {
+                                throw new UnAuthorizedException(translate("auth.method.provider.not.match"));
+                            }
 
-                        return BaseResponse.success(
-                            translate("auth.success"),
-                            new SignInResponse(jwtToken, user)
-                        );
-                    }).orElseGet(() -> {
-                        final String uuid = UUID.randomUUID().toString();
-                        final OffsetDateTime currentDate = OffsetDateTime.now();
+                            return BaseResponse.success(
+                                translate("auth.sign_in.success"),
+                                new SignInResponse(jwtToken, user.toResponse())
+                            );
+                        }).orElseGet(() -> {
+                            final String uuid = UUID.randomUUID().toString();
+                            final OffsetDateTime currentDate = OffsetDateTime.now();
 
-                        final UserCredential userCredential = new UserCredential();
-                        userCredential.setId(uuid);
-                        userCredential.setEmail(googleClaim.email());
-                        userCredential.setAuthProvider(Constant.AUTH_GOOGLE);
-                        userCredential.setActive(Constant.USER_ACTIVE);
-                        userCredential.setCreatedAt(currentDate);
-                        userCredential.setUpdatedAt(currentDate);
-                        final UserCredential saved = userCredentialRepository.save(userCredential);
+                            final UserProfile userProfile = new UserProfile();
+                            userProfile.setId(uuid);
+                            userProfile.setKey(keyFullName);
+                            userProfile.setValue(googleClaim.fullName());
+                            userProfile.setUserId(uuid);
+                            userProfile.setUpdatedAt(currentDate);
+                            userProfile.setCreatedAt(currentDate);
 
-                        return BaseResponse.success(
-                            translate("auth.success"),
-                            new SignInResponse(jwtToken, saved)
-                        );
-                    });
-            }
-        ).orElseThrow(() -> new UnAuthorizedException(translate("auth.token.invalid")));
+                            final UserProfile profile = userProfileRepository.save(userProfile);
+                            final List<UserProfile> profileList = new ArrayList<>();
+                            profileList.add(profile);
+
+                            final UserCredential userCredential = new UserCredential();
+                            userCredential.setId(uuid);
+                            userCredential.setEmail(googleClaim.email());
+                            userCredential.setAuthProvider(AuthProvider.GOOGLE);
+                            userCredential.setStatus(UserStatus.ACTIVE);
+                            userCredential.setUserInfo(profileList);
+                            userCredential.setCreatedAt(currentDate);
+                            userCredential.setUpdatedAt(currentDate);
+
+                            final UserCredential saved = userCredentialRepository.save(userCredential);
+
+                            return BaseResponse.success(
+                                translate("auth.sign_in.success"),
+                                new SignInResponse(jwtToken, saved.toResponse())
+                            );
+                        });
+                }
+            ).orElseThrow(() -> new UnAuthorizedException(translate("auth.token.invalid")));
     }
 
     public ResponseEntity<BaseResponse<SignInResponse>> signIn(@RequestBody SignInWithEmailRequest request) {
@@ -84,20 +110,20 @@ public class SignInService extends AbstractBaseService {
                 final boolean isPasswordMatched = bCryptPasswordEncoder.matches(request.password(), user.getPassword());
 
                 if (!isPasswordMatched) {
-                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.sign_in.failed"));
                 }
 
-                if (!user.getAuthProvider().equals(Constant.AUTH_BASIC)) {
-                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.invalid"));
+                if (!user.getAuthProvider().equals(AuthProvider.BASIC)) {
+                    throw new GeneralErrorException(HttpStatus.BAD_REQUEST.value(), translate("auth.sign_in.failed"));
                 }
 
                 final String token = jwtUtil.generateToken(request.email());
                 return BaseResponse.success(
-                    translate("auth.success"),
-                    new SignInResponse(token, user)
+                    translate("auth.sign_in.success"),
+                    new SignInResponse(token, user.toResponse())
                 );
             }
-        ).orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.invalid")));
+        ).orElseThrow(() -> new GeneralErrorException(HttpStatus.NOT_FOUND.value(), translate("auth.sign_in.failed")));
 
     }
 }
