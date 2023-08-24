@@ -2,7 +2,7 @@ name: CI with Gradle
 
 on:
   push:
-    branches: ["feature/**","patch/**","refactor/**","fix/**","bugfix/**"]
+    branches: [ "develop" ]
 
 permissions:
   contents: read
@@ -51,7 +51,20 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Execute Gradle Checkstyle
+      - name: Execute Gradle build
         run: |
           chmod +x ./gradlew
-          ./gradlew checkstyleMain
+          ./gradlew bootJar          
+
+      - name: Execute Gradle build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bootJar          
+
+      - name: Copy Jar file
+        run: mv build/libs/$(ls build/libs) app.jar
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: jar-file
+          path: app.jar
