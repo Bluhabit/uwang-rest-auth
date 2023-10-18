@@ -352,7 +352,7 @@
         </module>
         <module name="VisibilityModifier">
             <property name="ignoreAnnotationCanonicalNames"
-                      value="org.junit.Rule, org.junit.jupiter.api.io.TempDir, com.bluehabit.eureka.common.Constant"/>
+                      value="org.junit.Rule, org.junit.jupiter.api.io.TempDir, com.bluehabit.blu.common.Constant"/>
         </module>
 
         <!-- Coding -->
@@ -704,7 +704,7 @@
         </module>
         <module name="TrailingComment"/>
         <module name="UncommentedMain">
-            <property name="excludedClasses" value="com.bluehabit.eureka.EurekaApplication"/>
+            <property name="excludedClasses" value="com.bluehabit.blu.EurekaApplication"/>
         </module>
         <module name="UpperEll"/>
 
