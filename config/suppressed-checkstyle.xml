@@ -12,5 +12,5 @@
         "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-    <suppress files="com.bluehabit.eureka.common.Constant.java" checks="[a-zA-Z0-9]*"/>
+    <suppress files="com.bluehabit.blu.common.Constant.java" checks="[a-zA-Z0-9]*"/>
 </suppressions>
