@@ -10,9 +10,9 @@ package com.bluehabit.blu.services;
 
 import com.bluehabit.blu.common.AbstractBaseService;
 import com.bluehabit.blu.common.BaseResponse;
-import com.bluehabit.blu.common.Constant;
 import com.bluehabit.blu.common.MailUtil;
 import com.bluehabit.blu.common.TokenGenerator;
+import com.bluehabit.blu.component.VerificationType;
 import com.bluehabit.blu.component.data.UserCredential;
 import com.bluehabit.blu.component.data.UserCredentialRepository;
 import com.bluehabit.blu.component.data.UserVerification;
@@ -21,7 +21,6 @@ import com.bluehabit.blu.component.model.LinkResetPasswordConfirmationRequest;
 import com.bluehabit.blu.component.model.LinkResetPasswordConfirmationResponse;
 import com.bluehabit.blu.component.model.RequestResetPasswordRequest;
 import com.bluehabit.blu.component.model.ResetPasswordRequest;
-import com.bluehabit.blu.component.VerificationType;
 import com.bluehabit.blu.exception.GeneralErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
