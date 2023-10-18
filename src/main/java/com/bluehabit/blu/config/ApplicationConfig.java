@@ -29,7 +29,7 @@ public class ApplicationConfig {
     @Bean
     public ResourceBundleMessageSource bundleMessageSource() {
         final ResourceBundleMessageSource message = new ResourceBundleMessageSource();
-        message.addBasenames("message","status_code");
+        message.addBasenames("message", "status_code");
         return message;
     }
 }
