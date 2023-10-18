@@ -8,7 +8,6 @@
 package com.bluehabit.blu.config;
 
 import com.bluehabit.blu.common.BaseResponse;
-import com.bluehabit.blu.common.Constant;
 import com.bluehabit.blu.exception.GeneralErrorException;
 import com.bluehabit.blu.exception.UnAuthorizedException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -40,21 +39,21 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> signatureException(SignatureException signatureException) {
         return BaseResponse.error(
-            Constant.BKA_1000, "Authentication failed, token expired or invalid"
+            1000, "Authentication failed, token expired or invalid"
         );
     }
 
     @ExceptionHandler(value = ExpiredJwtException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> expiredException(ExpiredJwtException expiredJwtException) {
-        return BaseResponse.error(Constant.BKA_1001_EXPIRED, expiredJwtException.getMessage());
+        return BaseResponse.error(1001, expiredJwtException.getMessage());
     }
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> tokenNotMatchToAnyUser(UsernameNotFoundException usernameNotFoundException) {
         return BaseResponse.error(
-            Constant.BKA_1002, usernameNotFoundException.getMessage()
+            1002, usernameNotFoundException.getMessage()
         );
     }
 
@@ -62,7 +61,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> decodeException(DecodingException decodingException) {
         return BaseResponse.error(
-            Constant.BKA_1003, "Authentication failed, token expired or invalid"
+            1003, "Authentication failed, token expired or invalid"
         );
     }
 
@@ -70,7 +69,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<String> nullPointer(NullPointerException nullPointerException) {
         return BaseResponse.error(
-            Constant.BKA_1004, nullPointerException.getMessage()
+            1004, nullPointerException.getMessage()
         );
     }
 
@@ -86,7 +85,7 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<String> contentTypeFormDataNotMatch(FileUploadException fileUploadException) {
         return BaseResponse.error(
-            Constant.BKA_1006, fileUploadException.getMessage()
+            1006, fileUploadException.getMessage()
         );
     }
 
