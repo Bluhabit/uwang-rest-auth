@@ -21,7 +21,7 @@ public class ApplicationConfig {
         loggingFilter.setIncludeClientInfo(true);
         loggingFilter.setIncludeQueryString(true);
         loggingFilter.setIncludePayload(true);
-        int maxPayload = 64000;
+        final int maxPayload = 64000;
         loggingFilter.setMaxPayloadLength(maxPayload);
         return loggingFilter;
     }
@@ -29,7 +29,6 @@ public class ApplicationConfig {
     @Bean
     public ResourceBundleMessageSource bundleMessageSource() {
         final ResourceBundleMessageSource message = new ResourceBundleMessageSource();
-//        message.setBasename("message");
         message.addBasenames("message","status_code");
         return message;
     }
