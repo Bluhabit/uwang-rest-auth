@@ -39,7 +39,7 @@ public final class BaseResponse<T> {
 
     public static Map<String, Object> validationFailed(List<ConstraintViolation<?>> violations) {
         return Map.ofEntries(
-            Map.entry("statusCode", Constant.BKA_1008),
+            Map.entry("statusCode", 1008),
             Map.entry("data", ""),
             Map.entry("message", "Validation"),
             Map.entry("errorField", violations.stream().map(value -> Map.of(value.getPropertyPath(), value.getMessage())))

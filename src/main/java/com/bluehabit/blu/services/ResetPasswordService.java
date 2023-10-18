@@ -57,7 +57,7 @@ public class ResetPasswordService extends AbstractBaseService {
                 final boolean isMailed = mailUtil.sendEmail(
                     userCredential.getEmail(),
                     translate("auth.request.reset.password.subject"),
-                    Constant.RESET_PASSWORD_REQUEST_FOLDER,
+                    "",
                     Map.of(
                         "link", String.format("example://gawean/%s", userVerification.getToken()),
                         "user", userCredential.getEmail()
