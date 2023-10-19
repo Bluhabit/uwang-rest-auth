@@ -11,4 +11,5 @@ package com.bluehabit.blu.common;
  * @noinspection IntelliJ SuppressWarnings
  */
 public class Constant {
+
 }
