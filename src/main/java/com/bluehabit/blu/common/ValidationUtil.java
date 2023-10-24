@@ -26,7 +26,7 @@ public class ValidationUtil {
 
     public void validate(Object value) {
         final Set<ConstraintViolation<Object>> result = validator.validate(value);
-        if (result.size() != 0) {
+        if (!result.isEmpty()) {
             throw new ConstraintViolationException(result);
         }
     }

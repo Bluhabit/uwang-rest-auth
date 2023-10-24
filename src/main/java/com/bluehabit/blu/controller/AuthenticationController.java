@@ -60,7 +60,9 @@ public class AuthenticationController {
     }
 
     @PostMapping(
-        path = "/api/v1/auth/otp-confirmation"
+        path = "/api/v1/auth/otp-confirmation",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<OtpConfirmationResponse>> otpConfirmation(
         @RequestBody OtpConfirmationRequest request
@@ -96,7 +98,9 @@ public class AuthenticationController {
     //end region
     //region reset password
     @PostMapping(
-        path = "/api/v1/auth/request-reset-password"
+        path = "/api/v1/auth/request-reset-password",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<Map<Object, Object>>> requestResetPassword(
         @RequestBody RequestResetPasswordRequest request
@@ -105,7 +109,9 @@ public class AuthenticationController {
     }
 
     @PostMapping(
-        path = "/api/v1/auth/link-confirmation"
+        path = "/api/v1/auth/link-confirmation",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<LinkResetPasswordConfirmationResponse>> linkResetPasswordConfirmation(
         @RequestBody LinkResetPasswordConfirmationRequest request
@@ -114,7 +120,9 @@ public class AuthenticationController {
     }
 
     @PostMapping(
-        path = "/api/v1/auth/reset-password"
+        path = "/api/v1/auth/reset-password",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<Map<Object, Object>>> resetPassword(
         @RequestHeader(value = tokenResetPassword, required = false) String token,
@@ -125,7 +133,9 @@ public class AuthenticationController {
     //end region
 
     @PostMapping(
-        path = "/api/v1/auth/sign-in"
+        path = "/api/v1/auth/sign-in",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<BaseResponse<SignInResponse>> signIn(@RequestBody SignInWithEmailRequest request) {
         return signInService.signIn(request);

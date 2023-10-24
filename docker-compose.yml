@@ -1,26 +1,42 @@
 version: '3.5'
 
 services:
-  #  rest_api_budgetku:
-  #    container_name: "rest_api_budgetku"
-  #    build:
-  #      context: .
-  #      dockerfile: Dockerfile
-  #    ports:
-  #     - 8000:8000
-  #    expose:
-  #      - 8000
-  #    networks:
-  #      - app
-  postgres:
-    image: postgres:14.3
-    environment:
-      POSTGRES_USER: bluehabit
-      POSTGRES_PASSWORD: bluehabit
-      POSTGRES_DB: bluehabit
+  rest_api_budgetku:
+    container_name: "uwang_rest_api"
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
-    restart: always
+      - "8000:8000"
+    expose:
+      - 8000
+    networks:
+      - app
+#  postgres:
+#    image: postgres:14.3
+#    environment:
+#      POSTGRES_USER: bluehabit
+#      POSTGRES_PASSWORD: bluehabit
+#      POSTGRES_DB: bluehabit
+#    ports:
+#      - "5432:5432"
+#    restart: always
+#  nginx:
+#    image: nginx:1.16.0-alpine
+#    container_name: nginx
+#    restart: unless-stopped
+#    volumes:
+#      - ./config/default.conf:/etc/nginx/conf.d/default.conf
+#      - ./app/test/index.html:/var/www/index.html
+#    ports:
+#      - 80:80
+  pgAdmin:
+    image: dpage/pgadmin4
+    container_name: pgAdmin
+    env_file:
+      - ./.env
+    ports:
+      - "5050:80"
 
 networks:
   app:

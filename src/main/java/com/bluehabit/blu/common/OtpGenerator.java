@@ -15,7 +15,6 @@ import java.util.Random;
 public class OtpGenerator {
     private static final int MIN_OTP_VALUE = 1000;
     private static final int MAX_OTP_VALUE = 9999;
-
     private static final int MAX_LENGTH_OTP = 4;
     private static final int MAX_INDEX_OTP = 3;
 
