@@ -26,7 +26,7 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
     @Value("${jwt.secret}")
-    private String SECRET;
+    private String jwtSecret;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -76,16 +76,17 @@ public class JwtUtil {
     }
 
     private String createToken(Map<String, Object> claims, String userName) {
+        final Date expire = new Date(System.currentTimeMillis() + 1000 * 60 * 30);
         return Jwts.builder()
             .setClaims(claims)
             .setSubject(userName)
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+            .setExpiration(expire)
             .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
     private Key getSignKey() {
-        final byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        final byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
