@@ -38,38 +38,49 @@ public class ErrorController {
     @ExceptionHandler(value = SignatureException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> signatureException(SignatureException signatureException) {
+        final int signatureCode = 1_000;
         return BaseResponse.error(
-            1000, "Authentication failed, token expired or invalid"
+            signatureCode, "Authentication failed, token expired or invalid"
         );
     }
 
     @ExceptionHandler(value = ExpiredJwtException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> expiredException(ExpiredJwtException expiredJwtException) {
-        return BaseResponse.error(1001, expiredJwtException.getMessage());
+        final int expiredJwtCode = 1_001;
+        return BaseResponse.error(
+            expiredJwtCode,
+            expiredJwtException.getMessage()
+        );
     }
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> tokenNotMatchToAnyUser(UsernameNotFoundException usernameNotFoundException) {
+        final int tokenBearerCode = 1_002;
         return BaseResponse.error(
-            1002, usernameNotFoundException.getMessage()
+            tokenBearerCode,
+            usernameNotFoundException.getMessage()
         );
     }
 
     @ExceptionHandler(value = DecodingException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> decodeException(DecodingException decodingException) {
+        final int decodeJwtFailedCode = 1_003;
         return BaseResponse.error(
-            1003, "Authentication failed, token expired or invalid"
+            decodeJwtFailedCode,
+            "Authentication failed, token expired or invalid"
         );
     }
 
     @ExceptionHandler(value = NullPointerException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<String> nullPointer(NullPointerException nullPointerException) {
+        final int nullPointerCode = 1_004;
         return BaseResponse.error(
-            1004, nullPointerException.getMessage()
+            nullPointerCode,
+            nullPointerException.getMessage()
         );
     }
 
@@ -77,15 +88,18 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> unAuth(UnAuthorizedException unAuthorizedException) {
         return BaseResponse.error(
-            unAuthorizedException.getStatusCode(), unAuthorizedException.getMessage()
+            unAuthorizedException.getStatusCode(),
+            unAuthorizedException.getMessage()
         );
     }
 
     @ExceptionHandler(value = FileUploadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<String> contentTypeFormDataNotMatch(FileUploadException fileUploadException) {
+        final int contentTypeErrorCode = 1_006;
         return BaseResponse.error(
-            1006, fileUploadException.getMessage()
+            contentTypeErrorCode,
+            fileUploadException.getMessage()
         );
     }
 
@@ -93,7 +107,8 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponse<String> contentTypeFormDataNotMatch(GeneralErrorException generalErrorException) {
         return BaseResponse.error(
-            generalErrorException.getStatusCode(), generalErrorException.getMessage()
+            generalErrorException.getStatusCode(),
+            generalErrorException.getMessage()
         );
     }
 
@@ -101,7 +116,8 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public BaseResponse<String> malformed(MalformedJwtException malformedJwtException) {
         return BaseResponse.error(
-            HttpStatus.UNAUTHORIZED.value(), malformedJwtException.getMessage()
+            HttpStatus.UNAUTHORIZED.value(),
+            malformedJwtException.getMessage()
         );
     }
 
