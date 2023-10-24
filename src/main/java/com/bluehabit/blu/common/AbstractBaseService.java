@@ -45,7 +45,7 @@ public abstract class AbstractBaseService {
         try {
             return i81n.getMessage(key, params, LocaleContextHolder.getLocale());
         } catch (NoSuchMessageException noSuchMessageException) {
-            return "<tidak dapat menampilkan pesan>";
+            return i81n.getMessage("message.not.found",params,LocaleContextHolder.getLocale());
         }
     }
 
