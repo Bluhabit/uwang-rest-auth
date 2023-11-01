@@ -1,4 +1,4 @@
-FROM openjdk:11.0-jre-slim
+FROM openjdk:17-jdk-alpine
 WORKDIR /app
 EXPOSE 7001
 #COPY --from=build /home/gradle/src/build/libs/*.jar /com/spring-boot-application.jar
