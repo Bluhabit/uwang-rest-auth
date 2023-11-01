@@ -35,7 +35,7 @@ jobs:
           distribution: 'temurin'
       # Generate RELEASE_VERSION var (i.e. v12-63hef73)
       - name: Create Release Version
-        run: echo "RELEASE_VERSION=v${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=stage${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
       # Create but not yet push release tag before Gradle run
       - name: Create Release Tag
         run: git tag ${{env.RELEASE_VERSION}}
