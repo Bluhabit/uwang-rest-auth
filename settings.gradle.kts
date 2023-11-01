@@ -1,1 +1,1 @@
-rootProject.name = "GAWEAN"
+rootProject.name = "uwang-rest-api"

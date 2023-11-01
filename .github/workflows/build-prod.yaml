@@ -2,7 +2,7 @@ name: CI with Gradle
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "prod" ]
 
 permissions:
   contents: read
