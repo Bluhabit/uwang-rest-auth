@@ -1,12 +1,19 @@
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     java
     id("org.springframework.boot") version "3.1.1"
     id("io.spring.dependency-management") version "1.1.0"
     id("checkstyle")
+    id("com.palantir.git-version") version "2.0.0"
 }
 
-group = "com.bluehabit.budgetku"
-version = "0.0.1-SNAPSHOT"
+group = "com.bluehabit.uwang"
+val gitVersion: groovy.lang.Closure<String> by extra
+version = gitVersion()
+
+
 
 checkstyle {
     maxWarnings = 0
@@ -62,6 +69,12 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
 }
 
+tasks.withType<ProcessResources>(){
+    filesMatching("build.properties"){
+        expand(project.properties)
+    }
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }
@@ -95,8 +108,8 @@ tasks.create<Copy>("installGitHook") {
 
 tasks.getByPath(":init").dependsOn("installGitHook")
 
-//fun getTimestamp():String{
-//    val formatter = SimpleDateFormat()
-//    formatter.applyPattern("yyyyMMddHHmmss")
-//    return formatter.format(Date())
-//}
+fun getTimestamp():String{
+    val formatter = SimpleDateFormat()
+    formatter.applyPattern("yyyyMMddHHmmss")
+    return formatter.format(Date())
+}

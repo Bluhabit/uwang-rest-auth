@@ -1,8 +1,8 @@
 version: '3.5'
 
 services:
-  rest_api_budgetku:
-    container_name: "uwang_rest_api"
+  uwang-rest-api:
+    container_name: "uwang-rest-api"
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,15 +21,6 @@ services:
 #    ports:
 #      - "5432:5432"
 #    restart: always
-#  nginx:
-#    image: nginx:1.16.0-alpine
-#    container_name: nginx
-#    restart: unless-stopped
-#    volumes:
-#      - ./config/default.conf:/etc/nginx/conf.d/default.conf
-#      - ./app/test/index.html:/var/www/index.html
-#    ports:
-#      - 80:80
   pgAdmin:
     image: dpage/pgadmin4
     container_name: pgAdmin
