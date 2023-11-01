@@ -55,7 +55,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          registry: registry.bluhabit.id
           tags: |
             registry.bluhabit.id/uwang-rest-api:latest
             registry.bluhabit.id/uwang-rest-api:${{env.RELEASE_VERSION}}
@@ -76,7 +75,7 @@ jobs:
             username: ${{secrets.SSH_USER}}
             password: ${{secrets.SSH_PASSWORD}}
             port: ${{secrets.SSH_PORT}}
-            scripts: |
+            script: |
               cd /uwang
               docker-compose stop uwang-rest-api
               docker rm uwang-rest-api
