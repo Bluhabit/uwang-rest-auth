@@ -19,7 +19,7 @@ concurrency: release
 
 jobs:
   pr-build:
-    name: Create Dev Release
+    name: Build Dev Release
     runs-on: ubuntu-latest
     # Required by 'git push'
     permissions:
@@ -44,7 +44,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: clean build
-      - name: Login to Docker Hub
+      - name: Login to Registry
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.REGISTRY_USERNAME }}
@@ -56,8 +56,8 @@ jobs:
         with:
           context: .
           tags: |
-            registry.bluhabit.id/uwang-rest-api:latest
-            registry.bluhabit.id/uwang-rest-api:${{env.RELEASE_VERSION}}
+            registry.bluhabit.id/uwang-rest-api-dev:latest
+            registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
           push: true
       # Pushing release tag only if everything before passed
       - name: Push Release Tag
@@ -76,9 +76,9 @@ jobs:
             password: ${{secrets.SSH_PASSWORD}}
             port: ${{secrets.SSH_PORT}}
             script: |
-              cd /uwang
-              docker-compose stop uwang-rest-api
+              cd /uwang/dev
+              docker-compose stop uwang-rest-api-dev
               docker rm uwang-rest-api
-              docker pull registry.bluhabit.id/uwang-rest-api:latest
-              docker-compose up -d uwang-rest-api
+              docker pull registry.bluhabit.id/uwang-rest-api-dev:latest
+              docker-compose up -d uwang-rest-api-dev
               docker ps -a
