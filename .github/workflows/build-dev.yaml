@@ -44,7 +44,6 @@ jobs:
       - name: Create Release Tag
         run: |
           git tag ${{env.RELEASE_VERSION}}
-           echo "TAG=${{env.RELEASE_VERSION}}" >> $GITHUB_OUTPUT
 
       - name: docker login
         run: |
@@ -76,6 +75,6 @@ jobs:
               ls -la
               docker stop uwang-rest-api-dev
               docker rm uwang-rest-api-dev
-              docker pull registry.bluhabit.id/uwang-rest-api-dev:${{ needs.pr-build.steps.version.outputs.TAG }}
-              docker run --name uwang-rest-api-dev -p 7001:7001 --env-file .env -d registry.bluhabit.id/uwang-rest-api-dev:${{ needs.pr-build.steps.version.outputs.TAG }}
+              docker pull registry.bluhabit.id/uwang-rest-api-dev:dev${{github.run_number}}-${GITHUB_SHA::7}
+              docker run --name uwang-rest-api-dev -p 7001:7001 --env-file .env -d registry.bluhabit.id/uwang-rest-api-dev:dev${{github.run_number}}-${GITHUB_SHA::7}
               docker ps -a
