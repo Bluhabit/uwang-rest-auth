@@ -44,7 +44,7 @@ RUN mkdir /app && \
 USER 1000
 
 #COPY --chown=1000:1000 ./app.jar /app/app.jar
-COPY build/libs/uwang-rest-api-*.jar uwang-app.jar
+COPY build/libs/uwang-rest-api-*.jar /app/uwang-app.jar
 WORKDIR /app
 
 EXPOSE 8080
