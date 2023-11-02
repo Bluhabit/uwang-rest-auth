@@ -15,13 +15,4 @@ ADD /src/build/resources/ /app/resources/
 
 #ENTRYPOINT ["java","-jar","/com/spring-boot-application.jar"]
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
-ENTRYPOINT [
-"java",
-"-Xmx512m",
-"-Xss512k",
-"-XX:+UseSerialGC",
-"-XX:MaxRAM=72m",
-"--spring.config.location=classpath:file:/app/application-properties",
-"-jar",
-"/app/uwang-app.jar"
-]
+ENTRYPOINT ["java","-jar","--spring.config.location=classpath:file:/app/application-properties","/app/uwang-app.jar"]
