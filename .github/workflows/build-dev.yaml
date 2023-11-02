@@ -62,6 +62,10 @@ jobs:
     needs: pr-build
     name: Deploy to VPS
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Connect with SSH and Deploy
         uses: appleboy/ssh-action@master
         with:
@@ -74,6 +78,6 @@ jobs:
               ls -la
               docker stop uwang-rest-api-dev
               docker rm uwang-rest-api-dev
-              docker pull registry.bluhabit.id/uwang-rest-api-dev:${{  github.ref_name }}
-              docker run --name uwang-rest-api-dev -p 7001:7001 --env-file .env -d registry.bluhabit.id/uwang-rest-api-dev:${{  github.ref_name }}
+              docker pull registry.bluhabit.id/uwang-rest-api-dev:$(git describe --tags `git rev-list --tags --max-count=1`)
+              docker run --name uwang-rest-api-dev -p 7001:7001 --env-file .env -d registry.bluhabit.id/uwang-rest-api-dev:$(git describe --tags `git rev-list --tags --max-count=1`)
               docker ps -a
