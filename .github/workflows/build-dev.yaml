@@ -81,5 +81,5 @@ jobs:
               docker stop uwang-rest-api-dev
               docker rm uwang-rest-api-dev
               docker pull registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
-              docker run --name uwang-rest-api-dev -p 7001:7001 --env-file .env -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
+              docker run --name uwang-rest-api-dev -p 7001:7001 --env-file ./.env -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
               docker ps -a
