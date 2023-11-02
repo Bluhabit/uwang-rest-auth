@@ -10,8 +10,8 @@ RUN mkdir /app
 
 #COPY --from=build /home/gradle/src/build/libs/*.jar /com/spring-boot-application.jar
 COPY --from=build /home/gradle/src/build/libs/uwang-rest-api.jar /app/uwang-app.jar
-ADD /src/build/resources/application.properties /app/application.properties
-ADD /src/build/resources/ /app/resources/
+ADD /src/main/resources/application.properties /app/application.properties
+ADD /src/main/resources/ /app/resources/
 
 #ENTRYPOINT ["java","-jar","/com/spring-boot-application.jar"]
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
