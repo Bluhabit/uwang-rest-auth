@@ -79,8 +79,6 @@ jobs:
               ls -la
               cd uwang-rest-api/dev
               ls -la
-              docker-compose stop uwang-rest-api-dev
-              docker rm uwang-rest-api-dev
-              docker pull registry.bluhabit.id/uwang-rest-api-dev:latest
-              docker-compose up -d uwang-rest-api-dev
+              docker-compose stop
+              docker-compose up -d
               docker ps -a
