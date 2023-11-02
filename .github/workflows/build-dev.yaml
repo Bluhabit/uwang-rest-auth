@@ -34,6 +34,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
       # Generate RELEASE_VERSION var (i.e. v12-63hef73)
       - name: Create Release Version
         run: echo "RELEASE_VERSION=dev${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
