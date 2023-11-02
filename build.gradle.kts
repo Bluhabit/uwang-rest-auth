@@ -15,6 +15,7 @@ version = gitVersion()
 
 
 
+
 checkstyle {
     maxWarnings = 0
     isIgnoreFailures = false
