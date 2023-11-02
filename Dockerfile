@@ -2,7 +2,7 @@
 FROM gradle:7.2.0-jdk11-alpine AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
-RUN gradle bootJar -x test --no-daemon --stacktrace
+RUN gradle build -x test --no-daemon --stacktrace
 
 FROM openjdk:17-slim
 EXPOSE 7001
