@@ -44,6 +44,7 @@ jobs:
       - name: docker login
         run: |
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
+
       - name: Build image
         run: docker build -t registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}} . --no-cache
       - name: Push
