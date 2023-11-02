@@ -77,7 +77,6 @@ jobs:
           port: ${{secrets.SSH_PORT}}
           script: |
               cd uwang-rest-api/dev
-              ls -la
               docker stop uwang-rest-api-dev
               docker rm uwang-rest-api-dev
               docker pull registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
