@@ -1,10 +1,15 @@
-FROM openjdk:17-slim
+#https://codefresh.io/docs/docs/learn-by-example/java/gradle/
+FROM gradle:7.2.0-jdk11-alpine AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle bootJar -x test --no-daemon --stacktrace
 
-ADD . /app
-WORKDIR /app
+FROM openjdk:17-slim
 EXPOSE 7001
+RUN mkdir /app
+
 #COPY --from=build /home/gradle/src/build/libs/*.jar /com/spring-boot-application.jar
-COPY build/libs/uwang-rest-api-*.jar /app/uwang-app.jar
+COPY --from=build /home/gradle/src/build/libs/uwang-rest-api-*.jar /app/uwang-app.jar
 
 #ENTRYPOINT ["java","-jar","/com/spring-boot-application.jar"]
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
