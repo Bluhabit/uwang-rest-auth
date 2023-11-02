@@ -42,11 +42,6 @@ jobs:
       - name: Create Release Tag
         run: git tag ${{env.RELEASE_VERSION}}
 
-      - name: Encode properties
-        run: |
-          echo "${{secrets.ENV}}" > encoded.env
-          base64 -d encoded.env > .env
-
       - name: docker login
         run: |
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
