@@ -14,8 +14,6 @@ val gitVersion: groovy.lang.Closure<String> by extra
 version = gitVersion()
 
 
-
-
 checkstyle {
     maxWarnings = 0
     isIgnoreFailures = false
