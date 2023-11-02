@@ -37,7 +37,10 @@ jobs:
 
       # Generate RELEASE_VERSION var (i.e. v12-63hef73)
       - name: Create Release Version
-        run: echo "RELEASE_VERSION=dev${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
+        id: version
+        run: |
+          echo "RELEASE_VERSION=dev${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "TAG=dev${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
       # Create but not yet push release tag before Gradle run
       - name: Create Release Tag
         run: git tag ${{env.RELEASE_VERSION}}
@@ -68,10 +71,10 @@ jobs:
             password: ${{secrets.SSH_PASSWORD}}
             port: ${{secrets.SSH_PORT}}
             script: |
-              ls -la
               cd uwang-rest-api/dev
-              docker stop uwang-rest-api-dev
+              ls -la
+#               docker stop uwang-rest-api-dev
               docker rm uwang-rest-api-dev
-              docker pull registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
-              docker run --env-file .env --name uwang-rest-api-dev -p 7001:7001 -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
+              docker pull registry.bluhabit.id/uwang-rest-api-dev:${{ needs.pr-build.steps.version.outputs.TAG }}
+              docker run --name uwang-rest-api-dev -p 7001:7001 --env-file .env -d registry.bluhabit.id/uwang-rest-api-dev:${{ needs.pr-build.steps.version.outputs.TAG }}
               docker ps -a
