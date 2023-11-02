@@ -1,8 +1,10 @@
 FROM openjdk:17-slim
+
+ADD . /app
 WORKDIR /app
 EXPOSE 7001
 #COPY --from=build /home/gradle/src/build/libs/*.jar /com/spring-boot-application.jar
-COPY build/libs/uwang-rest-api-*.jar uwang-app.jar
+COPY build/libs/uwang-rest-api-*.jar /app/uwang-app.jar
 
 #ENTRYPOINT ["java","-jar","/com/spring-boot-application.jar"]
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
