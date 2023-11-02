@@ -1,5 +1,5 @@
 #https://codefresh.io/docs/docs/learn-by-example/java/gradle/
-FROM gradle:7.2.0-jdk11-alpine AS build
+FROM gradle:7.6-jdk17-alpine AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build -x test --no-daemon --stacktrace
