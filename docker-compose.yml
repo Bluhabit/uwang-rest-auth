@@ -7,7 +7,16 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8000:7001"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:6500/uwang-dev
+      SPRING_DATASOURCE_USERNAME: bluhabit
+      SPRING_DATASOURCE_PASSWORD: Bluehabit2023Baru
+      SPRING_JWT_SECRET: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+      SPRING_SMTP_HOST: smtp.gmail.com
+      SPRING_SMTP_PORT: 587
+      SPRING_SMTP_USERNAME: triannurizkillah@gmail.com
+      SPRING_SMTP_PASSWORD: ajmysertmddfnsui
     expose:
       - 8000
     networks:
