@@ -40,33 +40,12 @@ jobs:
       # Create but not yet push release tag before Gradle run
       - name: Create Release Tag
         run: git tag ${{env.RELEASE_VERSION}}
-      # 'Build' task depends on 'check' which depends on 'test' task in its turn
-#      - name: Build
-#        uses: gradle/gradle-build-action@v2
-#        with:
-#          arguments: clean build
-#      - name: Login to Registry
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{ secrets.REGISTRY_USERNAME }}
-#          password: ${{ secrets.REGISTRY_PASSWORD }}
-#          registry: registry.bluhabit.id
-#
-#      - name: Build & Push Docker Image
-#        uses: docker/build-push-action@v4
-#        with:
-#          context: .
-#          tags: |
-#            registry.bluhabit.id/uwang-rest-api-dev:latest
-#            registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
-#          push: true
+
       - name: docker login
         run: |
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
-      - name: Mark version
-        run: echo "::set-output name=${{env.RELEASE_VERSION}}"
       - name: Build image
-        run: docker build . --file Dockerfile --tag  registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
+        run: docker build -t  registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}} .
       - name: Push
         run: docker push registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
       # Pushing release tag only if everything before passed
