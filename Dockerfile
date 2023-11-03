@@ -15,4 +15,4 @@ COPY --from=build /home/gradle/src/build/ /app/
 #ENTRYPOINT ["java","-jar","/com/spring-boot-application.jar"]
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
 #"-Dspring.config.location=classpath:file:/app/resourapplication-properties"
-ENTRYPOINT ["java","-jar","/app/build/uwang-app.jar"]
+ENTRYPOINT ["java","-jar","/app/build/libs/uwang-rest-api.jar"]
