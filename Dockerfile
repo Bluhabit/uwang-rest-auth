@@ -15,6 +15,7 @@ COPY --from=build /home/gradle/src/build/libs/uwang-rest-api.jar /app/uwang-app.
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
 # docker inspect --format='{{.LogPath}}' uwang-rest-api-dev
 EXPOSE 7001
-ENTRYPOINT ["java","-Djavax.persistence.jdbc.url=jdbc:postgresql://host.docker.internal:6500/uwang-dev","-jar","/app/uwang-app.jar"]
+#ENTRYPOINT ["java","-Djavax.persistence.jdbc.url=jdbc:postgresql://host.docker.internal:6500/uwang-dev","-jar","/app/uwang-app.jar"]
+ENTRYPOINT ["java","-jar","/app/uwang-app.jar","--spring.config.location=/opt/app.properties"]
 
 
