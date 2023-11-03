@@ -56,7 +56,6 @@ jobs:
       # Pushing release tag only if everything before passed
       - name: Push Release Tag
         run: git push origin ${{env.RELEASE_VERSION}}
-
   deploy:
     runs-on: ubuntu-latest
     needs: pr-build
