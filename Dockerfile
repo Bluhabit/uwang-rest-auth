@@ -15,5 +15,5 @@ COPY --from=build /home/gradle/src/build/libs/uwang-rest-api.jar /app/uwang-app.
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
 # docker inspect --format='{{.LogPath}}' uwang-rest-api-dev
 EXPOSE 7001
-ENTRYPOINT ["java","-jar","/app/uwang-rest-api.jar"]
+ENTRYPOINT ["java","-jar","/app/uwang-app.jar"]
 
