@@ -109,9 +109,3 @@ tasks.create<Copy>("installGitHook") {
 }
 
 tasks.getByPath(":init").dependsOn("installGitHook")
-
-fun getTimestamp():String{
-    val formatter = SimpleDateFormat()
-    formatter.applyPattern("yyyyMMddHHmmss")
-    return formatter.format(Date())
-}
