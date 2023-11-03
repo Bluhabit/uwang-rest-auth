@@ -16,6 +16,6 @@ COPY --from=build /home/gradle/src/build/libs/uwang-rest-api.jar /app/uwang-app.
 # docker inspect --format='{{.LogPath}}' uwang-rest-api-dev
 EXPOSE 7001
 #ENTRYPOINT ["java","-Djavax.persistence.jdbc.url=jdbc:postgresql://host.docker.internal:6500/uwang-dev","-jar","/app/uwang-app.jar"]
-ENTRYPOINT ["java","-jar","/app/uwang-app.jar","--spring.config.location=/opt/app.properties"]
+ENTRYPOINT ["java","-jar","/app/uwang-app.jar","--spring.config.location=/data/resources/application.properties"]
 
 
