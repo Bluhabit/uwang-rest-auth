@@ -30,6 +30,7 @@ import java.util.Map;
 public class ErrorController {
     @Value("${info.build.version}")
     private String version;
+
     @ExceptionHandler(value = ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> validation(ConstraintViolationException violationException) {
