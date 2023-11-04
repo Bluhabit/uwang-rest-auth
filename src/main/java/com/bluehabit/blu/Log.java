@@ -24,9 +24,9 @@ public class Log {
         final String uname = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.username");
         final String pwd = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.password");
 
-        log.error("URL => "+url);
-        log.error("UNAME => "+uname);
-        log.error("PWD => "+pwd);
+        log.error("URL => " + url);
+        log.error("UNAME => " + uname);
+        log.error("PWD => " + pwd);
     }
 
     @EventListener
@@ -35,9 +35,9 @@ public class Log {
         final String uname = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.username");
         final String pwd = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.password");
 
-        log.error("URL => "+url);
-        log.error("UNAME => "+uname);
-        log.error("PWD => "+pwd);
+        log.error("URL => " + url);
+        log.error("UNAME => " + uname);
+        log.error("PWD => " + pwd);
     }
 
 }
