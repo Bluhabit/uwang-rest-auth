@@ -18,7 +18,7 @@ import org.springframework.context.annotation.PropertySource;
 public class EurekaApplication {
 
     public static void main(String[] args) {
-        final var  app = new SpringApplication(EurekaApplication.class);
+        final var app = new SpringApplication(EurekaApplication.class);
         app.run(args);
     }
 }
