@@ -37,6 +37,10 @@ jobs:
       - name: Create Release Tag
         run: |
           git tag ${{env.RELEASE_VERSION}}
+      - name: Create properties
+        run: |
+          echo "${{secrets.DEV_PROPERTIES}}" > app.properties.b64
+          base64 -d app.properties.b64 > application.properties
 
       - name: docker login
         run: |
