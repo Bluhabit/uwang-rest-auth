@@ -43,7 +43,7 @@ jobs:
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build image
-        run: docker build -t --build-arg url=${{secrets.DB_DEV_URL}} uname=${{secrets.DB_DEV_USERNAME}} pwd=${{secrets.DB_DEV_PASSWORD}} registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}} . --no-cache
+        run: docker build -t --build-arg url=${{secrets.DB_DEV_URL}} --build-arg uname=${{secrets.DB_DEV_USERNAME}} --build-arg pwd=${{secrets.DB_DEV_PASSWORD}} registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}} . --no-cache
 
       - name: Push
         run: docker push registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
