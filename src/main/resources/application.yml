@@ -1,0 +1,13 @@
+server:
+  port: 7001
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_UNAME}
+    password: ${DB_PASS}
+  jpa:
+    hibernate:
+      ddl-auto: update
