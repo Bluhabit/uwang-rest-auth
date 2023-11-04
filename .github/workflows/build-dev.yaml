@@ -37,10 +37,6 @@ jobs:
       - name: Create Release Tag
         run: |
           git tag ${{env.RELEASE_VERSION}}
-      - name: Create properties
-        run: |
-          echo "${{secrets.DEV_PROPERTIES}}" > app.properties.b64
-          base64 -d app.properties.b64 > src/main/resources/application.properties
 
       - name: docker login
         run: |
@@ -74,8 +70,9 @@ jobs:
           port: ${{secrets.SSH_PORT}}
           script: |
               cd uwang-rest-api/dev
+              cat .env
               docker stop uwang-rest-api-dev
               docker rm uwang-rest-api-dev
               docker pull registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
-              docker run -v ./data:/data:rw --network app-net --name uwang-rest-api-dev -p 7001:7001 -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
+              docker run --env-file ./.env -v ./data:/data:rw --network app-net --name uwang-rest-api-dev -p 7001:7001 -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
               docker ps -a
