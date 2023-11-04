@@ -16,6 +16,9 @@ import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,11 +30,18 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ErrorController {
+    @Value("${info.build.version}")
+    private String version;
+
+    @Autowired
+    private ApplicationContext context;
+
     @ExceptionHandler(value = ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> validation(ConstraintViolationException violationException) {
         return BaseResponse.validationFailed(
-            violationException.getConstraintViolations().stream().toList()
+            violationException.getConstraintViolations().stream().toList(),
+            context.getApplicationName()
         );
     }
 
@@ -40,7 +50,9 @@ public class ErrorController {
     public BaseResponse<String> signatureException(SignatureException signatureException) {
         final int signatureCode = 1_000;
         return BaseResponse.error(
-            signatureCode, "Authentication failed, token expired or invalid"
+            signatureCode,
+            "Authentication failed, token expired or invalid",
+            version
         );
     }
 
@@ -50,7 +62,8 @@ public class ErrorController {
         final int expiredJwtCode = 1_001;
         return BaseResponse.error(
             expiredJwtCode,
-            expiredJwtException.getMessage()
+            expiredJwtException.getMessage(),
+            version
         );
     }
 
@@ -60,7 +73,8 @@ public class ErrorController {
         final int tokenBearerCode = 1_002;
         return BaseResponse.error(
             tokenBearerCode,
-            usernameNotFoundException.getMessage()
+            usernameNotFoundException.getMessage(),
+            version
         );
     }
 
@@ -70,7 +84,8 @@ public class ErrorController {
         final int decodeJwtFailedCode = 1_003;
         return BaseResponse.error(
             decodeJwtFailedCode,
-            "Authentication failed, token expired or invalid"
+            "Authentication failed, token expired or invalid",
+            version
         );
     }
 
@@ -80,7 +95,8 @@ public class ErrorController {
         final int nullPointerCode = 1_004;
         return BaseResponse.error(
             nullPointerCode,
-            nullPointerException.getMessage()
+            nullPointerException.getMessage(),
+            version
         );
     }
 
@@ -89,7 +105,8 @@ public class ErrorController {
     public BaseResponse<String> unAuth(UnAuthorizedException unAuthorizedException) {
         return BaseResponse.error(
             unAuthorizedException.getStatusCode(),
-            unAuthorizedException.getMessage()
+            unAuthorizedException.getMessage(),
+            version
         );
     }
 
@@ -99,7 +116,8 @@ public class ErrorController {
         final int contentTypeErrorCode = 1_006;
         return BaseResponse.error(
             contentTypeErrorCode,
-            fileUploadException.getMessage()
+            fileUploadException.getMessage(),
+            version
         );
     }
 
@@ -108,7 +126,8 @@ public class ErrorController {
     public BaseResponse<String> contentTypeFormDataNotMatch(GeneralErrorException generalErrorException) {
         return BaseResponse.error(
             generalErrorException.getStatusCode(),
-            generalErrorException.getMessage()
+            generalErrorException.getMessage(),
+            version
         );
     }
 
@@ -117,7 +136,8 @@ public class ErrorController {
     public BaseResponse<String> malformed(MalformedJwtException malformedJwtException) {
         return BaseResponse.error(
             HttpStatus.UNAUTHORIZED.value(),
-            malformedJwtException.getMessage()
+            malformedJwtException.getMessage(),
+            version
         );
     }
 
@@ -126,7 +146,8 @@ public class ErrorController {
     public BaseResponse<String> noHandler(NoHandlerFoundException noHandlerFoundException) {
         return BaseResponse.error(
             HttpStatus.NOT_FOUND.value(),
-            noHandlerFoundException.getMessage()
+            noHandlerFoundException.getMessage(),
+            version
         );
     }
 
@@ -135,7 +156,8 @@ public class ErrorController {
     public BaseResponse<String> unSupportedException(UnsupportedOperationException noHandlerFoundException) {
         return BaseResponse.error(
             HttpStatus.NOT_FOUND.value(),
-            "Something wrong"
+            "Something wrong",
+            version
         );
     }
 }
