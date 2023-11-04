@@ -13,7 +13,9 @@ group = "com.bluehabit.uwang"
 val gitVersion: groovy.lang.Closure<String> by extra
 version = gitVersion()
 
-
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    this.archiveFileName.set("${archiveBaseName.get()}.${archiveExtension.get()}")
+}
 
 checkstyle {
     maxWarnings = 0
@@ -107,9 +109,3 @@ tasks.create<Copy>("installGitHook") {
 }
 
 tasks.getByPath(":init").dependsOn("installGitHook")
-
-fun getTimestamp():String{
-    val formatter = SimpleDateFormat()
-    formatter.applyPattern("yyyyMMddHHmmss")
-    return formatter.format(Date())
-}

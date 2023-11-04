@@ -1,1 +1,2 @@
-application.properties
+application-secret.properties
+application.example.properties
