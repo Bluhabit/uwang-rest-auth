@@ -16,7 +16,6 @@ import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -34,9 +33,6 @@ public class ErrorController {
     @Value("${info.build.version}")
     private String version;
 
-    @Value("${info.build.version}")
-    private String version;
-
     @Autowired
     private ApplicationContext context;
 
@@ -44,8 +40,6 @@ public class ErrorController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, Object> validation(ConstraintViolationException violationException) {
         return BaseResponse.validationFailed(
-            violationException.getConstraintViolations().stream().toList(),
-            version
             violationException.getConstraintViolations().stream().toList(),
             context.getApplicationName()
         );
