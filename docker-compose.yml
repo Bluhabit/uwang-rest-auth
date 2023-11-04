@@ -5,7 +5,7 @@ services:
     container_name: "uwang-rest-api"
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: staging.Dockerfile
     ports:
       - "8000:7001"
     environment:
