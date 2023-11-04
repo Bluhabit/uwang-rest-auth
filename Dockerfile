@@ -16,5 +16,6 @@ COPY --from=build /home/gradle/src/build/libs/uwang-rest-api.jar /app/uwang-app.
 # docker inspect --format='{{.LogPath}}' uwang-rest-api-dev
 EXPOSE 7001
 ENTRYPOINT ["java","-jar","/app/uwang-app.jar"]
+ENTRYPOINT ["java","-jar","/app/uwang-app.jar",""]
 
 
