@@ -20,5 +20,6 @@
 fba.json
 
 /src/main/resources/application-secret.properties
+/src/main/resources/application.properties
 ./.env
 .env
