@@ -25,7 +25,7 @@ public final class BaseResponse<T> {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;
-        this.version = version
+        this.version = version;
     }
 
     public static <O> ResponseEntity<BaseResponse<O>> failed(int statusCode, String message) {
