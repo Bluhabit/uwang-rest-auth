@@ -15,10 +15,6 @@ COPY --from=build /home/gradle/src/build/libs/uwang-rest-api.jar /app/uwang-app.
 #https://stackoverflow.com/questions/44491257/how-to-reduce-spring-boot-memory-usage
 # docker inspect --format='{{.LogPath}}' uwang-rest-api-dev
 EXPOSE 7001
-#ENTRYPOINT ["java","-Djavax.persistence.jdbc.url=jdbc:postgresql://203.194.112.146:6500/uwang-dev","-Dspring.datasource.username=bluehabit","-Dspring.datasource.password=Bluehabit2023Baru","-Dspring.datasource.hikari.driver-class-name=org.postgresql.Driver","-Dspring.datasource.driver-class-name: org.postgresql.Driver","-jar","/app/uwang-app.jar"]
 ENTRYPOINT ["java","-jar","/app/uwang-app.jar"]
-#ENTRYPOINT ["java","-jar","/app/uwang-app.jar","--spring.config.location=/data/resources/application.properties"]
-#              docker run -v ./data:/data:rw --network app-net --name uwang-rest-api-dev -p 7001:7001 --env-file ./.env -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
-
 
 
