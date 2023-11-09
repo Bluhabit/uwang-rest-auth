@@ -36,7 +36,7 @@ public class Device {
     @Column
     private String deviceName;
     @Column
-    private String deviceOS;
+    private String deviceOs;
     @Column
     private OffsetDateTime createdAt;
     @Column

@@ -17,8 +17,6 @@ public class SignInService {
     private String version;
 
     public ResponseEntity<BaseResponse<UserCredential>> signInWithEmail() {
-
-
         return BaseResponse.success("", null, version);
     }
 }
