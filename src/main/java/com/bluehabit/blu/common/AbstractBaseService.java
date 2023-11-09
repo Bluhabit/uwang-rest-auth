@@ -1,8 +1,8 @@
 
 package com.bluehabit.blu.common;
 
-import com.bluehabit.blu.component.data.UserCredential;
-import com.bluehabit.blu.component.data.UserCredentialRepository;
+import com.bluehabit.blu.component.data.useCredential.UserCredential;
+import com.bluehabit.blu.component.data.useCredential.UserCredentialRepository;
 import com.bluehabit.blu.exception.UnAuthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;

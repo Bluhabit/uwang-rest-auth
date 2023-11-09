@@ -9,5 +9,7 @@ package com.bluehabit.blu.component;
 
 public enum UserStatus {
     ACTIVE,
-    INACTIVE
+    INACTIVE,
+    SUSPENDED,
+    WAITING_ACTIVATION
 }
