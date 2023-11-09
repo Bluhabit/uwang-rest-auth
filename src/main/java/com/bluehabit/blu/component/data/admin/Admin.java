@@ -2,7 +2,12 @@ package com.bluehabit.blu.component.data.admin;
 
 import com.bluehabit.blu.component.data.adminPermission.AdminPermission;
 import com.bluehabit.blu.component.data.useCredential.UserCredential;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;

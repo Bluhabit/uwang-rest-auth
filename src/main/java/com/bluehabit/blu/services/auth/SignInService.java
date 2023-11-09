@@ -16,9 +16,9 @@ public class SignInService {
     @Value("${info.build.version}")
     private String version;
 
-    public ResponseEntity<BaseResponse<UserCredential>> signInWithEmail(){
+    public ResponseEntity<BaseResponse<UserCredential>> signInWithEmail() {
 
 
-        return BaseResponse.success("",null,version);
+        return BaseResponse.success("", null, version);
     }
 }

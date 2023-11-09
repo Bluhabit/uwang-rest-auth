@@ -26,9 +26,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -36,16 +34,16 @@ import java.util.Map;
 @Entity
 @Table(name = "tb_user_credential")
 @SQLDelete(
-    sql = "UPDATE tb_user_credential SET deleted=true WHERE id=?"
+        sql = "UPDATE tb_user_credential SET deleted=true WHERE id=?"
 )
 @Where(
-    clause = "deleted = false"
+        clause = "deleted = false"
 )
 public class UserCredential {
     @Id
     @GenericGenerator(
-        name = "UUID",
-        type = org.hibernate.id.uuid.UuidGenerator.class
+            name = "UUID",
+            type = org.hibernate.id.uuid.UuidGenerator.class
     )
     private String id;
     @Column(unique = true)

@@ -18,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
-import java.util.UUID;
 
 @Component
 public class Seeder implements ApplicationRunner {
@@ -31,12 +30,12 @@ public class Seeder implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        if(userCredentialRepository.findById("6b91eca7-335c-43f9-9c6e-c770a2f6ea6a").isEmpty()) {
+        if (userCredentialRepository.findById("6b91eca7-335c-43f9-9c6e-c770a2f6ea6a").isEmpty()) {
             final OffsetDateTime date = OffsetDateTime.now();
             final String email = "admin@bluhabit.id";
             final String password = "12345678";
             //no empty
-            var user = new UserCredential();
+            final UserCredential user = new UserCredential();
             user.setId("6b91eca7-335c-43f9-9c6e-c770a2f6ea6a");
             user.setEmail(email);
             user.setStatus(UserStatus.ACTIVE);

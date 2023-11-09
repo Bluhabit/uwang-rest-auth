@@ -1,7 +1,9 @@
 package com.bluehabit.blu.component.data.adminPermission;
 
-import com.bluehabit.blu.component.data.useCredential.UserCredential;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
