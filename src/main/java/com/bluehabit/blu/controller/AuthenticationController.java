@@ -31,7 +31,7 @@ public class AuthenticationController {
     @GetMapping(
             path = "/sign-in-basic"
     )
-    public ResponseEntity<BaseResponse<UserCredential>> signInBasic(){
+    public ResponseEntity<BaseResponse<UserCredential>> signInBasic() {
         return signInService.signInWithEmail();
     }
 
