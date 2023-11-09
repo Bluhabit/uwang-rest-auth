@@ -10,6 +10,7 @@ package com.bluehabit.blu.component.data.useCredential;
 import com.bluehabit.blu.component.AuthProvider;
 import com.bluehabit.blu.component.UserStatus;
 import com.bluehabit.blu.component.data.userProfile.UserProfile;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -50,6 +51,7 @@ public class UserCredential {
     @Column(unique = true)
     private String email;
     @Column
+    @JsonIgnore
     private String password;
     @Enumerated(EnumType.ORDINAL)
     @Column(columnDefinition = "int2")
