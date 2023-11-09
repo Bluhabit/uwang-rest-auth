@@ -19,24 +19,12 @@ public class Log {
 
     @EventListener
     public void onStartup(ApplicationReadyEvent event) {
-        final String url = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.url");
-        final String uname = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.username");
-        final String pwd = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.password");
 
-        log.error("URL => " + url);
-        log.error("UNAME => " + uname);
-        log.error("PWD => " + pwd);
     }
 
     @EventListener
     public void onShutdown(ContextStoppedEvent event) {
-        final String url = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.url");
-        final String uname = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.username");
-        final String pwd = event.getApplicationContext().getEnvironment().getProperty("spring.datasource.password");
 
-        log.error("URL => " + url);
-        log.error("UNAME => " + uname);
-        log.error("PWD => " + pwd);
     }
 
 }

@@ -5,9 +5,10 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.blu.component.data;
+package com.bluehabit.blu.component.data.userVerification;
 
 import com.bluehabit.blu.component.VerificationType;
+import com.bluehabit.blu.component.data.useCredential.UserCredential;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -7,7 +7,7 @@
 
 package com.bluehabit.blu.services;
 
-import com.bluehabit.blu.component.data.UserCredentialRepository;
+import com.bluehabit.blu.component.data.useCredential.UserCredentialRepository;
 import com.bluehabit.blu.component.model.UserInfoDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

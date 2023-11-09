@@ -5,10 +5,11 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.blu.component.data;
+package com.bluehabit.blu.component.data.useCredential;
 
 import com.bluehabit.blu.component.AuthProvider;
 import com.bluehabit.blu.component.UserStatus;
+import com.bluehabit.blu.component.data.userProfile.UserProfile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -64,20 +65,4 @@ public class UserCredential {
     private OffsetDateTime updatedAt;
     @Column(name = "deleted", nullable = false)
     private boolean deleted;
-
-    public Map<String, Object> toResponse() {
-        final Map<String, Object> data = new HashMap<>();
-        final Map<String, Object> profile = new HashMap<>();
-        if (getUserInfo() != null) {
-            getUserInfo().forEach(userProfile -> profile.put(userProfile.getKey(), userProfile.getValue()));
-        }
-        data.put("id", getId());
-        data.put("email", getEmail());
-        data.put("status", getStatus());
-        data.put("userInfo", profile);
-        data.put("createdAt", getCreatedAt());
-        data.put("updatedAt", getUpdatedAt());
-
-        return data;
-    }
 }

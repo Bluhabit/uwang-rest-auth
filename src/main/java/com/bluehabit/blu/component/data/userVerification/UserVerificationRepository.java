@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.blu.component.data;
+package com.bluehabit.blu.component.data.userVerification;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;

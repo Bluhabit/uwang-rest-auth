@@ -5,7 +5,7 @@
  * Proprietary and confidential
  */
 
-package com.bluehabit.blu.component.data;
+package com.bluehabit.blu.component.data.userProfile;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

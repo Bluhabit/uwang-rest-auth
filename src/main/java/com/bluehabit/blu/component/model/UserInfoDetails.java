@@ -7,7 +7,7 @@
 
 package com.bluehabit.blu.component.model;
 
-import com.bluehabit.blu.component.data.UserCredential;
+import com.bluehabit.blu.component.data.useCredential.UserCredential;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
