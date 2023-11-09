@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 
 @Component
@@ -42,44 +44,48 @@ public class FilterRequest extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userService;
 
+    @Autowired
+    private ResourceBundleMessageSource i81n;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            setLocale(request);
-            if (new AntPathMatcher().match("/v1/auth/**", request.getServletPath())) {
+            final Locale locale = setLocale(request);
+            if (new AntPathMatcher().match("/v1/auth/**", request.getServletPath()) || new AntPathMatcher().match("/api/v1/auth/**", request.getServletPath())) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
             final String authHeader = request.getHeader("Authorization");
             if (authHeader == null || authHeader.isEmpty()) {
-                throw new UnAuthorizedException("header empty");
+
+                throw new UnAuthorizedException(i81n.getMessage("auth.header.empty", null, locale));
             }
 
             if (!authHeader.startsWith("Bearer")) {
-                throw new UnAuthorizedException("header doesn't contain Bearer");
+                throw new UnAuthorizedException(i81n.getMessage("auth.header.not.contain.bearer", null, locale));
             }
 
             if (authHeader.length() <= LENGTH_BEARER) {
-                throw new UnAuthorizedException("Header only contains 'Bearer'");
+                throw new UnAuthorizedException(i81n.getMessage("auth.header.only.contain.bearer", null, locale));
             }
 
             final String token = authHeader.substring(7);
             final String username = jwtUtil.extractUsername(token);
 
             if (username.isEmpty()) {
-                throw new UnAuthorizedException("failed extract claim");
+                throw new UnAuthorizedException(i81n.getMessage("auth.header.cannot.extract.claim", null, locale));
             }
 
             final UserDetails userDetails = userService.loadUserByUsername(username);
             if (!jwtUtil.validateToken(token, userDetails)) {
-                throw new UnAuthorizedException("user not found");
+                throw new UnAuthorizedException(i81n.getMessage("auth.header.user.not.found", null, locale));
             }
 
             final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
             );
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -90,12 +96,15 @@ public class FilterRequest extends OncePerRequestFilter {
         }
     }
 
-    private void setLocale(HttpServletRequest request) {
+    private Locale setLocale(HttpServletRequest request) {
         final String locale = request.getHeader("Accept-Language");
+        Locale finalLocale = Locale.forLanguageTag("ID");
         if (!locale.isEmpty() && !locale.isBlank()) {
-            LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(locale));
+            finalLocale = Locale.forLanguageTag(locale);
+            LocaleContextHolder.setDefaultLocale(finalLocale);
         } else {
-            LocaleContextHolder.setLocale(Locale.forLanguageTag("ID"));
+            LocaleContextHolder.setLocale(finalLocale);
         }
+        return finalLocale;
     }
 }

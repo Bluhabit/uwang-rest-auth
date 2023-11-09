@@ -44,7 +44,7 @@ public class WebSecurityConfiguration {
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> {
                     auth
-                        .requestMatchers("/v1/auth/**")
+                        .requestMatchers("/v1/auth/**","/api/v1/auth/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated();
