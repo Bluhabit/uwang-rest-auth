@@ -41,28 +41,28 @@ public class WebSecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> {
-                    auth
-                        .requestMatchers("/v1/auth/**","/api/v1/auth/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated();
-                }
-            )
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .sessionManagement(session -> {
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-            })
-            .exceptionHandling(handlingConfigurer -> {
-                    handlingConfigurer.authenticationEntryPoint((request, response, authException) -> {
-                        response.sendError(HttpStatus.BAD_REQUEST.value(), authException.getMessage());
-                    });
-                }
-            ).addFilterBefore(
-                filterRequest,
-                UsernamePasswordAuthenticationFilter.class
-            );
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> {
+                            auth
+                                    .requestMatchers("/v1/auth/**", "/api/v1/auth/**")
+                                    .permitAll()
+                                    .anyRequest()
+                                    .authenticated();
+                        }
+                )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> {
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                })
+                .exceptionHandling(handlingConfigurer -> {
+                            handlingConfigurer.authenticationEntryPoint((request, response, authException) -> {
+                                response.sendError(HttpStatus.BAD_REQUEST.value(), authException.getMessage());
+                            });
+                        }
+                ).addFilterBefore(
+                        filterRequest,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
