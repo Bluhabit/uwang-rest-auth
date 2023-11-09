@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @Entity
 @Table(name = "tb_admin_permission")
 @SQLDelete(
-        sql = "UPDATE tb_admin SET deleted=true WHERE id=?"
+        sql = "UPDATE tb_admin_permission SET deleted=true WHERE id=?"
 )
 @Where(
         clause = "deleted = false"
@@ -30,7 +30,7 @@ public class AdminPermission {
     @Column
     private String name;
     @Column
-    private String group;
+    private String permissionGroup;
     @Column
     private OffsetDateTime createdAt;
     @Column

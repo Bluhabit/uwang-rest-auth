@@ -46,7 +46,7 @@ public class FilterRequest extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             setLocale(request);
-            if (new AntPathMatcher().match("/api/v1/auth/**", request.getServletPath())) {
+            if (new AntPathMatcher().match("/v1/auth/**", request.getServletPath())) {
                 filterChain.doFilter(request, response);
                 return;
             }
