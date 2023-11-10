@@ -9,10 +9,13 @@ package com.bluehabit.blu.controller;
 
 import com.bluehabit.blu.common.BaseResponse;
 import com.bluehabit.blu.component.data.useCredential.UserCredential;
+import com.bluehabit.blu.component.model.SignInBasicRequest;
 import com.bluehabit.blu.services.auth.SignInService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,10 +32,14 @@ public class AuthenticationController {
 
     //region sign up
     @GetMapping(
-            path = "/sign-in-basic"
+            path = "/sign-in-basic",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<BaseResponse<UserCredential>> signInBasic() {
-        return signInService.signInWithEmail();
+    public ResponseEntity<BaseResponse<UserCredential>> signInBasic(
+           @RequestBody SignInBasicRequest request
+    ) {
+        return signInService.signInWithEmail(request);
     }
 
 }

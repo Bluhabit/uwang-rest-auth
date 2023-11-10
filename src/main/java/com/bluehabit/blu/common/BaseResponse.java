@@ -9,7 +9,6 @@ package com.bluehabit.blu.common;
 
 import jakarta.validation.ConstraintViolation;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -28,12 +27,12 @@ public final class BaseResponse<T> {
         this.version = version;
     }
 
-    public static <O> ResponseEntity<BaseResponse<O>> failed(int statusCode, String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse<>(statusCode, message, null, ""));
+    public static <O> BaseResponse<O> failed(int statusCode, String message) {
+        return new BaseResponse<>(statusCode, message, null, "");
     }
 
-    public static <O> ResponseEntity<BaseResponse<O>> failed(int statusCode, String message, String appVersion) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse<>(statusCode, message, null, appVersion));
+    public static <O> BaseResponse<O> failed(int statusCode, String message, String appVersion) {
+        return new BaseResponse<>(statusCode, message, null, appVersion);
     }
 
     public static <O> BaseResponse<O> error(int statusCode, String message) {
@@ -44,12 +43,12 @@ public final class BaseResponse<T> {
         return new BaseResponse<>(statusCode, message, null, appVersion);
     }
 
-    public static <O> ResponseEntity<BaseResponse<O>> success(String message, O data) {
-        return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), message, data, ""));
+    public static <O> BaseResponse<O> success(String message, O data) {
+        return new BaseResponse<>(HttpStatus.OK.value(), message, data, "");
     }
 
-    public static <O> ResponseEntity<BaseResponse<O>> success(String message, O data, String appVersion) {
-        return ResponseEntity.ok(new BaseResponse<>(HttpStatus.OK.value(), message, data, appVersion));
+    public static <O> BaseResponse<O> success(String message, O data, String appVersion) {
+        return new BaseResponse<>(HttpStatus.OK.value(), message, data, appVersion);
     }
 
     public static Map<String, Object> validationFailed(
