@@ -1,22 +1,17 @@
 FROM rust:latest as build
 
 # create a new empty shell project
-RUN USER=root cargo new --bin holodeck
+RUN USER=root cargo new --bin uwang-rest-api
 WORKDIR /uwang-rest-api
 
 # copy over your manifests
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 
-# this build step will cache your dependencies
-#RUN cargo build --release
-#RUN rm src/*.rs
-
 # copy your source tree
 COPY ./src ./src
 
 # build for release
-RUN rm ./target/release/deps/uwang-rest-api*
 RUN cargo build --release
 
 # our final base
