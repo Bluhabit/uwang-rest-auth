@@ -1,4 +1,4 @@
-FROM rust:1.49 as build
+FROM rust:latest as build
 
 # create a new empty shell project
 RUN USER=root cargo new --bin holodeck
@@ -20,7 +20,7 @@ RUN rm ./target/release/deps/uwang-rest-api*
 RUN cargo build --release
 
 # our final base
-FROM rust:1.49-slim-buster
+FROM rust:slim-buster
 
 # copy the build artifact from the build stage
 COPY --from=build /uwang-rest-api/target/release/uwang-rest-api .
