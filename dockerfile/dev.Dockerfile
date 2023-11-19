@@ -1,38 +1,29 @@
-FROM rust:1.43 as builder
+FROM rust:1.49 as build
 
-RUN USER=root cargo new --bin uwang-rest-api
-WORKDIR ./uwang-rest-api
+# create a new empty shell project
+RUN USER=root cargo new --bin holodeck
+WORKDIR /uwang-rest-api
+
+# copy over your manifests
+COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
+
+# this build step will cache your dependencies
 RUN cargo build --release
 RUN rm src/*.rs
 
-ADD . ./
+# copy your source tree
+COPY ./src ./src
 
+# build for release
 RUN rm ./target/release/deps/uwang-rest-api*
 RUN cargo build --release
 
+# our final base
+FROM rust:1.49-slim-buster
 
-FROM debian:buster-slim
-ARG APP=/usr/src/app
+# copy the build artifact from the build stage
+COPY --from=build /uwang-rest-api/target/release/uwang-rest-api .
 
-RUN apt-get update \
-    && apt-get install -y ca-certificates tzdata \
-    && rm -rf /var/lib/apt/lists/*
-
-EXPOSE 7005
-
-ENV TZ=Etc/UTC \
-    APP_USER=appuser
-
-RUN groupadd $APP_USER \
-    && useradd -g $APP_USER $APP_USER \
-    && mkdir -p ${APP}
-
-COPY --from=builder /uwang-rest-api/target/release/uwang-rest-api ${APP}/uwang-rest-api
-
-RUN chown -R $APP_USER:$APP_USER ${APP}
-
-USER $APP_USER
-WORKDIR ${APP}
-
+# set the startup command to run your binary
 CMD ["./uwang-rest-api"]
