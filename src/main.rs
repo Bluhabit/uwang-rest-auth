@@ -78,7 +78,7 @@ async fn main() -> std::io::Result<()> {
             .configure(init)
     })
         .bind(("0.0.0.0", 7005))?
-        .bind("[::]:7005")?
+        // .bind("[::]:7005")?
         .run()
         .await
 }
