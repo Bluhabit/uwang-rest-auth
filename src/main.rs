@@ -43,12 +43,12 @@ async fn main() -> std::io::Result<()> {
     let redis_url: String = std::env::var(REDIS_URL_KEY)
         .unwrap_or(REDIS_URL_DEFAULT_VALUE.to_string());
 
-    let db: DatabaseConnection = Database::connect(postgres_url)
+    let db: DatabaseConnection = Database::connect(postgres_url.clone())
         .await
-        .expect("failed to connect postgres");
+        .expect(format!("failed to connect postgres {}",postgres_url).as_str());
 
-    let cache: Client = Client::open(redis_url)
-        .expect("Invalid connection Url");
+    let cache: Client = Client::open(redis_url.clone())
+        .expect(format!("Invalid connection Url {}",redis_url).as_str());
 
     let state: AppState = AppState {
         db: db.clone(),
