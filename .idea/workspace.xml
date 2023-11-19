@@ -7,7 +7,10 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: initial uwang" />
+    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: initial uwang">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockerfile/dev.Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockerfile/dev.Dockerfile" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -222,7 +225,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1690185594053</updated>
-      <workItem from="1700385812680" duration="5016000" />
+      <workItem from="1700385812680" duration="5630000" />
     </task>
     <task id="LOCAL-00022" summary="feat: add email service&#10;refs : https://bluehabit.atlassian.net/browse/GAWE-70&#10;&#10;usage:&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  )&#10;);&#10;```&#10;&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  ),&#10;  (success)-&gt;{&#10;  &#10;    return success;&#10;  }&#10;);&#10;```">
       <option name="closed" value="true" />
