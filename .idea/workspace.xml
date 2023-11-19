@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: initial uwang">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/build-dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build-dev.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.jpb/jpb-settings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/HELP.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/checkstyle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/suppressed-checkstyle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dev.Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lint_rules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prod.Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/pre-commit-macos" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/pre-commit-windows" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/pre-push-macos" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/pre-push-windows" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/EurekaApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/Log.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/Seeder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/AbstractBaseService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/BaseResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/Constant.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/GoogleAuthUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/GoogleClaim.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/JwtUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/MailUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/OtpGenerator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/PermissionUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/TokenGenerator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/common/ValidationUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/AuthProvider.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/NotificationType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/UserStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/VerificationType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/Device/Device.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/admin/Admin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/adminPermission/AdminPermission.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/useCredential/UserCredential.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/useCredential/UserCredentialRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/userLogin/UserLogin.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/userProfile/UserProfile.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/userProfile/UserProfileRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/userReport/UserReport.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/userVerification/UserVerification.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/data/userVerification/UserVerificationRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/model/SignInBasicRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/component/model/UserInfoDetails.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/config/ApplicationConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/config/ErrorController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/config/FilterRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/config/WebSecurityConfiguration.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/controller/AuthenticationController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/controller/RootController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/exception/GeneralErrorException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/exception/UnAuthorizedException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/services/UserInfoService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/bluehabit/blu/services/auth/SignInService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-secret.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.example.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/banner.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/build.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/message_en.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/message_id.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/status_code_en.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/status_code_id.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/email/otp/id.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/email/reset-password-notification/id.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/email/reset-password-request/id.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/staging.Dockerfile" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="AnnotationType" />
+        <option value="Interface" />
+        <option value="HTML File" />
+        <option value="Class" />
+        <option value="Record" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="7zgrbz7n" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2T0gpMaSK9FUjlzocQhd6G4vjwY" />
+  <component name="ProjectViewState">
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+    <option name="showVisibilityIcons" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "android.gradle.sync.needed": "true",
+    "git-widget-placeholder": "REFACTOR/RUST-1",
+    "last_opened_file_path": "/Users/triandamai/Projects/bluhabit/uwang-rest-api",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.bluehabit.eureka.component" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/main/resources" />
+      <recent name="$PROJECT_DIR$/.github/workflows" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
+      <recent name="$PROJECT_DIR$/src/main/java/com/bluehabit/eureka/services" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources/templates/email/reset-password-request" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates/email/reset-password-notification" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates/email/otp" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
+      <recent name="$PROJECT_DIR$/src/main/resources/templates/mail/html" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.bluehabit.eureka.services" />
+      <recent name="com.bluehabit.eureka.component.model" />
+      <recent name="com.bluehabit.eureka.controller" />
+      <recent name="com.bluehabit.eureka.component.data" />
+      <recent name="com.bluehabit.eureka.component" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Cargo.Run learn-actix">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Blue_Habit.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Blue_Habit.main" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Run learn-actix" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="command" value="run --package learn-actix --bin learn-actix" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <envs />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml.pgAdmin: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="pgAdmin" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker-compose.yml.uwang-rest-api: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="uwang-rest-api" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker-compose.yml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="staging.Dockerfile: Compose Deployment" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="sourceFilePath" value="staging.Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo.Run learn-actix" />
+        <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
+        <item itemvalue="Docker.staging.Dockerfile: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.uwang-rest-api: Compose Deployment" />
+        <item itemvalue="Docker.docker-compose.yml.pgAdmin: Compose Deployment" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="" />
+      <created>1690185594053</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1690185594053</updated>
+      <workItem from="1700385812680" duration="336000" />
+    </task>
+    <task id="LOCAL-00022" summary="feat: add email service&#10;refs : https://bluehabit.atlassian.net/browse/GAWE-70&#10;&#10;usage:&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  )&#10;);&#10;```&#10;&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  ),&#10;  (success)-&gt;{&#10;  &#10;    return success;&#10;  }&#10;);&#10;```">
+      <option name="closed" value="true" />
+      <created>1691672313139</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1691672313139</updated>
+    </task>
+    <task id="LOCAL-00023" summary="feat: sign in with Google&#10;&#10;jira refs: https://bluehabit.atlassian.net/browse/GAWE-41">
+      <option name="closed" value="true" />
+      <created>1691757655648</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1691757655648</updated>
+    </task>
+    <task id="LOCAL-00024" summary="refactor: move UserService.java dedicated feature service">
+      <option name="closed" value="true" />
+      <created>1691758468570</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1691758468570</updated>
+    </task>
+    <task id="LOCAL-00025" summary="feat: update sign in service with google">
+      <option name="closed" value="true" />
+      <created>1691846345543</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1691846345543</updated>
+    </task>
+    <task id="LOCAL-00026" summary="fix: resolve conflict">
+      <option name="closed" value="true" />
+      <created>1691940931913</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1691940931913</updated>
+    </task>
+    <task id="LOCAL-00027" summary="feat: create complete profile service">
+      <option name="closed" value="true" />
+      <created>1691996718006</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1691996718006</updated>
+    </task>
+    <task id="LOCAL-00028" summary="feat: create complete profile service">
+      <option name="closed" value="true" />
+      <created>1691997051108</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1691997051108</updated>
+    </task>
+    <task id="LOCAL-00029" summary="feat: create complete profile service">
+      <option name="closed" value="true" />
+      <created>1691997206428</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1691997206428</updated>
+    </task>
+    <task id="LOCAL-00030" summary="feat: create complete profile service">
+      <option name="closed" value="true" />
+      <created>1692014157202</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1692014157202</updated>
+    </task>
+    <task id="LOCAL-00031" summary="feat: create complete profile service">
+      <option name="closed" value="true" />
+      <created>1692014190563</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1692014190563</updated>
+    </task>
+    <task id="LOCAL-00032" summary="fix: conflict">
+      <option name="closed" value="true" />
+      <created>1692288091977</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1692288091977</updated>
+    </task>
+    <task id="LOCAL-00033" summary="fix: make sure otp length less than 4 character">
+      <option name="closed" value="true" />
+      <created>1692292997368</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1692292997368</updated>
+    </task>
+    <task id="LOCAL-00034" summary="fix: make sure otp length less than 4 character">
+      <option name="closed" value="true" />
+      <created>1692293078062</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1692293078062</updated>
+    </task>
+    <task id="LOCAL-00035" summary="chore: set createdAt and updatedAt profile">
+      <option name="closed" value="true" />
+      <created>1692293314047</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1692293314047</updated>
+    </task>
+    <task id="LOCAL-00036" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692638984595</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1692638984595</updated>
+    </task>
+    <task id="LOCAL-00037" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692639066894</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1692639066894</updated>
+    </task>
+    <task id="LOCAL-00038" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692639094664</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1692639094664</updated>
+    </task>
+    <task id="LOCAL-00039" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692639199430</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1692639199430</updated>
+    </task>
+    <task id="LOCAL-00040" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692640422185</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1692640422185</updated>
+    </task>
+    <task id="LOCAL-00041" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692641269793</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1692641269793</updated>
+    </task>
+    <task id="LOCAL-00042" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692705533925</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1692705533925</updated>
+    </task>
+    <task id="LOCAL-00043" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692706473625</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1692706473625</updated>
+    </task>
+    <task id="LOCAL-00044" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692706597094</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1692706597094</updated>
+    </task>
+    <task id="LOCAL-00045" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692708690668</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1692708690668</updated>
+    </task>
+    <task id="LOCAL-00046" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692776738482</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1692776738482</updated>
+    </task>
+    <task id="LOCAL-00047" summary="patch: update some broken entity">
+      <option name="closed" value="true" />
+      <created>1692776911339</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1692776911339</updated>
+    </task>
+    <task id="LOCAL-00048" summary="patch: update build artifact">
+      <option name="closed" value="true" />
+      <created>1692778110850</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1692778110850</updated>
+    </task>
+    <task id="LOCAL-00049" summary="patch: update build artifact">
+      <option name="closed" value="true" />
+      <created>1692779719226</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1692779719226</updated>
+    </task>
+    <task id="LOCAL-00050" summary="patch: update build artifact">
+      <option name="closed" value="true" />
+      <created>1692844768891</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1692844768894</updated>
+    </task>
+    <task id="LOCAL-00051" summary="patch: update build artifact">
+      <option name="closed" value="true" />
+      <created>1692877178651</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1692877178651</updated>
+    </task>
+    <task id="LOCAL-00052" summary="feat: create feature create temporary task,get list priority, get list status">
+      <option name="closed" value="true" />
+      <created>1693066857648</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1693066857651</updated>
+    </task>
+    <task id="LOCAL-00053" summary="feat: create feature create temporary task,get list priority, get list status">
+      <option name="closed" value="true" />
+      <created>1693068203937</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1693068203937</updated>
+    </task>
+    <task id="LOCAL-00054" summary="feat: create feature upload attachment task&#10;&#10;jira: GAWE-121">
+      <option name="closed" value="true" />
+      <created>1693147815265</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1693147815265</updated>
+    </task>
+    <task id="LOCAL-00055" summary="feat: working mostly on task service&#10;&#10;refs: GAWE-103, GAWE-122, GAWE-143, GAWE-131, GAWE-129">
+      <option name="closed" value="true" />
+      <created>1693214720890</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1693214720891</updated>
+    </task>
+    <task id="LOCAL-00056" summary="chore: ignore uploads folder">
+      <option name="closed" value="true" />
+      <created>1693214778678</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1693214778678</updated>
+    </task>
+    <task id="LOCAL-00057" summary="feat: profile and task&#10;GAWE-88, GAWE-89,GAWE-90,GAWE-91,GAWE-92,GAWE-93,GAWE-137">
+      <option name="closed" value="true" />
+      <created>1693591849958</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1693591849958</updated>
+    </task>
+    <task id="LOCAL-00058" summary="fix: conflict">
+      <option name="closed" value="true" />
+      <created>1693592459441</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1693592459441</updated>
+    </task>
+    <task id="LOCAL-00059" summary="fix: conflict">
+      <option name="closed" value="true" />
+      <created>1693751970656</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1693751970656</updated>
+    </task>
+    <task id="LOCAL-00060" summary="fix: conflict">
+      <option name="closed" value="true" />
+      <created>1693752053437</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1693752053438</updated>
+    </task>
+    <task id="LOCAL-00061" summary="fix: conflict">
+      <option name="closed" value="true" />
+      <created>1693760865961</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1693760865962</updated>
+    </task>
+    <task id="LOCAL-00062" summary="feat: integration">
+      <option name="closed" value="true" />
+      <created>1693830823827</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1693830823827</updated>
+    </task>
+    <task id="LOCAL-00063" summary="feat: integration">
+      <option name="closed" value="true" />
+      <created>1693830959100</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1693830959100</updated>
+    </task>
+    <task id="LOCAL-00064" summary="feat: integration">
+      <option name="closed" value="true" />
+      <created>1693831162388</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1693831162389</updated>
+    </task>
+    <task id="LOCAL-00065" summary="feat: integration">
+      <option name="closed" value="true" />
+      <created>1693831235124</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1693831235124</updated>
+    </task>
+    <task id="LOCAL-00066" summary="feat: integration">
+      <option name="closed" value="true" />
+      <created>1693831253215</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1693831253215</updated>
+    </task>
+    <task id="LOCAL-00067" summary="feat: integration">
+      <option name="closed" value="true" />
+      <created>1693831273715</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1693831273715</updated>
+    </task>
+    <task id="LOCAL-00068" summary="feat: integration">
+      <option name="closed" value="true" />
+      <created>1693831303524</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1693831303524</updated>
+    </task>
+    <task id="LOCAL-00069" summary="feat: initial uwang">
+      <option name="closed" value="true" />
+      <created>1697599698582</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1697599698583</updated>
+    </task>
+    <task id="LOCAL-00070" summary="feat: initial uwang">
+      <option name="closed" value="true" />
+      <created>1697599764345</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1697599764345</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: add linter and git hook&#10;&#10;GAWE-34" />
+    <MESSAGE value="fix: update security config" />
+    <MESSAGE value="fix: security config" />
+    <MESSAGE value="feat: create service email &#10;jira ref: GAWE-70" />
+    <MESSAGE value="fix: middleware not working" />
+    <MESSAGE value="feat: add email service" />
+    <MESSAGE value="feat: add email service&#10;refs : https://bluehabit.atlassian.net/browse/GAWE-70&#10;&#10;usage:&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  )&#10;);&#10;```&#10;&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  ),&#10;  (success)-&gt;{&#10;  &#10;    return success;&#10;  }&#10;);&#10;```" />
+    <MESSAGE value="feat: sign in with Google&#10;&#10;jira refs: https://bluehabit.atlassian.net/browse/GAWE-41" />
+    <MESSAGE value="refactor: move UserService.java dedicated feature service" />
+    <MESSAGE value="feat: update sign in service with google" />
+    <MESSAGE value="fix: resolve conflict" />
+    <MESSAGE value="feat: create complete profile service" />
+    <MESSAGE value="fix: make sure otp length less than 4 character" />
+    <MESSAGE value="chore: set createdAt and updatedAt profile" />
+    <MESSAGE value="patch: update some broken feature" />
+    <MESSAGE value="patch: update some broken entity" />
+    <MESSAGE value="patch: update build artifact" />
+    <MESSAGE value="feat: create feature create temporary task,get list priority, get list status" />
+    <MESSAGE value="feat: create feature upload attachment task&#10;&#10;jira: GAWE-121" />
+    <MESSAGE value="feat: working mostly on task service&#10;&#10;refs: GAWE-103, GAWE-122, GAWE-143, GAWE-131, GAWE-129" />
+    <MESSAGE value="chore: ignore uploads folder" />
+    <MESSAGE value="feat: profile and task&#10;GAWE-88, GAWE-89,GAWE-90,GAWE-91,GAWE-92,GAWE-93,GAWE-137" />
+    <MESSAGE value="fix: conflict" />
+    <MESSAGE value="feat: integration" />
+    <MESSAGE value="feat: initial uwang" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: initial uwang" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
