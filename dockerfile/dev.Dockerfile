@@ -16,7 +16,7 @@ COPY ./src ./src
 RUN cargo build --release
 
 # our final base
-FROM rust:slim-buster
+FROM debian:bullseye-stable
 
 # copy the build artifact from the build stage
 COPY --from=build /uwang-rest-api/target/release/uwang-rest-api .
