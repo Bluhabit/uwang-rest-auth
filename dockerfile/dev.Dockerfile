@@ -1,25 +1,42 @@
-FROM rust:latest as build
+################
+##### Builder
+FROM rust:1.61.0-slim as builder
 
-# create a new empty shell project
-RUN USER=root cargo new --bin uwang-rest-api
-WORKDIR /uwang-rest-api
+WORKDIR /usr/src
 
-# copy over your manifests
-COPY ./Cargo.lock ./Cargo.lock
-COPY ./Cargo.toml ./Cargo.toml
+# Create blank project
+RUN USER=root cargo new uwang-rest-api
 
-# copy your source tree
-COPY ./migration ./migration
-COPY ./src ./src
+# We want dependencies cached, so copy those first.
+COPY Cargo.toml Cargo.lock /usr/src/uwang-rest-api/
 
-# build for release
-RUN cargo build --release
+# Set the working directory
+WORKDIR /usr/src/uwang-rest-api
 
-# our final base
-FROM debian:bullseye-stable
+## Install target platform (Cross-Compilation) --> Needed for Alpine
+RUN rustup target add x86_64-unknown-linux-musl
 
-# copy the build artifact from the build stage
-COPY --from=build /uwang-rest-api/target/release/uwang-rest-api .
+# This is a dummy build to get the dependencies cached.
+RUN cargo build --target x86_64-unknown-linux-musl --release
 
-# set the startup command to run your binary
-CMD ["./uwang-rest-api"]
+# Now copy in the rest of the sources
+COPY src /usr/src/uwang-rest-api/src/
+COPY migration /usr/src/uwang-rest-api/migration/
+
+## Touch main.rs to prevent cached release build
+RUN touch /usr/src/uwang-rest-api/src/main.rs
+
+# This is the actual application build.
+RUN cargo build --target x86_64-unknown-linux-musl --release
+
+################
+##### Runtime
+FROM alpine:3.16.0 AS runtime 
+
+# Copy application binary from builder image
+COPY --from=builder /usr/src/uwang-rest-api/target/x86_64-unknown-linux-musl/release/uwang-rest-api /usr/local/bin
+
+EXPOSE 7005
+
+# Run the application
+CMD ["/usr/local/bin/uwang-rest-api"]
