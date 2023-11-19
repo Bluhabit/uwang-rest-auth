@@ -9,6 +9,7 @@ COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 
 # copy your source tree
+COPY ./migration ./migration
 COPY ./src ./src
 
 # build for release
