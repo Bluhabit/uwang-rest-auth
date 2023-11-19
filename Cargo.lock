@@ -1464,28 +1464,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "learn-actix"
-version = "0.1.0"
-dependencies = [
- "actix-cors",
- "actix-web",
- "bcrypt",
- "chrono",
- "dotenv",
- "env_logger",
- "jsonwebtoken",
- "lazy_static",
- "migration",
- "redis",
- "sea-orm",
- "serde",
- "serde_json",
- "tokio",
- "uuid",
- "validator",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3029,6 +3007,28 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.39",
+]
+
+[[package]]
+name = "uwang-rest-api"
+version = "0.1.0"
+dependencies = [
+ "actix-cors",
+ "actix-web",
+ "bcrypt",
+ "chrono",
+ "dotenv",
+ "env_logger",
+ "jsonwebtoken",
+ "lazy_static",
+ "migration",
+ "redis",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "tokio",
+ "uuid",
+ "validator",
 ]
 
 [[package]]
