@@ -20,8 +20,7 @@ RUN rustup target add x86_64-unknown-linux-musl
 RUN cargo build --target x86_64-unknown-linux-musl --release
 
 # Now copy in the rest of the sources
-COPY src /usr/src/uwang-rest-api/src/
-COPY migration /usr/src/uwang-rest-api/migration/
+COPY . /usr/src/uwang-rest-api/
 
 ## Touch main.rs to prevent cached release build
 RUN touch /usr/src/uwang-rest-api/src/main.rs
