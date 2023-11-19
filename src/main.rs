@@ -77,7 +77,8 @@ async fn main() -> std::io::Result<()> {
             }))
             .configure(init)
     })
-        .bind(("127.0.0.1", 7005))?
+        .bind(("0.0.0.0", 7005))?
+        .bind("[::]:7005")?
         .run()
         .await
 }
