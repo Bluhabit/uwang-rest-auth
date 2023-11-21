@@ -1,8 +1,9 @@
 use std::string::ToString;
+use actix_cors::Cors;
 use actix_web::error::InternalError;
 use actix_web::http::StatusCode;
 use actix_web::web::Data;
-use actix_web::{middleware, web, App, HttpResponse, HttpServer};
+use actix_web::{middleware, web, App, HttpResponse, HttpServer, http};
 use dotenv::dotenv;
 use redis::Client;
 use sea_orm::{Database, DatabaseConnection};
@@ -45,18 +46,30 @@ async fn main() -> std::io::Result<()> {
 
     let db: DatabaseConnection = Database::connect(postgres_url.clone())
         .await
-        .expect(format!("failed to connect postgres {}",postgres_url).as_str());
+        .expect(format!("failed to connect postgres {}", postgres_url).as_str());
 
     let cache: Client = Client::open(redis_url.clone())
-        .expect(format!("Invalid connection Url {}",redis_url).as_str());
+        .expect(format!("Invalid connection Url {}", redis_url).as_str());
 
     let state: AppState = AppState {
         db: db.clone(),
         cache: cache.clone(),
     };
 
-    HttpServer::new(move || {
+
+
+    HttpServer::new(move|| {
+        let cors = Cors::default()
+            .allowed_origin_fn(|origin, _req_head| {
+                let origin = origin.as_bytes();
+                origin.ends_with(b".bluhabit.id")
+            })
+            .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE"])
+            .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
+            .allowed_header(http::header::CONTENT_TYPE);
+
         App::new()
+            .wrap(cors)
             .wrap(middleware::Logger::default())
             .wrap(middleware::Logger::new(
                 "%a %r %s %b %{Referer}i %{User-Agent}i %T",
@@ -77,7 +90,7 @@ async fn main() -> std::io::Result<()> {
             }))
             .configure(init)
     })
-        .bind(("0.0.0.0", 7000))?
+        .bind(("0.0.0.0", 8000))?
         .run()
         .await
 }
