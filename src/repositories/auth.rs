@@ -10,7 +10,7 @@ use sea_orm::{
 };
 
 use crate::common::jwt::encode;
-use crate::entity::sea_orm_active_enums::{AuthProvider, Status, VerificationType};
+use crate::entity::sea_orm_active_enums::{AuthProvider,UserStatus, VerificationType};
 use crate::entity::{user_credential, user_verification};
 use crate::models::auth::{SessionModel, VerifyOtpRequest};
 use crate::AppState;
@@ -140,7 +140,7 @@ impl AuthRepository {
             email: Set(email.to_string()),
             full_name: Set(full_name.to_string()),
             password: Set(password.to_string()),
-            status: Set(Status::WaitingConfirmation),
+            status: Set(UserStatus::WaitingConfirmation),
             auth_provider: Set(AuthProvider::Basic),
             created_at: Set(current_date),
             updated_at: Set(current_date),

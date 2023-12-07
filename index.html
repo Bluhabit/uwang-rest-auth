@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input id="input" placeholder="Input nama">
+<button id="start">watch</button>
+<p id="show"></p>
+<script type="text/javascript">
+    let eventSource;
+    let input = document.getElementById("input")
+    let btn = document.getElementById("start")
+
+    function register(){
+        eventSource= new EventSource("http://localhost:8000/event/register/"+input.value)
+        eventSource.setRequestHeader("Bearer","tes")
+        eventSource.addEventListener("message",event => {
+            console.log(":ping",event)
+        })
+
+        eventSource.addEventListener("error",event=>{
+            console.log("error",event)
+        })
+
+        eventSource.addEventListener("databaru",(event)=>{
+            console.log("databaru",event)
+        })
+
+        eventSource.addEventListener("topic baru",(event)=>{
+            console.log("databaru",event)
+        })
+
+        eventSource.addEventListener(":ping",(event)=>{
+            console.log("ping",event)
+        })
+
+        eventSource.addEventListener("open",(event)=>{
+            console.log("open",event)
+        })
+    }
+
+    btn.addEventListener("click",()=>{
+        register()
+    })
+
+
+
+</script>
+
+</body>
+</html>

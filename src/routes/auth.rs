@@ -7,7 +7,7 @@ use validator::Validate;
 use crate::AppState;
 use crate::common::response::{BaseResponse, ErrorResponse};
 use crate::common::utils::get_readable_validation_message;
-use crate::entity::sea_orm_active_enums::{AuthProvider, Status};
+use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::models::auth::{SignInBasicRequest, SignUpBasicRequest, VerifyOtpRequest};
 use crate::repositories::auth::AuthRepository;
 use crate::models::auth::SessionModel;
@@ -41,16 +41,15 @@ pub async fn sign_in_basic(
     if user.auth_provider != AuthProvider::Basic {
         return Err(ErrorResponse::forbidden(1000, "Email used by another account".to_string()));
     }
-    if user.status == Status::Suspended {
+    if user.status == UserStatus::Suspended {
         return Err(ErrorResponse::forbidden(1002, "Your account suspended".to_string()));
     }
-    if user.status == Status::Inactive {
+    if user.status == UserStatus::Inactive {
         return Err(ErrorResponse::forbidden(1003, "Your account is inactive".to_string()));
     }
 
     //set session
     let save_session:Option<SessionModel> = auth_repo.set_user_session(&find_user.unwrap()).await;
-
 
     Ok(web::Json(BaseResponse::success(
         200,
