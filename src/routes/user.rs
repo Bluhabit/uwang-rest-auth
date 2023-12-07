@@ -1,8 +1,9 @@
 use std::collections::HashMap;
+
 use actix_web::{Responder, Result, web};
 use actix_web::web::Json;
 
-use crate::{AppState, common::response::BaseResponse, models, request_filter};
+use crate::{AppState, common::response::BaseResponse, request_filter};
 use crate::common::response::ErrorResponse;
 use crate::repositories::auth::AuthRepository;
 
@@ -21,21 +22,9 @@ pub async fn get_users(
     Ok(Json(BaseResponse::success(200, user.unwrap(), "Success".to_string())))
 }
 
-pub async fn sign_in_basic(
-    _: web::Data<AppState>,
-    _: web::Json<models::auth::SignInBasicRequest>,
-) -> Result<impl Responder> {
-    return Ok(Json(BaseResponse::success(
-        200,
-        Some(""),
-        "".to_string(),
-    )));
-}
-
 pub fn user_handler(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/user")
             .route("/get", web::get().to(get_users))
-            .route("/sign-in-basic", web::post().to(sign_in_basic)),
     );
 }

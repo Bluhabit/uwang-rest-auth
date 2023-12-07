@@ -6,28 +6,24 @@ use std::option::Option;
 #[derive(Serialize, Debug)]
 pub struct BaseResponse<T> {
     pub status_code: u16,
-    pub error_code: u16,
     pub data: Option<T>,
     pub message: String,
 }
 
 impl<T> BaseResponse<T> {
     fn create(
-        status_code: StatusCode,
-        error_code: u16,
+        status_code: u16,
         message: String,
         data: Option<T>,
     ) -> BaseResponse<T> {
         BaseResponse {
-            status_code: status_code.as_u16(),
-            error_code,
+            status_code,
             message,
             data,
         }
     }
     pub fn created(code: u16, data: T, message: String) -> BaseResponse<T> {
         BaseResponse::<T>::create(
-            StatusCode::CREATED,
             code,
             message,
             Some(data),
@@ -36,7 +32,6 @@ impl<T> BaseResponse<T> {
 
     pub fn success(code: u16, data: T, message: String) -> BaseResponse<T> {
         BaseResponse::<T>::create(
-            StatusCode::OK,
             code,
             message,
             Some(data),
@@ -45,7 +40,6 @@ impl<T> BaseResponse<T> {
 
     pub fn not_found(code: u16, data: T, message: String) -> BaseResponse<T> {
         BaseResponse::<T>::create(
-            StatusCode::NOT_FOUND,
             code,
             message,
             Some(data),
@@ -108,7 +102,11 @@ impl ResponseError for ErrorResponse {
         return StatusCode::from_u16(self.status_code).unwrap();
     }
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code()).json(self)
+        HttpResponse::build(self.status_code()).json(BaseResponse::create(
+            self.status_code.clone(),
+            self.message.clone(),
+            self.data.clone(),
+        ))
     }
 }
 
