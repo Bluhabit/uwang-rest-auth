@@ -60,7 +60,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Get Release Version
-        run: echo "RELEASE_VERSION={{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
       - name: Connect with SSH and Deploy
         uses: appleboy/ssh-action@master
         with:
