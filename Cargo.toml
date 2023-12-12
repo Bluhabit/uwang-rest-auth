@@ -1,0 +1,38 @@
+[package]
+name = "uwang-rest-api"
+version = "0.1.0"
+edition = "2021"
+authors = ["Trian triandamai@gmail.com"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = ["migration"]
+
+
+[dependencies]
+actix-web = "4.4.0"
+actix-web-lab = "0.20.1"
+actix-cors = "0.6.4"
+serde = {version = "1.0",features = ["derive"]}
+dotenv = "0.15.0"
+tokio = {version = "1.33.0",features = ["macros","rt-multi-thread"]}
+chrono = {version = "0.4.31",features = ["serde"]}
+migration = {path = "migration"}
+uuid ={ version = "1.4.1",features = ["v4","fast-rng","macro-diagnostics"]}
+validator = { version = "0.16.1", features = ["derive"] }
+lazy_static="1.4.0"
+env_logger="0.10.1"
+jsonwebtoken = "9.1.0"
+serde_json = "1.0.108"
+bcrypt = "0.15.0"
+parking_lot = "0.12.1"
+tokio-stream = "0.1.14"
+redis = {version = "0.24.0",features = ["json","script","serde_json"]}
+http = { version = "0.2.10", features = [] }
+
+[dependencies.sea-orm]
+version = "0.12.4"
+features = ["sqlx-postgres","runtime-tokio-rustls","macros","with-chrono"]
+default-features = false
+
+

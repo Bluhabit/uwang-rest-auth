@@ -43,7 +43,7 @@ jobs:
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build image
-        run: docker build -t registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}} . -f dev.Dockerfile --no-cache
+        run: docker build -t registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}} . -f ./dockerfile/dev.Dockerfile --no-cache
 
       - name: Push
         run: docker push registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
@@ -69,8 +69,8 @@ jobs:
           password: ${{secrets.SSH_PASSWORD}}
           port: ${{secrets.SSH_PORT}}
           script: |
-              cd uwang-rest-api/dev
+              cd vps-config/application/uwang-rest-api/dev
               docker stop uwang-rest-api-dev
               docker rm uwang-rest-api-dev
               docker pull registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
-              docker run --env-file .env -v ./data:/data:rw --network app-net --name uwang-rest-api-dev -p 7005:7005 -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
+              docker run --env-file .env -v ./data:/data:rw --network app-net --add-host "host.docker.internal:host-gateway" --name uwang-rest-api-dev -p 7005:7000  -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
