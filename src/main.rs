@@ -110,3 +110,5 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     routes::index::index_handler(cfg);
     routes::event_stream::event_stream_handler(cfg)
 }
+
+//ini komen
