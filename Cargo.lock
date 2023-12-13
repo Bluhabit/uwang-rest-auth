@@ -55,7 +55,7 @@ dependencies = [
  "flate2",
  "futures-core",
  "h2",
- "http",
+ "http 0.2.10",
  "httparse",
  "httpdate",
  "itoa",
@@ -90,7 +90,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d66ff4d247d2b160861fa2866457e85706833527840e4133f8f49aa423a38799"
 dependencies = [
  "bytestring",
- "http",
+ "http 0.2.10",
  "regex",
  "serde",
  "tracing",
@@ -217,7 +217,7 @@ dependencies = [
  "derive_more",
  "futures-core",
  "futures-util",
- "http",
+ "http 0.2.10",
  "impl-more",
  "itertools",
  "local-channel",
@@ -1248,7 +1248,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "futures-util",
- "http",
+ "http 0.2.10",
  "indexmap 1.9.3",
  "slab",
  "tokio",
@@ -1334,6 +1334,17 @@ name = "http"
 version = "0.2.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f95b9abcae896730d42b78e09c155ed4ddf82c07b4de772c64aee5b2d8b7c150"
+dependencies = [
+ "bytes",
+ "fnv",
+ "itoa",
+]
+
+[[package]]
+name = "http"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b32afd38673a8016f7c9ae69e5af41a58f81b1d31689040f2f1959594ce194ea"
 dependencies = [
  "bytes",
  "fnv",
@@ -3122,11 +3133,12 @@ dependencies = [
  "chrono",
  "dotenv",
  "env_logger",
- "http",
+ "http 1.0.0",
  "jsonwebtoken",
  "lazy_static",
  "migration",
  "parking_lot",
+ "rand",
  "redis",
  "sea-orm",
  "serde",

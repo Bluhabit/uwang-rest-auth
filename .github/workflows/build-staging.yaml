@@ -1,4 +1,4 @@
-name: Create Staging Release
+name: Create Dev Release
 
 on:
   # allow to trigger job manually from UI
@@ -20,7 +20,7 @@ concurrency: release
 
 jobs:
   pr-build:
-    name: Build Staging Release
+    name: Build Dev Release
     runs-on: ubuntu-latest
     # Required by 'git push'
     permissions:
@@ -43,7 +43,7 @@ jobs:
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
 
       - name: Build image
-        run: docker build -t registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}} . -f staging.Dockerfile --no-cache
+        run: docker build -t registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}} . -f ./dockerfile/staging.Dockerfile --no-cache
 
       - name: Push
         run: docker push registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
@@ -69,8 +69,8 @@ jobs:
           password: ${{secrets.SSH_PASSWORD}}
           port: ${{secrets.SSH_PORT}}
           script: |
-            cd uwang-rest-api/stage
-            docker stop uwang-rest-api-staging
-            docker rm uwang-rest-api-staging
-            docker pull registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
-            docker run --env-file .env -v ./data:/data:rw --network app-net --name uwang-rest-api-staging -p 7003:7003 -d registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
+              cd vps-config/application/uwang-rest-api/stage
+              docker stop uwang-rest-api-staging
+              docker rm uwang-rest-api-staging
+              docker pull registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
+              docker run --env-file .env -v ./data:/data:rw --network app-net --add-host "host.docker.internal:host-gateway" --name uwang-rest-api-staging -p 7003:8000  -d registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
