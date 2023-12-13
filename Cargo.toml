@@ -28,7 +28,8 @@ bcrypt = "0.15.0"
 parking_lot = "0.12.1"
 tokio-stream = "0.1.14"
 redis = {version = "0.24.0",features = ["json","script","serde_json"]}
-http = { version = "0.2.10", features = [] }
+http = { version = "1.0.0", features = [] }
+rand = "0.8.5"
 
 [dependencies.sea-orm]
 version = "0.12.4"
