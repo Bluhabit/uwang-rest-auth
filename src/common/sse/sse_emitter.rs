@@ -84,8 +84,11 @@ impl SseBroadcaster {
         Sse::from_infallible_receiver(rx)
     }
     /// Broadcasts `msg` to all clients.
-    pub async fn broadcast(&self, topic: &str, msg: &str) {
+    pub async fn broadcast(&self, topic: &str, msg: &str)->Option<String> {
         let clients = self.inner.lock().clients.clone();
+        if clients.is_empty(){
+            return None
+        }
         for (_, value) in clients {
             let _ = value
                 .send(sse::Event::Data(
@@ -94,6 +97,8 @@ impl SseBroadcaster {
                     ).unwrap().event(topic))
                 ).await;
         }
+
+        return Some("".to_string())
     }
 
     pub async fn send_to(&self,to: &str, topic: &str, msg: &str)->Option<String> {
