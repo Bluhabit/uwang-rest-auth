@@ -25,13 +25,14 @@ mod routes;
 pub struct AppState {
     db: DatabaseConnection,
     cache: Client,
-    sse_emitter:Arc<SseBroadcaster>
+    sse_emitter: Arc<SseBroadcaster>,
 }
 
 const DB_URL_KEY: &str = "DATABASE_URL";
 const REDIS_URL_KEY: &str = "REDIS_URL";
 const DB_URL_DEFAULT_VALUE: &str = "postgres://user:password@host:port/db";
 const REDIS_URL_DEFAULT_VALUE: &str = "redis://user:password@host:port";
+const ENV: &str = "";
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -60,16 +61,15 @@ async fn main() -> std::io::Result<()> {
     let state: AppState = AppState {
         db: db.clone(),
         cache: cache.clone(),
-        sse_emitter:sse_emitter.clone()
+        sse_emitter: sse_emitter.clone(),
     };
 
 
-
-    HttpServer::new(move|| {
+    HttpServer::new(move || {
         let cors = Cors::default()
             .allowed_origin_fn(|origin, _req_head| {
                 let origin = origin.as_bytes();
-                let allow= origin.ends_with(b".bluhabit.id");
+                let allow = origin.ends_with(b".bluhabit.id");
 
                 allow
             })

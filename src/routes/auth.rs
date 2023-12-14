@@ -25,6 +25,8 @@ pub async fn sign_in_basic(
 
     //find related account
     let mut auth_repo = AuthRepository::init(&state);
+
+
     let find_user = auth_repo.get_user_by_email(&body.email).await;
     if find_user.is_none() {
         return Err(ErrorResponse::unauthorized("Cannot find user ".to_string()));
@@ -69,7 +71,6 @@ pub async fn sign_up_basic(
     }
 
     let auth_repo = AuthRepository::init(&state);
-
     //check email already use
     let email_exist = auth_repo.is_email_used(&body.email).await;
     if email_exist {
