@@ -1,4 +1,4 @@
-name: Create Dev Release
+name: Create Staging Release
 
 on:
   # allow to trigger job manually from UI
