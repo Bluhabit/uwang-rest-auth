@@ -7,15 +7,9 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: working on sign up basic [UWANG-65]">
-      <change afterPath="$PROJECT_DIR$/templates/sign-up-basic-otp.hbs" afterDir="false" />
+    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: working on sign in basic [UWANG-65]">
+      <change beforePath="$PROJECT_DIR$/.github/pull_request_template.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/pull_request_template.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/common/mail/email.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/mail/email.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/repositories/auth/sign_in.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/repositories/auth/sign_in.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/auth/sign_in.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/auth/sign_in.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/auth/sign_up.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/auth/sign_up.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/otp.hbs" beforeDir="false" afterPath="$PROJECT_DIR$/templates/sign-in-basic-otp.hbs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -257,15 +251,7 @@
       <workItem from="1702390836883" duration="1991000" />
       <workItem from="1702476660571" duration="2152000" />
       <workItem from="1702642079972" duration="25829000" />
-      <workItem from="1702738796374" duration="1992000" />
-    </task>
-    <task id="LOCAL-00022" summary="feat: add email service&#10;refs : https://bluehabit.atlassian.net/browse/GAWE-70&#10;&#10;usage:&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  )&#10;);&#10;```&#10;&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  ),&#10;  (success)-&gt;{&#10;  &#10;    return success;&#10;  }&#10;);&#10;```">
-      <option name="closed" value="true" />
-      <created>1691672313139</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1691672313139</updated>
+      <workItem from="1702738796374" duration="2253000" />
     </task>
     <task id="LOCAL-00023" summary="feat: sign in with Google&#10;&#10;jira refs: https://bluehabit.atlassian.net/browse/GAWE-41">
       <option name="closed" value="true" />
@@ -651,7 +637,15 @@
       <option name="project" value="LOCAL" />
       <updated>1697599764345</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="feat: working on sign in basic [UWANG-65]">
+      <option name="closed" value="true" />
+      <created>1702741988060</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1702741988060</updated>
+    </task>
+    <option name="localTasksCounter" value="72" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -669,7 +663,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="feat: create service email &#10;jira ref: GAWE-70" />
     <MESSAGE value="fix: middleware not working" />
     <MESSAGE value="feat: add email service" />
     <MESSAGE value="feat: add email service&#10;refs : https://bluehabit.atlassian.net/browse/GAWE-70&#10;&#10;usage:&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  )&#10;);&#10;```&#10;&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  ),&#10;  (success)-&gt;{&#10;  &#10;    return success;&#10;  }&#10;);&#10;```" />
@@ -694,7 +687,8 @@
     <MESSAGE value="feat: add cors" />
     <MESSAGE value="feat: add sse" />
     <MESSAGE value="feat: working on sign up basic [UWANG-65]" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: working on sign up basic [UWANG-65]" />
+    <MESSAGE value="feat: working on sign in basic [UWANG-65]" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: working on sign in basic [UWANG-65]" />
   </component>
   <component name="VueSettings">
     <option name="innerServiceType" value="VOLAR" />
