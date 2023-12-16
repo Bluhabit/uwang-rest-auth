@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://203.194.112.146:6500/uwang-dev</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="Redis bluhbabit" uuid="70d57daf-74c9-4bb3-92d0-4fbce5f0c83d">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://203.194.112.146:6379/0</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

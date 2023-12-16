@@ -13,9 +13,9 @@ pub struct Claims {
     pub exp: i64,
 }
 
-pub const JWT_SECRET_KEY: &str = "JWT_SECRET";
-pub const JWT_SECRET_KEY_DEFAULT: &str = "triandamai";
-pub const ISS: &str = "bluhabit.id";
+const JWT_SECRET_KEY: &str = "JWT_SECRET";
+const JWT_SECRET_KEY_DEFAULT: &str = "triandamai";
+const ISS: &str = "bluhabit.id";
 
 pub fn encode(
     sub: String

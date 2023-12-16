@@ -3,12 +3,12 @@ use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::response::Response;
+use crate::common::mail::config;
 use crate::common::mail::config::Config;
 
 pub struct Email {
     email: String,
     name: String,
-    url: String,
     from: String,
     config: Config,
 }
@@ -17,17 +17,14 @@ impl Email {
     pub fn new(
         email: String,
         name: String,
-        url: String,
-        config: Config,
     ) -> Self {
-        let from = format!("Bluhabit <{}>", config.smtp_from.to_owned());
-
+        let conf = config::Config::init();
+        let from = format!("Bluhabit <{}>", conf.smtp_from.to_owned());
         Email {
             email,
             name,
-            url,
             from,
-            config,
+            config: conf,
         }
     }
 
@@ -42,11 +39,11 @@ impl Email {
 
         let transport =
             AsyncSmtpTransport::<Tokio1Executor>::relay(
-            &self.config.smtp_host.to_owned()
-        )?
-            .port(self.config.smtp_port)
-            .credentials(creds)
-            .build();
+                &self.config.smtp_host.to_owned()
+            )?
+                .port(self.config.smtp_port)
+                .credentials(creds)
+                .build();
 
         Ok(transport)
     }
@@ -54,18 +51,13 @@ impl Email {
     fn render_template(
         &self,
         template_name: &str,
+        data: &serde_json::Value,
     ) -> Result<String, handlebars::RenderError> {
         let mut handlebars = Handlebars::new();
         handlebars
-            .register_template_file(template_name, &format!("./templates/{}.hbs",template_name))?;
+            .register_template_file(template_name, &format!("./templates/{}.hbs", template_name))?;
         handlebars.register_template_file("styles", "./templates/partials/style.hbs")?;
         handlebars.register_template_file("base", "./templates/layouts/base.hbs")?;
-
-        let data = serde_json::json!({
-            "first_name": &self.name.split_whitespace().next().unwrap(),
-            "subject": &template_name,
-            "url": &self.url
-        });
 
         let content_template = handlebars.render(template_name, &data)?;
 
@@ -76,8 +68,9 @@ impl Email {
         &self,
         template_name: &str,
         subject: &str,
+        data: &serde_json::Value,
     ) -> Result<Response, Box<dyn std::error::Error>> {
-        let html_template = self.render_template(template_name)?;
+        let html_template = self.render_template(template_name, data)?;
         let email = Message::builder()
             .to(
                 format!("{} <{}>", self.name.as_str(), self.email.as_str())
@@ -96,8 +89,16 @@ impl Email {
         Ok(send)
     }
 
-    pub async fn send_verification_code(&self) -> Result<Response, Box<dyn std::error::Error>> {
-        self.send_email("otp", "Your account verification code")
+    pub async fn send_verification_code(
+        &self,
+        name: &str,
+        otp_code: &str,
+    ) -> Result<Response, Box<dyn std::error::Error>> {
+        let data = serde_json::json!({
+            "full_name": name,
+            "otp_code": otp_code
+        });
+        self.send_email("otp", "Your account verification code", &data)
             .await
     }
 }
