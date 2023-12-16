@@ -71,7 +71,7 @@ async fn main() -> std::io::Result<()> {
                 let origin = origin.as_bytes();
                 let allow = origin.ends_with(b".bluhabit.id");
 
-                allow
+                true
             })
             .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE"])
             .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])

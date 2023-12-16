@@ -9,6 +9,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: String,
     pub group_owner: Option<String>,
+    pub group_banner: Option<String>,
     pub group_name: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
     pub group_description: Option<String>,

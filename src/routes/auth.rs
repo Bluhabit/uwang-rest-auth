@@ -11,6 +11,7 @@ use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::models::auth::{SignInBasicRequest, SignUpBasicRequest, VerifyOtpRequest};
 use crate::repositories::auth::AuthRepository;
 use crate::models::auth::SessionModel;
+use crate::common::mail;
 
 pub async fn sign_in_basic(
     state: web::Data<AppState>,
@@ -20,7 +21,7 @@ pub async fn sign_in_basic(
     //validate request
     let validate_body = body.validate();
     if validate_body.is_err() {
-        return Err(ErrorResponse::bad_request(2000, get_readable_validation_message(validate_body.unwrap_err())));
+        return Err(ErrorResponse::bad_request(2000, get_readable_validation_message(validate_body.err())));
     }
 
     //find related account
@@ -51,7 +52,7 @@ pub async fn sign_in_basic(
     }
 
     //set session
-    let save_session:Option<SessionModel> = auth_repo.set_user_session(&find_user.unwrap()).await;
+    let save_session: Option<SessionModel> = auth_repo.set_user_session(&find_user.unwrap()).await;
 
     Ok(web::Json(BaseResponse::success(
         200,
@@ -67,14 +68,15 @@ pub async fn sign_up_basic(
     //validate body
     let validate_body = body.validate();
     if validate_body.is_err() {
-        return Err(ErrorResponse::bad_request(400, "Request seems invalid".to_string()));
+        let message = get_readable_validation_message(validate_body.err());
+        return Err(ErrorResponse::bad_request(400, message));
     }
 
     let auth_repo = AuthRepository::init(&state);
     //check email already use
     let email_exist = auth_repo.is_email_used(&body.email).await;
     if email_exist {
-        return Err(ErrorResponse::bad_request(400, "Email is used by another account".to_string()));
+        return Err(ErrorResponse::bad_request(400, "Email tidak dapat digunakan".to_string()));
     }
 
     //save to db
@@ -82,29 +84,41 @@ pub async fn sign_up_basic(
         &body.password.to_string(), DEFAULT_COST,
     );
     if hash_password.is_err() {
-        return Err(ErrorResponse::bad_request(400, "Cannot".to_string()));
+        return Err(ErrorResponse::bad_request(1000, format!("{}", hash_password.unwrap_err().to_string())));
     }
 
-    let result = auth_repo.insert_user_basic(
-        &body.email,
-        &hash_password.unwrap().to_string(),
-        &body.full_name,
-    ).await;
+    // let result = auth_repo.insert_user_basic(
+    //     &body.email,
+    //     &hash_password.unwrap().to_string(),
+    //     &body.full_name,
+    // ).await;
+    //
+    // if result.is_err() {
+    //     return Err(ErrorResponse::bad_request(1001, format!("{}", result.unwrap_err().to_string())));
+    // }
 
-    if result.is_err() {
-        return Err(ErrorResponse::bad_request(400, "".to_string()));
-    }
-
-    let credential = result.unwrap();
+    // let credential = result.unwrap();
 
     //begin save otp then send to user
-    let _ = auth_repo.create_user_verification(
-        &credential.clone()
-    ).await;
+    // let user_verification = auth_repo.create_user_verification(
+    //     &credential.clone()
+    // ).await;
+
+    let conf = mail::config::Config::init();
+    let m = mail::email::Email::new("triandamai@gmail.com".to_string(),"Trian".to_string(),"ini url".to_string(),conf);
+
+   let result =  m.send_verification_code().await;
+    if result.is_err(){
+        return Err(ErrorResponse::bad_request(1001, format!("{}", result.unwrap_err().to_string())));
+    }
+
+    let r = result.unwrap();
+    let string:String = r.message().into_iter().map(|v|format!("{}",v))
+        .collect();
+
 
     //send email otp
-
-    Ok(web::Json(BaseResponse::created(201, Some(credential), "OTP Sent please check your email".to_string())))
+    Ok(web::Json(BaseResponse::created(201, Some(string), "OTP Sent please check your email".to_string())))
 }
 
 pub async fn verify_otp(
@@ -115,13 +129,13 @@ pub async fn verify_otp(
     if validate_body.is_err() {
         return Err(ErrorResponse::bad_request(400, "invalid request".to_string()));
     }
-    
+
     Ok(web::Json(BaseResponse::success(200, Some(""), "".to_string())))
 }
 
 pub fn auth_handler(cfg: &mut web::ServiceConfig) {
     cfg.service(
-        web::scope("/auth")
+        web::scope("/api/auth")
             .route("/sign-in-basic", web::post().to(sign_in_basic))
             .route("/sign-up-basic", web::post().to(sign_up_basic))
             .route("/verify-otp", web::post().to(verify_otp))

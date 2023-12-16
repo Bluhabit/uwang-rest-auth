@@ -2,7 +2,13 @@ use std::collections::HashMap;
 use std::default::Default as time_default;
 
 use chrono::FixedOffset;
-use redis::{Client, Commands, RedisResult};
+use http::header::CONTENT_TYPE;
+use lettre::message::header::ContentType;
+use lettre::{SmtpTransport, Transport};
+use lettre::transport::smtp::authentication::Credentials;
+use lettre::transport::smtp::Error;
+use lettre::transport::smtp::response::Response;
+use redis::{Client, Commands, ConnectionLike, RedisResult};
 use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, PaginatorTrait,
@@ -10,10 +16,11 @@ use sea_orm::{
 };
 
 use crate::common::jwt::encode;
-use crate::entity::sea_orm_active_enums::{AuthProvider,UserStatus, VerificationType};
+use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus, VerificationType};
 use crate::entity::{user_credential, user_verification};
 use crate::models::auth::{SessionModel, VerifyOtpRequest};
 use crate::AppState;
+use crate::common::otp_generator::generate_otp;
 
 #[derive(Debug, Clone)]
 pub struct AuthRepository {
@@ -156,11 +163,11 @@ impl AuthRepository {
         user: &user_credential::Model,
     ) -> Result<user_verification::Model, DbErr> {
         let current_date = chrono::DateTime::<FixedOffset>::default().naive_local();
-
+        let otp = generate_otp();
         let uuid = uuid::Uuid::new_v4();
         let verification = user_verification::ActiveModel {
             id: Set(uuid.to_string()),
-            code: Set("1234".to_string()),
+            code: Set(otp.clone().to_string()),
             verification_type: Set(VerificationType::Otp),
             user_id: Set(Some(user.id.to_string())),
             created_at: Set(current_date),
@@ -170,5 +177,30 @@ impl AuthRepository {
         };
 
         verification.insert(&self.db).await
+    }
+
+
+    pub async fn send_email_otp_sign_up(&self, email: String, otp: String) -> Result<String, String> {
+        let email = lettre::Message::builder()
+            .from("Bluhabit <no-reply@bluhabit.id>".parse().unwrap())
+            .reply_to(format!("Hi <{}>", email).parse().unwrap())
+            .to(format!("Otp Kamu <{}>", email).parse().unwrap())
+            .subject("Registrasi bluhabit")
+            .header(ContentType::TEXT_PLAIN)
+            .body(format!("OTP KAMU {}", otp))
+            .unwrap();
+        let credential = Credentials::new(
+            "".to_owned(),
+            "".to_owned(),
+        );
+
+        let mailer = SmtpTransport::relay("mail.bluhabit.id")
+            .unwrap()
+            .credentials(credential)
+            .build();
+        match mailer.send(&email) {
+            Ok(_) => Ok("".to_string()),
+            Err(err) => Err(err.to_string())
+        }
     }
 }
