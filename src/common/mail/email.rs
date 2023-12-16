@@ -18,7 +18,7 @@ impl Email {
         email: String,
         name: String,
     ) -> Self {
-        let conf = config::Config::init();
+        let conf = Config::init();
         let from = format!("Bluhabit <{}>", conf.smtp_from.to_owned());
         Email {
             email,
@@ -89,7 +89,7 @@ impl Email {
         Ok(send)
     }
 
-    pub async fn send_verification_code(
+    pub async fn send_otp_sign_up_basic(
         &self,
         name: &str,
         otp_code: &str,
@@ -98,7 +98,20 @@ impl Email {
             "full_name": name,
             "otp_code": otp_code
         });
-        self.send_email("otp", "Your account verification code", &data)
+        self.send_email("sign-up-basic-otp", "Rahasia - OTP ", &data)
+            .await
+    }
+
+    pub async fn send_otp_sign_in_basic(
+        &self,
+        name: &str,
+        otp_code: &str,
+    ) -> Result<Response, Box<dyn std::error::Error>> {
+        let data = serde_json::json!({
+            "full_name": name,
+            "otp_code": otp_code
+        });
+        self.send_email("sign-in-basic-otp", "Rahasia - OTP", &data)
             .await
     }
 }
