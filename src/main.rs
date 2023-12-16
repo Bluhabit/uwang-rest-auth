@@ -1,5 +1,6 @@
 use std::string::ToString;
 use std::sync::Arc;
+
 use actix_cors::Cors;
 use actix_web::{App, http, HttpResponse, HttpServer, middleware, web};
 use actix_web::error::InternalError;
@@ -32,7 +33,6 @@ const DB_URL_KEY: &str = "DATABASE_URL";
 const REDIS_URL_KEY: &str = "REDIS_URL";
 const DB_URL_DEFAULT_VALUE: &str = "postgres://user:password@host:port/db";
 const REDIS_URL_DEFAULT_VALUE: &str = "redis://user:password@host:port";
-const ENV: &str = "";
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -69,9 +69,9 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::default()
             .allowed_origin_fn(|origin, _req_head| {
                 let origin = origin.as_bytes();
-                let allow = origin.ends_with(b".bluhabit.id");
+                let _ = origin.ends_with(b".bluhabit.id");
 
-                allow
+                true
             })
             .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE"])
             .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
@@ -105,8 +105,9 @@ async fn main() -> std::io::Result<()> {
 }
 
 pub fn init(cfg: &mut web::ServiceConfig) {
+    routes::auth::sign_up::handler(cfg);
+    routes::auth::sign_in::handler(cfg);
     routes::user::user_handler(cfg);
-    routes::auth::auth_handler(cfg);
     routes::index::index_handler(cfg);
     routes::event_stream::event_stream_handler(cfg)
 }
