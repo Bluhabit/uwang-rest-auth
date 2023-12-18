@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::ops::Add;
 use std::string::ToString;
 
@@ -11,6 +12,25 @@ pub struct Claims {
     pub sub: String,
     pub iat: i64,
     pub exp: i64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct GoogleClaims {
+    pub iss: String,
+    pub sub: String,
+    pub iat: i64,
+    pub exp: i64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Payload {
+    pub iss: String,
+    pub aud: String,
+    pub typ: String,
+    pub iat: u32,
+    pub exp: u32,
+    pub email:String,
+    pub given_name:String
 }
 
 const JWT_SECRET_KEY: &str = "JWT_SECRET";
@@ -48,5 +68,23 @@ pub fn decode(
         &DecodingKey::from_secret(secret.as_ref()),
         &Validation::new(Algorithm::HS256),
     );
+    decoded
+}
+
+pub fn decode_google_token(
+    token:String
+)->Result<TokenData<Payload>,jsonwebtoken::errors::Error>{
+    let key = DecodingKey::from_secret(&[]);
+    let mut validation = Validation::new(Algorithm::HS256);
+    validation.insecure_disable_signature_validation();
+    validation.validate_exp = false;
+    validation.aud = Some(HashSet::from(["Google".to_string()]));
+
+    let decoded = jsonwebtoken::decode::<Payload>(
+        &token,
+        &key,
+        &validation
+    );
+    println!("{:?}", decoded.unwrap().claims);
     decoded
 }

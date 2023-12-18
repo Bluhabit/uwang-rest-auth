@@ -2,12 +2,15 @@ use chrono::FixedOffset;
 use redis::{Client, Commands, RedisResult};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
 use sea_orm::ActiveValue::Set;
+use uuid::Uuid;
 
 use crate::AppState;
+use crate::common::jwt::encode;
 use crate::common::otp_generator::generate_otp;
+use crate::common::redis_ext::RedisUtil;
 use crate::entity::{user_credential, user_verification};
 use crate::entity::sea_orm_active_enums::VerificationType;
-use crate::entity::user_credential::Model;
+use crate::entity::user_credential::Model as UserCredential;
 
 #[derive(Debug, Clone)]
 pub struct SignInRepository {
@@ -24,7 +27,7 @@ impl SignInRepository {
         }
     }
 
-    pub async fn get_user_credential_by_email(&self, email: &str) -> Result<Model, String> {
+    pub async fn get_user_credential_by_email(&self, email: &str) -> Result<UserCredential, String> {
         let user = user_credential::Entity::find()
             .filter(user_credential::Column::Email.eq(email))
             .one(&self.db).await;
@@ -43,11 +46,11 @@ impl SignInRepository {
 
     pub async fn create_user_verification(
         &self,
-        user: &Model,
+        user: &UserCredential,
     ) -> Result<user_verification::Model, DbErr> {
         let current_date = chrono::DateTime::<FixedOffset>::default().naive_local();
         let otp = generate_otp();
-        let uuid = uuid::Uuid::new_v4();
+        let uuid = Uuid::new_v4();
 
         let verification = user_verification::ActiveModel {
             id: Set(uuid.to_string()),
@@ -70,7 +73,7 @@ impl SignInRepository {
     ) -> Result<String, String> {
         let connection = self.cache
             .get_connection();
-        let session_id = format!("otp:{}", verification_id);
+        let session_id = RedisUtil::new(verification_id).create_key_otp_sign_in();
 
         let saved: Result<String, redis::RedisError> = connection.unwrap()
             .set(&session_id, otp);
@@ -82,5 +85,32 @@ impl SignInRepository {
             return Err(saved.unwrap_err().to_string());
         }
         Ok(session_id)
+    }
+
+    pub async fn save_user_session_to_redis(
+        &self,
+        user: &UserCredential,
+    ) -> Result<String, String> {
+        let connection = self.cache
+            .get_connection();
+        if connection.is_err() {}
+
+        let session_key = RedisUtil::new("")
+            .create_key_otp_sign_in();
+
+        let session_id = Uuid::new_v4();
+
+        let generate_token = encode(session_id.to_string());
+        if (generate_token.is_none()) {
+            return Err("Gagal membuat sesi".to_string());
+        }
+
+        let _ = connection
+            .unwrap()
+            .hset_multiple(session_key, &*[
+                ("email".to_string(), &user.email),
+                ("token", &generate_token.unwrap())
+            ]);
+        Ok(generate_token.unwrap())
     }
 }

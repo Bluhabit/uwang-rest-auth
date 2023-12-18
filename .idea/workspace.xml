@@ -8,8 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: working on sign in basic [UWANG-65]">
-      <change beforePath="$PROJECT_DIR$/.github/pull_request_template.md" beforeDir="false" afterPath="$PROJECT_DIR$/.github/pull_request_template.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/jwt.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/jwt.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/common/redis_ext.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/redis_ext.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/auth.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/auth.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/repositories/auth/sign_in.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/repositories/auth/sign_in.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/auth/sign_in.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/auth/sign_in.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,37 +78,37 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Cargo.Run learn-actix.executor&quot;: &quot;Run&quot;,
-    &quot;Cargo.Run uwang-rest-api.executor&quot;: &quot;Run&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Docker.dockerfile/dev.Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/UWANG-48&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/triandamai/Projects/bluhabit/uwang-rest-api/templates&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.disableDetachedFileInspection/Users/triandamai/Projects/bluhabit/uwang-rest-api/src/common/sse/sse_emitter.rs&quot;: &quot;true&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Cargo.Run learn-actix.executor": "Run",
+    "Cargo.Run uwang-rest-api.executor": "Run",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Docker.dockerfile/dev.Dockerfile.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "android.gradle.sync.needed": "true",
+    "git-widget-placeholder": "feature/UWANG-46",
+    "last_opened_file_path": "/Users/triandamai/Projects/bluhabit/uwang-rest-api/templates",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.disableDetachedFileInspection/Users/triandamai/Projects/bluhabit/uwang-rest-api/src/common/sse/sse_emitter.rs": "true",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.bluehabit.eureka.component" />
