@@ -93,7 +93,9 @@ impl SignInRepository {
     ) -> Result<String, String> {
         let connection = self.cache
             .get_connection();
-        if connection.is_err() {}
+        if connection.is_err() {
+            return Err("Gagal membuat sesi".to_string());
+        }
 
         let session_key = RedisUtil::new("")
             .create_key_otp_sign_in();
@@ -101,15 +103,15 @@ impl SignInRepository {
         let session_id = Uuid::new_v4();
 
         let generate_token = encode(session_id.to_string());
-        if (generate_token.is_none()) {
+        if generate_token.is_none() {
             return Err("Gagal membuat sesi".to_string());
         }
 
-        let _ = connection
+        let _:Result<String, redis::RedisError> = connection
             .unwrap()
-            .hset_multiple(session_key, &*[
+            .hset_multiple(session_key, &[
                 ("email".to_string(), &user.email),
-                ("token", &generate_token.unwrap())
+                ("token".to_string(), &generate_token.clone().unwrap())
             ]);
         Ok(generate_token.unwrap())
     }
