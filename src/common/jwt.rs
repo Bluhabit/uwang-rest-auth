@@ -85,6 +85,5 @@ pub fn decode_google_token(
         &key,
         &validation
     );
-    println!("{:?}", decoded.unwrap().claims);
     decoded
 }

@@ -189,11 +189,12 @@ pub async fn sign_in_google(
                 return Err(ErrorResponse::unauthorized(saved_session.unwrap_err()));
             }
 
+
             Ok(web::Json(BaseResponse::success(
                 200, Some(
                     serde_json::json!({
-                        token:saved_session.unwrap(),
-                        credential:user_credential
+                        "token":saved_session.unwrap(),
+                        "credential":user_credential
                     })
                 ),
                 "Login berhasil".to_string())
