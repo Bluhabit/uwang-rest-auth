@@ -14,14 +14,6 @@ pub struct Claims {
     pub exp: i64,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct GoogleClaims {
-    pub iss: String,
-    pub sub: String,
-    pub iat: i64,
-    pub exp: i64,
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Payload {
     pub iss: String,
