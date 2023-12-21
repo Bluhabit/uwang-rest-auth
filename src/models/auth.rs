@@ -10,6 +10,12 @@ pub struct SignInBasicRequest {
 }
 
 #[derive(Debug,Serialize,Deserialize,Validate)]
+pub struct SignInGoogleRequest {
+    #[validate(length(min=6))]
+    pub token:String
+}
+
+#[derive(Debug,Serialize,Deserialize,Validate)]
 pub struct SignUpBasicRequest {
     #[validate(email)]
     pub email:String,

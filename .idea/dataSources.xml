@@ -15,5 +15,20 @@
       <jdbc-url>jdbc:redis://203.194.112.146:6379/0</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="uwang-dev@localhost" uuid="0f870c24-a986-4833-b4ac-d30cdb1fac42">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <schema-control>AUTOMATIC</schema-control>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/uwang-dev</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="0@localhost" uuid="3ad65862-8f9f-44dd-9dec-c5d564db1db4">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://localhost:6379/0</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
