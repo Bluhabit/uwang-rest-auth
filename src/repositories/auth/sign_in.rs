@@ -124,7 +124,7 @@ impl SignInRepository {
             ]);
 
         let _: RedisResult<_> = self.cache
-            .expire::<String, String>(redis_key.clone(), 120);
+            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP);
 
         if saved.is_err() {
             return Err(ErrorResponse::unauthorized(

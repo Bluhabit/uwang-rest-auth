@@ -9,6 +9,7 @@ use crate::common::response::{BaseResponse, ErrorResponse};
 use crate::common::utils::get_readable_validation_message;
 use crate::models::auth::{SignInBasicRequest, SignInGoogleRequest, VerifyOtpSignInBasicRequest};
 use crate::repositories::auth::sign_in::SignInRepository;
+use crate::models::user::UserCredentialResponse;
 
 //region sign in basic
 pub async fn sign_in_basic(
@@ -21,7 +22,6 @@ pub async fn sign_in_basic(
         let message = get_readable_validation_message(validate_body.err());
         return Err(ErrorResponse::bad_request(400, message));
     }
-
     let mut sign_in_repository = SignInRepository::init(&state);
     //get user by email
     let find_user = sign_in_repository

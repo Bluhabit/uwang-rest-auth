@@ -33,6 +33,7 @@ impl SignUpRepository {
         }
     }
 
+    //sign up email & passowrd
     pub async fn create_user_credential(
         &self,
         email: &String,
@@ -77,7 +78,6 @@ impl SignUpRepository {
         Ok(saved_data.unwrap())
     }
 
-
     pub async fn create_user_verification(
         &self,
         user: user_credential::Model,
@@ -99,18 +99,18 @@ impl SignUpRepository {
     ) -> Result<OtpRedisModel, ErrorResponse> {
         let connection = self.cache
             .get_connection();
-        let session_id = RedisUtil::new(verification_id)
-            .create_key_session_sign_in();
+        let redis_key = RedisUtil::new(verification_id.clone())
+            .create_key_otp_sign_up();
 
         let saved: Result<String, redis::RedisError> = connection
             .unwrap()
-            .hset_multiple(session_id.clone(), &[
+            .hset_multiple(redis_key.clone(), &[
                 (common::constant::REDIS_KEY_OTP, otp),
                 (common::constant::REDIS_KEY_USER_ID, user_id),
             ]);
 
         let _: RedisResult<_> = self.cache
-            .expire::<String, String>(session_id.clone(), 60);
+            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP);
 
         if saved.is_err() {
             return Err(ErrorResponse::unauthorized(
@@ -120,11 +120,12 @@ impl SignUpRepository {
         let data = OtpRedisModel {
             otp: otp.to_string(),
             user_id: user_id.to_string(),
-            session_id
+            session_id: verification_id.to_string(),
         };
         Ok(data)
     }
-
+    //end sign up email & password
+    // verify otp email & password
     pub async fn get_otp_sign_up_from_redis(
         &mut self,
         session_id: String,
@@ -168,43 +169,6 @@ impl SignUpRepository {
         Ok(data)
     }
 
-    pub async fn save_user_session_to_redis(
-        &self,
-        user: &user_credential::Model,
-    ) -> Result<SessionRedisModel, ErrorResponse> {
-        let connection = self.cache
-            .get_connection();
-        if connection.is_err() {
-            return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
-        }
-
-        let session_id = Uuid::new_v4();
-        let session_key = RedisUtil::new(session_id.to_string().as_str())
-            .create_key_otp_sign_in();
-
-
-        let generate_token = encode(session_id.to_string());
-        if generate_token.is_none() {
-            return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
-        }
-
-        let _: Result<String, redis::RedisError> = connection
-            .unwrap()
-            .hset_multiple(
-                session_key,
-                &*create_session_redis_from_user(
-                    user.clone(),
-                    generate_token
-                        .clone()
-                        .unwrap(),
-                ),
-            );
-
-        Ok(create_session_from_user(
-            user.to_owned(),
-            generate_token.unwrap(),
-        ))
-    }
     pub async fn update_verification_user_status(
         &self,
         user_id: String,
@@ -237,5 +201,44 @@ impl SignUpRepository {
             ));
         }
         Ok(updated_result.unwrap())
+    }
+
+    //end verify otp email & password
+    pub async fn save_user_session_to_redis(
+        &self,
+        user: &user_credential::Model,
+    ) -> Result<SessionRedisModel, ErrorResponse> {
+        let connection = self.cache
+            .get_connection();
+        if connection.is_err() {
+            return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
+        }
+
+        let session_id = Uuid::new_v4();
+        let session_key = RedisUtil::new(session_id.to_string().as_str())
+            .create_key_session_sign_in();
+
+
+        let generate_token = encode(session_id.to_string());
+        if generate_token.is_none() {
+            return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
+        }
+
+        let _: Result<String, redis::RedisError> = connection
+            .unwrap()
+            .hset_multiple(
+                session_key,
+                &*create_session_redis_from_user(
+                    user.clone(),
+                    generate_token
+                        .clone()
+                        .unwrap(),
+                ),
+            );
+
+        Ok(create_session_from_user(
+            user.to_owned(),
+            generate_token.unwrap(),
+        ))
     }
 }
