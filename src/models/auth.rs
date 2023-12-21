@@ -20,6 +20,14 @@ pub struct SignUpBasicRequest {
 }
 
 #[derive(Debug,Serialize,Deserialize,Validate)]
+pub struct VerifiedOtpSignUpBasicRequest{
+    #[validate(length(min=1))]
+    pub session_id:String,
+    #[validate(length(min=4))]
+    pub otp:String
+}
+
+#[derive(Debug,Serialize,Deserialize,Validate)]
 pub struct VerifyOtpRequest {
     #[validate(length(min=6))]
     pub session_id:String,
