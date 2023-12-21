@@ -10,7 +10,7 @@ pub struct SignInRepository {
 }
 
 impl SignInRepository {
-    pub fn init(app_state: &AppState) -> SignInRepository {
+    pub fn init(app_state: &AppState) -> Self {
         let state = app_state.clone();
         SignInRepository {
             db: state.db,
