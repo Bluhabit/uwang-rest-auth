@@ -4,7 +4,7 @@
 
 #### Ticket Reference(s)
 
-[UWANG-XXX](https://bluehabit.atlassian.net/browse/<TICKET_NUMBER>)
+[UWANG-XXX](https://bluehabit.atlassian.net/browse/UWANG-XXX)
 
 #### Validation
 
