@@ -41,3 +41,9 @@ pub struct SessionModel {
     pub token:String,
     pub permission:Vec<String>
 }
+
+#[derive(Debug, Serialize, Deserialize, Validate)]
+pub struct ForgotPasswordRequest {
+    #[validate(email)]
+    pub email:String,
+}
