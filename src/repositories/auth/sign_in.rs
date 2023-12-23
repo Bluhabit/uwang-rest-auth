@@ -91,7 +91,7 @@ impl SignInRepository {
 
     pub async fn create_user_verification(
         &self,
-        user: user_credential::Model,
+        user: Model,
     ) -> Result<user_verification::Model, ErrorResponse> {
         let verification = create_user_verification(user);
 

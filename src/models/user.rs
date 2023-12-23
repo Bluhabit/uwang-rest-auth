@@ -1,5 +1,6 @@
 use sea_orm::prelude::DateTime;
 use serde::{Deserialize, Serialize};
+use crate::entity::prelude::UserProfile;
 
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential::Model as UserCredential;
@@ -17,12 +18,10 @@ pub struct AddUserInfoRequest {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct SignUpRequest {
-    pub full_name: String,
-    pub email: String,
-    pub password: String,
+pub struct CompleteProfileRequest {
+    pub date_of_birth: String,
+    pub username:String
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserCredentialResponse {
@@ -31,6 +30,7 @@ pub struct UserCredentialResponse {
     pub full_name: String,
     pub status: UserStatus,
     pub auth_provider: AuthProvider,
+    pub profile: Vec<UserProfile>,
     pub created_at: DateTime,
     pub updated_at: DateTime,
     pub deleted: bool,
@@ -46,6 +46,23 @@ impl UserCredentialResponse {
             full_name: user_credential.full_name,
             status: user_credential.status,
             auth_provider: user_credential.auth_provider,
+            profile: vec![],
+            created_at: user_credential.created_at,
+            updated_at: user_credential.updated_at,
+            deleted: user_credential.deleted,
+        }
+    }
+    pub fn from_credential_with_profile(
+        user_credential: UserCredential,
+        profile: Vec<UserProfile>,
+    ) -> Self {
+        UserCredentialResponse {
+            id: user_credential.id,
+            email: user_credential.email,
+            full_name: user_credential.full_name,
+            status: user_credential.status,
+            auth_provider: user_credential.auth_provider,
+            profile,
             created_at: user_credential.created_at,
             updated_at: user_credential.updated_at,
             deleted: user_credential.deleted,

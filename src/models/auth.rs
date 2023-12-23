@@ -10,6 +10,14 @@ pub struct SignInBasicRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
+pub struct VerifyOtpSignInBasicRequest {
+    #[validate(length(min = 6))]
+    pub session_id: String,
+    #[validate(length(min = 4))]
+    pub otp: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct SignInGoogleRequest {
     #[validate(length(min = 6))]
     pub token: String,
@@ -34,11 +42,25 @@ pub struct VerifyOtpSignUpBasicRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
-pub struct VerifyOtpSignInBasicRequest {
+pub struct ForgotPasswordRequest {
+    #[validate(email)]
+    pub email: String
+}
+
+#[derive(Debug, Serialize, Deserialize, Validate)]
+pub struct VerifyOtpForgotPasswordRequest {
     #[validate(length(min = 6))]
     pub session_id: String,
     #[validate(length(min = 4))]
     pub otp: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Validate)]
+pub struct SetForgotPasswordRequest {
+    #[validate(length(min=6))]
+    pub password: String,
+    #[validate(length(min=6))]
+    pub session_id: String
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]

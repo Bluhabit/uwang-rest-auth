@@ -1,10 +1,10 @@
 extern crate bcrypt;
 
-use crate::models::user::UserCredentialResponse;
+use crate::models::user::{UserCredentialResponse};
 use actix_web::{Responder, Result, web};
 use validator::Validate;
 
-use crate::AppState;
+use crate::{AppState, common};
 use crate::common::mail;
 use crate::common::response::{BaseResponse, ErrorResponse};
 use crate::common::utils::get_readable_validation_message;

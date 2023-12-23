@@ -18,7 +18,3 @@ pub async fn hello(_state: web::Data<AppState>) -> Result<impl Responder> {
     };
     Ok(web::Json(obj))
 }
-
-pub fn index_handler(cfg: &mut web::ServiceConfig) {
-    cfg.route("/", web::get().to(hello));
-}

@@ -31,7 +31,27 @@ impl RedisUtil {
             self.value
         );
     }
+
+    pub fn create_key_otp_forgot_password(
+        &self
+    ) -> String {
+        return format!(
+            "{}:otp:forgot-password:{}",
+            self.environment,
+            self.value
+        );
+    }
     pub fn create_key_session_sign_in(
+        &self
+    ) -> String {
+        return format!(
+            "{}:sign-in:{}",
+            self.environment,
+            self.value
+        );
+    }
+
+    pub fn create_key_session_forgot_password(
         &self
     ) -> String {
         return format!(

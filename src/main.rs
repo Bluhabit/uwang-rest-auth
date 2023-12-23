@@ -12,8 +12,11 @@ use sea_orm::{Database, DatabaseConnection};
 
 use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
+use crate::routes::auth::forgot_password::{forgot_password, set_new_password, verify_otp_forgot_password};
 use crate::routes::auth::sign_in::{sign_in_basic, sign_in_google, verify_otp_sign_in_basic};
 use crate::routes::auth::sign_up::{sign_up_basic, verify_otp_sign_up_basic};
+use crate::routes::index::hello;
+use crate::routes::user::user::get_users;
 
 mod common;
 
@@ -107,6 +110,7 @@ async fn main() -> std::io::Result<()> {
 }
 
 pub fn init(cfg: &mut web::ServiceConfig) {
+    cfg.route("/", web::get().to(hello));
     cfg.service(
         web::scope("/api/auth")
             .route("/sign-up-basic", web::post().to(sign_up_basic))
@@ -114,8 +118,14 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/sign-in-basic", web::post().to(sign_in_basic))
             .route("/sign-in-basic/verify-otp",web::post().to(verify_otp_sign_in_basic))
             .route("/sign-in-google", web::post().to(sign_in_google))
+            .route("/forgot-password",web::post().to(forgot_password))
+            .route("/forgot-password/verify-otp",web::post().to(verify_otp_forgot_password))
+            .route("/forgot-password/set-password",web::post().to(set_new_password))
     );
-    routes::user::user_handler(cfg);
-    routes::index::index_handler(cfg);
+    cfg.service(
+        web::scope("/api/user")
+            .route("/profile",web::get().to(get_users))
+    );
+
     routes::event_stream::event_stream_handler(cfg)
 }

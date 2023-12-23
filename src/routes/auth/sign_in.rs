@@ -160,14 +160,14 @@ pub async fn sign_in_google(
 
     let sign_in_repository = SignInRepository::init(&state);
     //get data and validate account
-    let get_user_by_email = sign_in_repository
+    let get_user_by_google = sign_in_repository
         .get_user_by_google(google_credential.unwrap().claims, )
         .await;
 
-    if get_user_by_email.is_err() {
-        return Err(get_user_by_email.unwrap_err());
+    if get_user_by_google.is_err() {
+        return Err(get_user_by_google.unwrap_err());
     }
-    let user = get_user_by_email.unwrap();
+    let user = get_user_by_google.unwrap();
     //save to redis
     let saved_session = sign_in_repository
         .save_user_session_to_redis(&user).await;
