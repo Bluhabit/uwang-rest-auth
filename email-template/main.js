@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   var numberOtpWrapper = document.querySelector(".numberOtp-wrapper");
-  var otpString = "1234"; // Replace this with your actual OTP string
+  var otpString = "1234";
 
   for (var i = 0; i < otpString.length; i++) {
     var h3Element = document.createElement("h3");

@@ -1,4 +1,8 @@
+use sea_orm::prelude::DateTime;
 use serde::{Deserialize, Serialize};
+
+use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
+use crate::entity::user_credential::Model as UserCredential;
 
 #[derive(Serialize, Deserialize)]
 pub struct UserInfoRequest {
@@ -17,4 +21,34 @@ pub struct SignUpRequest {
     pub full_name: String,
     pub email: String,
     pub password: String,
+}
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UserCredentialResponse {
+    pub id: String,
+    pub email: String,
+    pub full_name: String,
+    pub status: UserStatus,
+    pub auth_provider: AuthProvider,
+    pub created_at: DateTime,
+    pub updated_at: DateTime,
+    pub deleted: bool,
+}
+
+impl UserCredentialResponse {
+    pub fn from_credential(
+        user_credential: UserCredential
+    ) -> Self {
+        UserCredentialResponse {
+            id: user_credential.id,
+            email: user_credential.email,
+            full_name: user_credential.full_name,
+            status: user_credential.status,
+            auth_provider: user_credential.auth_provider,
+            created_at: user_credential.created_at,
+            updated_at: user_credential.updated_at,
+            deleted: user_credential.deleted,
+        }
+    }
 }

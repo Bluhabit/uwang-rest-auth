@@ -1,3 +1,5 @@
 /target
 .env
 ./.env
+.idea
+.idea/workspace.xml

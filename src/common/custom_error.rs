@@ -28,7 +28,7 @@ impl std::fmt::Display for CustomError {
 impl From<validator::ValidationErrors> for CustomError {
     fn from(err: validator::ValidationErrors) -> CustomError {
         CustomError {
-            message: Some(get_readable_validation_message(err)),
+            message: Some(get_readable_validation_message(Some(err))),
             err_type: CustomErrorType::ValidationError,
         }
     }
