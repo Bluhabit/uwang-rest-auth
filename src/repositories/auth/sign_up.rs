@@ -100,7 +100,7 @@ impl SignUpRepository {
     ) -> Result<OtpRedisModel, ErrorResponse> {
         let connection = self.cache
             .get_connection();
-        let redis_key = RedisUtil::new(verification_id.clone())
+        let redis_key = RedisUtil::new(verification_id)
             .create_key_otp_sign_up();
 
         let saved: Result<String, redis::RedisError> = connection

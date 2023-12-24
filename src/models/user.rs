@@ -4,6 +4,7 @@ use crate::entity::prelude::UserProfile;
 
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential::Model as UserCredential;
+use crate::entity::user_profile;
 
 #[derive(Serialize, Deserialize)]
 pub struct UserInfoRequest {
@@ -30,7 +31,7 @@ pub struct UserCredentialResponse {
     pub full_name: String,
     pub status: UserStatus,
     pub auth_provider: AuthProvider,
-    pub profile: Vec<UserProfile>,
+    pub profile: Vec<user_profile::Model>,
     pub created_at: DateTime,
     pub updated_at: DateTime,
     pub deleted: bool,
@@ -54,7 +55,7 @@ impl UserCredentialResponse {
     }
     pub fn from_credential_with_profile(
         user_credential: UserCredential,
-        profile: Vec<UserProfile>,
+        profile: Vec<user_profile::Model>,
     ) -> Self {
         UserCredentialResponse {
             id: user_credential.id,

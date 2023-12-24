@@ -78,7 +78,7 @@ pub async fn verify_otp_forgot_password(
         }
     }
 
-    let forgot_password_repository = ForgotPasswordRepository::init(&state);
+    let mut forgot_password_repository = ForgotPasswordRepository::init(&state);
     let redis_otp = forgot_password_repository
         .get_otp_forgot_password_from_redis(body.session_id.clone())
         .await;

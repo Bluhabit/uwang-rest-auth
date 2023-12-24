@@ -17,5 +17,5 @@ pub async fn update_basic_profile(
     jwt: JwtMiddleware,
 ) -> Result<impl Responder, ErrorResponse> {
 
-    Ok()
+    Ok(Json(BaseResponse::success(200, Some("sas"), "Success".to_string())))
 }

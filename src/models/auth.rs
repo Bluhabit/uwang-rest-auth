@@ -3,10 +3,10 @@ use validator::Validate;
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct SignInBasicRequest {
-    #[validate(email)]
-    pub email: String,
-    #[validate(length(min = 6))]
-    pub password: String,
+    #[validate(email(code="regex", message="Email tidak boleh kosong"))]
+    pub email:String,
+    #[validate(length(min=6,message="Password tidak boleh kosong"))]
+    pub password:String
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]

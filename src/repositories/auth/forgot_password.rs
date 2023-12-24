@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use bcrypt::{DEFAULT_COST, hash};
-use redis::{Client, Commands, RedisResult};
+use redis::{Client, Commands, RedisError, RedisResult};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter};
 use sea_orm::ActiveValue::Set;
 
@@ -66,7 +66,7 @@ impl ForgotPasswordRepository {
     }
 
     pub async fn save_otp_forgot_password_to_redis(
-        &self,
+        &mut self,
         verification_id: &str,
         otp: &str,
         user_id: &str,
@@ -83,8 +83,11 @@ impl ForgotPasswordRepository {
                 (common::constant::REDIS_KEY_USER_ID, user_id),
             ]);
 
-        let _: RedisResult<_> = connection
-            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_FORGOT_PASSWORD);
+        let _: RedisResult<_> = self.cache
+            .expire::<String, String>(
+                redis_key.clone(),
+                common::constant::TTL_OTP_FORGOT_PASSWORD,
+            );
 
         if saved.is_err() {
             return Err(ErrorResponse::unauthorized(
@@ -163,10 +166,10 @@ impl ForgotPasswordRepository {
     }
 
     pub async fn save_session_forgot_password(
-        &self,
+        &mut self,
         user: user_credential::Model,
     ) -> Result<String, ErrorResponse> {
-        let mut connection = self.cache
+        let connection = self.cache
             .get_connection();
         let uuid = uuid::Uuid::new_v4();
         let redis_key = RedisUtil::new(uuid.to_string().as_str())
@@ -174,10 +177,10 @@ impl ForgotPasswordRepository {
 
         let saved: Result<String, redis::RedisError> = connection
             .unwrap()
-            .set(redis_key, user.id);
+            .set(redis_key.clone(), user.id);
 
 
-        let _: RedisResult<_> = connection
+        let _: RedisResult<_> = self.cache
             .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_FORGOT_PASSWORD);
 
         if saved.is_err() {
@@ -198,12 +201,18 @@ impl ForgotPasswordRepository {
         let mut connection = redis_connection.unwrap();
         let session_key = RedisUtil::new(session_id.as_str())
             .create_key_session_forgot_password();
+
         let user_id: RedisResult<String> = connection.get(session_key);
-        let get_user = user_credential::Entity::find_by_id(user_id)
+        if user_id.is_err(){
+            return Err(ErrorResponse::bad_request(400,"Gagal menghubungi server [2]".to_string()))
+        }
+
+        let get_user = user_credential::Entity::find_by_id(user_id.unwrap())
             .one(&self.db)
             .await;
+
         if get_user.is_err() {
-            return Err(ErrorResponse::bad_request(400, "Gagal mengubungi server [2]".to_string()));
+            return Err(ErrorResponse::bad_request(400, "Gagal mengubungi server [3]".to_string()));
         }
         let get_user_credential = get_user.unwrap();
         if get_user_credential.is_none() {
@@ -218,7 +227,7 @@ impl ForgotPasswordRepository {
         user: user_credential::Model,
         new_password: &String,
     ) -> Result<String, ErrorResponse> {
-        let mut active_model = user.into_active_model();
+        let mut active_model = user.clone().into_active_model();
         let hash_password = hash(&new_password.to_string(), DEFAULT_COST);
         if hash_password.is_err() {
             return Err(ErrorResponse::bad_request(400, "Gagal merubah password".to_string()));
@@ -230,7 +239,7 @@ impl ForgotPasswordRepository {
         if updated_data.is_err() {
             return Err(ErrorResponse::bad_request(400, "Gagal merubah password [2]".to_string()));
         }
-        Ok(user.full_name)
+        Ok(user.clone().full_name)
     }
     //end set password
 }
