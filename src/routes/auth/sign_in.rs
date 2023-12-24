@@ -22,6 +22,7 @@ pub async fn sign_in_basic(
         let message = get_readable_validation_message(validate_body.err());
         return Err(ErrorResponse::bad_request(400, message));
     }
+
     let mut sign_in_repository = SignInRepository::init(&state);
     //get user by email
     let find_user = sign_in_repository
@@ -30,6 +31,7 @@ pub async fn sign_in_basic(
     if find_user.is_err() {
         return Err(find_user.unwrap_err());
     }
+
     let user = find_user.unwrap();
 
     //save otp to db
@@ -43,7 +45,6 @@ pub async fn sign_in_basic(
     let verification = user_verification
         .unwrap();
 
-
     //save to redis
     let user_session = sign_in_repository.save_otp_sign_in_to_redis(
         &verification.id,
@@ -54,6 +55,7 @@ pub async fn sign_in_basic(
     if user_session.is_err() {
         return Err(user_session.unwrap_err());
     }
+
     let session = user_session.unwrap();
 
 
@@ -163,14 +165,14 @@ pub async fn sign_in_google(
 
     let sign_in_repository = SignInRepository::init(&state);
     //get data and validate account
-    let get_user_by_email = sign_in_repository
+    let get_user_by_google = sign_in_repository
         .get_user_by_google(google_credential.unwrap().claims)
         .await;
 
-    if get_user_by_email.is_err() {
-        return Err(get_user_by_email.unwrap_err());
+    if get_user_by_google.is_err() {
+        return Err(get_user_by_google.unwrap_err());
     }
-    let user = get_user_by_email.unwrap();
+    let user = get_user_by_google.unwrap();
     //save to redis
     let saved_session = sign_in_repository
         .save_user_session_to_redis(&user.0).await;
@@ -178,7 +180,6 @@ pub async fn sign_in_google(
     if saved_session.is_err() {
         return Err(saved_session.unwrap_err());
     }
-
 
     //success
     Ok(web::Json(BaseResponse::success(

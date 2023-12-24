@@ -91,7 +91,7 @@ impl SignInRepository {
 
     pub async fn create_user_verification(
         &self,
-        user: user_credential::Model,
+        user: Model,
     ) -> Result<user_verification::Model, ErrorResponse> {
         let verification = create_user_verification(user);
 
@@ -294,7 +294,7 @@ impl SignInRepository {
             .create_key_session_sign_in();
 
 
-        let generate_token = encode(session_key.clone());
+        let generate_token = encode(user.id.clone());
         if generate_token.is_none() {
             return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
         }

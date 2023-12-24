@@ -7,8 +7,39 @@
     {{> styles}}
 </head>
 <body class="body-style">
-<!-- START CENTERED WHITE CONTAINER -->
-{{> @partial-block}}
-<!-- END CENTERED WHITE CONTAINER -->
+<table cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td class="td-first">
+            <div class="content">
+                <table class="main">
+                    <tr>
+                        <td class="wrapper">
+                            <table class="main2">
+                                <tr>
+                                    <td class="td-second">
+                                        <!-- START CENTERED WHITE CONTAINER -->
+                                        {{> @partial-block}}
+                                        <!-- END CENTERED WHITE CONTAINER -->
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <div class="footer">
+                    <p>Ada pertanyaan?</p>
+                    <p class="footer-help">
+                        Hubungi
+                        <span class="footer-support">support@uwang.id</span> untuk
+                        mendapatkan bantuan.
+                    </p>
+                    <div class="footer-bg">
+                        <p>Uwang © 2023</p>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
 </body>
 </html>

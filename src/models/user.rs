@@ -1,5 +1,7 @@
 use sea_orm::prelude::DateTime;
 use serde::{Deserialize, Serialize};
+use validator::Validate;
+use crate::entity::prelude::UserProfile;
 
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential::Model as UserCredential;
@@ -17,13 +19,13 @@ pub struct AddUserInfoRequest {
     pub user_info: Vec<UserInfoRequest>,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct SignUpRequest {
-    pub full_name: String,
-    pub email: String,
-    pub password: String,
+#[derive(Serialize, Deserialize,Validate)]
+pub struct CompleteProfileRequest {
+    pub date_of_birth: String,
+    pub username:String,
+    pub avatar:String,
+    pub personal_preferences:Vec<String>
 }
-
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserCredentialResponse {
@@ -68,7 +70,6 @@ impl UserCredentialResponse {
             created_at: user_credential.created_at,
             updated_at: user_credential.updated_at,
             deleted: user_credential.deleted,
-
         }
     }
 }

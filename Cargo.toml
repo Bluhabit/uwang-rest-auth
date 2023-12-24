@@ -31,7 +31,7 @@ redis = { version = "0.24.0", features = ["json", "script", "serde_json"] }
 http = { version = "1.0.0", features = [] }
 rand = "0.8.5"
 lettre = { version = "0.11.2", features = ["tokio1", "tokio1-native-tls"] }
-handlebars = "4.5.0"
+handlebars = { version = "4.5.0", features = ["dir_source"] }
 
 [dependencies.sea-orm]
 version = "0.12.4"
