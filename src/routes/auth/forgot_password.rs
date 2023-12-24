@@ -47,19 +47,17 @@ pub async fn forgot_password(
             ));
         },
         UserStatus::Active => {
-            let otp_key = forgot_password_repository.create_and_save_otp_to_redis(&user_credential).await
+            let otp_key = forgot_password_repository.save_otp_forgot_password_to_redis(&user_credential).await
                 .map_err(|_| ErrorResponse::bad_request(1005, "Gagal menyimpan OTP".to_string()))?;
 
-            // Kirim email OTP
-            let email = email::Email::new(user_credential.email, user_credential.full_name.clone());
-            if let Err(_) = email.send_otp(&otp_key) {
+            if let Err(_) = forgot_password_repository.send_otp_email(&user_credential, &otp_key).await {
                 return Err(ErrorResponse::bad_request(1006, "Gagal mengirim email".to_string()));
             }
 
             Ok(web::Json(BaseResponse::success(
                 200,
-                Some("Contoh"),
-                "Verifikasi telah terkirim ".to_string(),
+                Some("Verifikasi telah terkirim".to_string()),
+                "OTP berhasil dikirim".to_string(),
             )))
         }
     }

@@ -1,14 +1,12 @@
-use std::os::linux::raw::stat;
+use uuid::Uuid;
 use redis::{Client, Commands};
 use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
-use sea_orm::ColumnType::Uuid;
-use serde_json::to_string;
+// use sea_orm::ColumnType::Uuid;
 use crate::AppState;
-use crate::common::mail::email::Email;
 use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
-use crate::entity::prelude::UserCredential;
-use crate::entity::user_credential;
+use crate::entity::{user_credential};
+use crate::entity::user_credential::Model as UserCredential;
 
 #[derive(Debug, Clone)]
 pub struct ForgotPasswordRepository {
@@ -48,11 +46,18 @@ impl ForgotPasswordRepository {
         let verification_id = Uuid::new_v4().to_string();
         let otp_key = RedisUtil::new(&verification_id).create_key_otp_forgot_password();
 
-        self.cache.set_ex(&otp_key, &otp, ttl).await
+        self.cache.set_ex(&otp_key, &otp, ttl)
             .map_err(|_| {
                 "Gagal menyimpan OTP".to_string()
             })?;
         Ok(otp_key)
+    }
+
+    pub async fn send_otp_email(&self, user: &UserCredential, otp: &str) -> Result<(), String> {
+        println!("Mengirim OTP ke: {}", user.email);
+        println!("Isi Email: Kode OTP untuk reset password Anda adalah: {}", otp);
+
+        Ok(())
     }
 
     // pub async fn forgot_password(&self, email: &str) -> Result<String, String> {
