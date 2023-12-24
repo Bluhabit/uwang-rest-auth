@@ -12,8 +12,12 @@ use sea_orm::{Database, DatabaseConnection};
 
 use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
+e::routes::auth::sign_up::sign_up_basic;
+
+use crate::routes::auth::forgot_password::forgot_password;
 use crate::routes::auth::sign_in::{sign_in_basic, sign_in_google, verify_otp_sign_in_basic};
 use crate::routes::auth::sign_up::{sign_up_basic, verify_otp_sign_up_basic};
+
 
 mod common;
 
@@ -112,8 +116,11 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/sign-up-basic", web::post().to(sign_up_basic))
             .route("/sign-up-basic/verify-otp", web::post().to(verify_otp_sign_up_basic))
             .route("/sign-in-basic", web::post().to(sign_in_basic))
+    .route("/forgot-password",web::post().to(forgot_password))
+            .route("/forgot-password",web::post().to(forgot_password))
             .route("/sign-in-basic/verify-otp",web::post().to(verify_otp_sign_in_basic))
             .route("/sign-in-google", web::post().to(sign_in_google))
+
     );
     routes::user::user_handler(cfg);
     routes::index::index_handler(cfg);

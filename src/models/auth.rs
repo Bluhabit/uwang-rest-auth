@@ -55,3 +55,9 @@ pub struct OtpRedisModel {
     pub otp: String,
     pub session_id: String,
 }
+
+#[derive(Debug, Serialize, Deserialize, Validate)]
+pub struct ForgotPasswordRequest {
+    #[validate(email)]
+    pub email:String,
+}
