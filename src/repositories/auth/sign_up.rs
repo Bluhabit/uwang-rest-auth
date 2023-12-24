@@ -40,7 +40,7 @@ impl SignUpRepository {
         email: &String,
         password: &String,
         full_name: &String,
-    ) -> Result<user_credential::Model, ErrorResponse> {
+    ) -> Result<Model, ErrorResponse> {
         let data = user_credential::Entity::find()
             .filter(user_credential::Column::Email.eq(email))
             .one(&self.db).await;
@@ -63,7 +63,7 @@ impl SignUpRepository {
             id: Set(uuid.to_string()),
             email: Set(email.to_string()),
             full_name: Set(full_name.to_string()),
-            password: Set(password.to_string()),
+            password: Set(hash_password.unwrap()),
             status: Set(UserStatus::WaitingConfirmation),
             auth_provider: Set(AuthProvider::Basic),
             created_at: Set(current_date),

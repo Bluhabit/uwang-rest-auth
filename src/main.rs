@@ -18,7 +18,7 @@ use crate::routes::auth::forgot_password::{forgot_password, set_new_password, ve
 use crate::routes::auth::sign_in::{sign_in_basic, sign_in_google, verify_otp_sign_in_basic};
 use crate::routes::auth::sign_up::{sign_up_basic, verify_otp_sign_up_basic};
 use crate::routes::index::hello;
-use crate::routes::user::user::get_users;
+use crate::routes::user::user::complete_profile;
 
 mod common;
 
@@ -128,7 +128,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     );
     cfg.service(
         web::scope("/api/user")
-            .route("/profile", web::get().to(get_users))
+            .route("/complete-profile",web::post().to(complete_profile))
     );
 
     routes::event_stream::event_stream_handler(cfg)
@@ -138,6 +138,7 @@ pub async fn index(
     state: web::Data<AppState>
 ) ->HttpResponse {
     let mut hbs = Handlebars::new();
+    hbs.register_templates_directory(".png","./templates").expect("");
     hbs.register_template_file("sign-up-basic-otp", &format!("./templates/{}.hbs", "sign-up-basic-otp")).expect("");
     hbs.register_template_file("styles", "./templates/partials/style.hbs").expect("");
     hbs.register_template_file("base", "./templates/layouts/base.hbs").expect("");

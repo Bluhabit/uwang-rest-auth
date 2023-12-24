@@ -1,5 +1,6 @@
 use sea_orm::prelude::DateTime;
 use serde::{Deserialize, Serialize};
+use validator::Validate;
 use crate::entity::prelude::UserProfile;
 
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
@@ -18,10 +19,12 @@ pub struct AddUserInfoRequest {
     pub user_info: Vec<UserInfoRequest>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize,Validate)]
 pub struct CompleteProfileRequest {
     pub date_of_birth: String,
-    pub username:String
+    pub username:String,
+    pub avatar:String,
+    pub personal_preferences:Vec<String>
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -281,7 +281,7 @@ impl SignInRepository {
             .create_key_session_sign_in();
 
 
-        let generate_token = encode(session_key.clone());
+        let generate_token = encode(user.id.clone());
         if generate_token.is_none() {
             return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
         }
