@@ -2,22 +2,23 @@ use std::string::ToString;
 use std::sync::Arc;
 
 use actix_cors::Cors;
-use actix_web::{App, http, HttpResponse, HttpServer, middleware, web};
+use actix_web::{App, http, HttpResponse, HttpServer, middleware, Responder, web};
 use actix_web::error::InternalError;
 use actix_web::http::StatusCode;
 use actix_web::web::Data;
 use dotenv::dotenv;
+use handlebars::Handlebars;
 use redis::Client;
 use sea_orm::{Database, DatabaseConnection};
+use serde_json::json;
 
 use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
-e::routes::auth::sign_up::sign_up_basic;
-
-use crate::routes::auth::forgot_password::forgot_password;
+use crate::routes::auth::forgot_password::{forgot_password, set_new_password, verify_otp_forgot_password};
 use crate::routes::auth::sign_in::{sign_in_basic, sign_in_google, verify_otp_sign_in_basic};
 use crate::routes::auth::sign_up::{sign_up_basic, verify_otp_sign_up_basic};
-
+use crate::routes::index::hello;
+use crate::routes::user::user::complete_profile;
 
 mod common;
 
@@ -63,6 +64,7 @@ async fn main() -> std::io::Result<()> {
         .expect(format!("Invalid connection Url {}", redis_url).as_str());
 
     let sse_emitter = SseBroadcaster::create();
+
 
     let state: AppState = AppState {
         db: db.clone(),
@@ -111,18 +113,39 @@ async fn main() -> std::io::Result<()> {
 }
 
 pub fn init(cfg: &mut web::ServiceConfig) {
+    cfg.route("/", web::get().to(hello));
+    cfg.route("/email", web::get().to(index));
     cfg.service(
         web::scope("/api/auth")
             .route("/sign-up-basic", web::post().to(sign_up_basic))
             .route("/sign-up-basic/verify-otp", web::post().to(verify_otp_sign_up_basic))
             .route("/sign-in-basic", web::post().to(sign_in_basic))
-    .route("/forgot-password",web::post().to(forgot_password))
-            .route("/forgot-password",web::post().to(forgot_password))
-            .route("/sign-in-basic/verify-otp",web::post().to(verify_otp_sign_in_basic))
+            .route("/sign-in-basic/verify-otp", web::post().to(verify_otp_sign_in_basic))
             .route("/sign-in-google", web::post().to(sign_in_google))
-
+            .route("/forgot-password", web::post().to(forgot_password))
+            .route("/forgot-password/verify-otp", web::post().to(verify_otp_forgot_password))
+            .route("/forgot-password/set-password", web::post().to(set_new_password))
     );
-    routes::user::user_handler(cfg);
-    routes::index::index_handler(cfg);
+    cfg.service(
+        web::scope("/api/user")
+            .route("/complete-profile",web::post().to(complete_profile))
+    );
+
     routes::event_stream::event_stream_handler(cfg)
+}
+
+pub async fn index(
+    state: web::Data<AppState>
+) ->HttpResponse {
+    let mut hbs = Handlebars::new();
+    hbs.register_templates_directory(".png","./templates").expect("");
+    hbs.register_template_file("sign-up-basic-otp", &format!("./templates/{}.hbs", "sign-up-basic-otp")).expect("");
+    hbs.register_template_file("styles", "./templates/partials/style.hbs").expect("");
+    hbs.register_template_file("base", "./templates/layouts/base.hbs").expect("");
+    let data = json!({
+        "full_name":"Tes",
+        "otp_Code":"2134"
+    });
+    let body = hbs.render("sign-up-basic-otp", &data).unwrap();
+    HttpResponse::Ok().body(body)
 }

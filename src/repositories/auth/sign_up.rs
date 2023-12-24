@@ -12,9 +12,10 @@ use crate::{AppState, common};
 use crate::common::jwt::encode;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
-use crate::common::utils::{create_session_from_user, create_session_redis_from_user};
+use crate::common::utils::{check_account_status_active_user, create_session_from_user, create_session_redis_from_user};
 use crate::entity::{user_credential, user_verification};
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
+use crate::entity::user_credential::Model;
 use crate::models::auth::{OtpRedisModel, SessionRedisModel};
 use crate::models::utils::create_user_verification;
 
@@ -39,7 +40,7 @@ impl SignUpRepository {
         email: &String,
         password: &String,
         full_name: &String,
-    ) -> Result<user_credential::Model, ErrorResponse> {
+    ) -> Result<Model, ErrorResponse> {
         let data = user_credential::Entity::find()
             .filter(user_credential::Column::Email.eq(email))
             .one(&self.db).await;
@@ -62,7 +63,7 @@ impl SignUpRepository {
             id: Set(uuid.to_string()),
             email: Set(email.to_string()),
             full_name: Set(full_name.to_string()),
-            password: Set(password.to_string()),
+            password: Set(hash_password.unwrap()),
             status: Set(UserStatus::WaitingConfirmation),
             auth_provider: Set(AuthProvider::Basic),
             created_at: Set(current_date),
@@ -80,7 +81,7 @@ impl SignUpRepository {
 
     pub async fn create_user_verification(
         &self,
-        user: user_credential::Model,
+        user: Model,
     ) -> Result<user_verification::Model, ErrorResponse> {
         let verification = create_user_verification(user);
 
@@ -99,7 +100,7 @@ impl SignUpRepository {
     ) -> Result<OtpRedisModel, ErrorResponse> {
         let connection = self.cache
             .get_connection();
-        let redis_key = RedisUtil::new(verification_id.clone())
+        let redis_key = RedisUtil::new(verification_id)
             .create_key_otp_sign_up();
 
         let saved: Result<String, redis::RedisError> = connection
@@ -172,7 +173,7 @@ impl SignUpRepository {
     pub async fn update_verification_user_status(
         &self,
         user_id: String,
-    ) -> Result<user_credential::Model, ErrorResponse> {
+    ) -> Result<Model, ErrorResponse> {
         let credential = user_credential::Entity::find_by_id(user_id)
             .one(&self.db)
             .await;
@@ -204,6 +205,74 @@ impl SignUpRepository {
     }
 
     //end verify otp email & password
+    // sign up google
+    pub async fn get_user_by_google(
+        &self,
+        google_credential: common::jwt::Payload,
+    ) -> Result<Model, ErrorResponse> {
+        let user = user_credential::Entity::find()
+            .filter(user_credential::Column::Email.eq(google_credential.email.clone()))
+            .one(&self.db).await;
+
+        if user.is_err() {
+            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [3]".to_string()));
+        }
+        let credential_result = user.unwrap();
+
+        let user: Result<Model, ErrorResponse> = match credential_result {
+            None => {
+                let uuid = Uuid::new_v4();
+                let current_date = chrono::DateTime::<FixedOffset>::default().naive_local();
+                let prepare_data = user_credential::ActiveModel {
+                    id: Set(uuid.to_string()),
+                    email: Set(google_credential.email.to_string()),
+                    full_name: Set(google_credential.given_name.to_string()),
+                    password: Set("n/a".to_string()),
+                    status: Set(UserStatus::Active),
+                    auth_provider: Set(AuthProvider::Google),
+                    created_at: Set(current_date),
+                    updated_at: Set(current_date),
+                    deleted: Set(false),
+                    ..Default::default()
+                };
+                let saved_data = prepare_data.insert(&self.db).await;
+                if saved_data.is_err() {
+                    return Err(ErrorResponse::unauthorized("".to_string()));
+                }
+                return Ok(saved_data.unwrap());
+            }
+            Some(ref user_credential) => Ok(user_credential.clone())
+        };
+
+        let check_status = check_account_status_active_user(
+            &user.unwrap()
+        );
+        if check_status.is_err() {
+            return Err(check_status.unwrap_err());
+        }
+
+        if check_status.is_err() {
+            return Err(
+                ErrorResponse::bad_request(
+                    1002,
+                    "Akun belum terdaftar".to_string(),
+                )
+            );
+        }
+
+        let user_credential = check_status.unwrap();
+
+        if user_credential.auth_provider != AuthProvider::Google {
+            return Err(
+                ErrorResponse::bad_request(
+                    1003,
+                    "Akun sudah digunakan".to_string(),
+                )
+            );
+        }
+        return Ok(credential_result.unwrap());
+    }
+    // end sign up google
     pub async fn save_user_session_to_redis(
         &self,
         user: &user_credential::Model,
