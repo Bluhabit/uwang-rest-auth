@@ -19,7 +19,7 @@ pub fn get_readable_validation_message(
                     };
                     return format!("{}, ", message);
                 }).collect();
-                return format!("Field {} {}", field, message);
+                return message;
             }).collect()
     }
 }
