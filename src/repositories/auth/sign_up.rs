@@ -49,7 +49,7 @@ impl SignUpRepository {
                 return Err(ErrorResponse::unauthorized("Email sudah digunakan".to_string()));
             }
         }
-        let current_date = chrono::DateTime::<FixedOffset>::default().naive_local();
+        let current_date = chrono::Utc::now().naive_local();
 
         let uuid = uuid::Uuid::new_v4();
         let hash_password = hash(&password.to_string(), DEFAULT_COST);
@@ -222,7 +222,7 @@ impl SignUpRepository {
         let user: Result<Model, ErrorResponse> = match credential_result {
             None => {
                 let uuid = Uuid::new_v4();
-                let current_date = chrono::DateTime::<FixedOffset>::default().naive_local();
+                let current_date = chrono::Utc::now().naive_local();
                 let prepare_data = user_credential::ActiveModel {
                     id: Set(uuid.to_string()),
                     email: Set(google_credential.email.to_string()),

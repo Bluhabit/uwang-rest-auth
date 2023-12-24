@@ -1,4 +1,4 @@
-use chrono::FixedOffset;
+use chrono::{FixedOffset, Utc};
 use sea_orm::ActiveValue::Set;
 use uuid::Uuid;
 use crate::common::otp_generator::generate_otp;
@@ -8,7 +8,7 @@ use crate::entity::sea_orm_active_enums::VerificationType;
 pub fn create_user_verification(
     credential:user_credential::Model
 )-> user_verification::ActiveModel{
-    let current_date = chrono::DateTime::<FixedOffset>::default().naive_local();
+    let current_date =  chrono::Utc::now().naive_local();
     let otp = generate_otp();
     let uuid = Uuid::new_v4();
 

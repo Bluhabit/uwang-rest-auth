@@ -97,7 +97,7 @@ impl UserRepository {
         profile: Vec<Model>,
         body: CompleteProfileRequest,
     ) -> Result<Vec<Model>, ErrorResponse> {
-        let current_date = chrono::DateTime::<FixedOffset>::default().naive_local();
+        let current_date = chrono::Utc::now().naive_local();
         let mut insert_data: Vec<user_profile::ActiveModel> = Vec::new();
 
         let username = profile.iter().find(|model| model.key == "username");
@@ -193,6 +193,7 @@ impl UserRepository {
                 sea_query::OnConflict::column(user_profile::Column::Id)
                     .update_column(user_profile::Column::Key)
                     .update_column(user_profile::Column::Value)
+                    .update_column(user_profile::Column::UpdatedAt)
                     .to_owned()
             )
             .exec(&self.db)
