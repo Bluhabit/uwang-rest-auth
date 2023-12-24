@@ -3,7 +3,6 @@ use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::response::Response;
-use crate::common::mail::config;
 use crate::common::mail::config::Config;
 
 pub struct Email {
