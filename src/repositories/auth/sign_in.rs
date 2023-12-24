@@ -1,6 +1,6 @@
 use std::collections::HashMap;
-use chrono::FixedOffset;
 
+use chrono::FixedOffset;
 use redis::{Client, Commands, RedisResult};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use sea_orm::ActiveValue::Set;
@@ -11,7 +11,7 @@ use crate::common::jwt::encode;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
 use crate::common::utils::{check_account_status_active_user, create_session_from_user, create_session_redis_from_user};
-use crate::entity::{user_credential, user_verification};
+use crate::entity::{user_credential, user_profile, user_verification};
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential::{Model as UserCredential, Model};
 use crate::models::auth::{OtpRedisModel, SessionRedisModel};
@@ -181,8 +181,8 @@ impl SignInRepository {
     pub async fn get_user_credential(
         &self,
         user_id: String,
-    ) -> Result<UserCredential, ErrorResponse> {
-        let user = user_credential::Entity::find_by_id(user_id)
+    ) -> Result<(Model, Vec<user_profile::Model>), ErrorResponse> {
+        let user = user_credential::Entity::find_by_id(user_id.clone())
             .one(&self.db)
             .await;
         if user.is_err() {
@@ -192,7 +192,14 @@ impl SignInRepository {
         if credential.is_none() {
             return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [2]".to_string()));
         }
-        Ok(credential.unwrap())
+
+        let profile = user_profile::Entity::find()
+            .filter(user_profile::Column::UserId.eq(user_id.clone()))
+            .all(&self.db)
+            .await
+            .unwrap_or(vec![]);
+
+        Ok((credential.unwrap(), profile))
     }
 
     //end verify otp sign in
@@ -201,7 +208,7 @@ impl SignInRepository {
     pub async fn get_user_by_google(
         &self,
         google_credential: common::jwt::Payload,
-    ) -> Result<UserCredential, ErrorResponse> {
+    ) -> Result<(user_credential::Model, Vec<user_profile::Model>), ErrorResponse> {
         let user = user_credential::Entity::find()
             .filter(user_credential::Column::Email.eq(google_credential.email.clone()))
             .one(&self.db).await;
@@ -231,7 +238,7 @@ impl SignInRepository {
                 if saved_data.is_err() {
                     return Err(ErrorResponse::unauthorized("".to_string()));
                 }
-                return Ok(saved_data.unwrap());
+                return Ok((saved_data.unwrap(), vec![]));
             }
             Some(ref user_credential) => Ok(user_credential.clone())
         };
@@ -262,7 +269,13 @@ impl SignInRepository {
                 )
             );
         }
-        return Ok(credential_result.unwrap());
+        let profile = user_profile::Entity::find()
+            .filter(user_profile::Column::UserId.eq(user_credential.id.clone()))
+            .all(&self.db)
+            .await
+            .unwrap_or(vec![]);
+
+        return Ok((credential_result.unwrap(), profile));
     }
 
     //end sign in google

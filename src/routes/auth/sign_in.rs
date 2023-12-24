@@ -116,7 +116,7 @@ pub async fn verify_otp_sign_in_basic(
     let user = user_credential.unwrap();
 
     let save_session = sign_in_repository
-        .save_user_session_to_redis(&user)
+        .save_user_session_to_redis(&user.0)
         .await;
 
     if save_session.is_err() {
@@ -128,7 +128,10 @@ pub async fn verify_otp_sign_in_basic(
         200,
         Some(serde_json::json!({
             "token":saved_session.token,
-            "user_credential":user
+            "user":UserCredentialResponse::from_credential_with_profile(
+                user.0,
+                user.1
+            )
         })),
         "Verifikasi otp berhasil".to_string(),
     )))
@@ -161,7 +164,7 @@ pub async fn sign_in_google(
     let sign_in_repository = SignInRepository::init(&state);
     //get data and validate account
     let get_user_by_email = sign_in_repository
-        .get_user_by_google(google_credential.unwrap().claims, )
+        .get_user_by_google(google_credential.unwrap().claims)
         .await;
 
     if get_user_by_email.is_err() {
@@ -170,7 +173,7 @@ pub async fn sign_in_google(
     let user = get_user_by_email.unwrap();
     //save to redis
     let saved_session = sign_in_repository
-        .save_user_session_to_redis(&user).await;
+        .save_user_session_to_redis(&user.0).await;
 
     if saved_session.is_err() {
         return Err(saved_session.unwrap_err());
@@ -182,7 +185,10 @@ pub async fn sign_in_google(
         200,
         Some(serde_json::json!({
             "token":saved_session.unwrap().token,
-            "credential":UserCredentialResponse::from_credential(user)
+            "credential":UserCredentialResponse::from_credential_with_profile(
+                user.0,
+                user.1
+            )
         })),
         "Login berhasil silahkan melanjutkan".to_string())
     ))
