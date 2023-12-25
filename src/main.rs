@@ -2,7 +2,7 @@ use std::string::ToString;
 use std::sync::Arc;
 
 use actix_cors::Cors;
-use actix_web::{App, http, HttpResponse, HttpServer, middleware, Responder, web};
+use actix_web::{App, http, HttpResponse, HttpServer, middleware, web};
 use actix_web::error::InternalError;
 use actix_web::http::StatusCode;
 use actix_web::web::Data;
@@ -128,17 +128,17 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     );
     cfg.service(
         web::scope("/api/user")
-            .route("/complete-profile",web::post().to(complete_profile))
+            .route("/complete-profile", web::post().to(complete_profile))
     );
 
     routes::event_stream::event_stream_handler(cfg)
 }
 
 pub async fn index(
-    state: web::Data<AppState>
-) ->HttpResponse {
+    _: Data<AppState>
+) -> HttpResponse {
     let mut hbs = Handlebars::new();
-    hbs.register_templates_directory(".png","./templates").expect("");
+    hbs.register_templates_directory(".png", "./templates").expect("");
     hbs.register_template_file("sign-up-basic-otp", &format!("./templates/{}.hbs", "sign-up-basic-otp")).expect("");
     hbs.register_template_file("styles", "./templates/partials/style.hbs").expect("");
     hbs.register_template_file("base", "./templates/layouts/base.hbs").expect("");

@@ -1,24 +1,16 @@
 use std::collections::HashMap;
 
-use bcrypt::{DEFAULT_COST, hash};
-use chrono::FixedOffset;
 use redis::{Client, Commands, RedisResult};
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, ModelTrait, QueryFilter, sea_query, TryIntoModel};
+use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, sea_query, TryIntoModel};
 use sea_orm::ActiveValue::Set;
-use sea_orm::prelude::DateTime;
 use uuid::Uuid;
 
 use crate::{AppState, common};
-use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
-use crate::common::utils::check_account_status_active_user;
-use crate::entity::{user_credential, user_profile, user_verification};
-use crate::entity::prelude::UserProfile;
+use crate::entity::{user_credential, user_profile};
 use crate::entity::user_profile::Model;
-use crate::models::auth::OtpRedisModel;
 use crate::models::user::CompleteProfileRequest;
-use crate::models::utils::create_user_verification;
 
 #[derive(Debug, Clone)]
 pub struct UserRepository {
@@ -39,13 +31,13 @@ impl UserRepository {
     pub async fn get_user_by_session_id(
         &self, session_id: String,
     ) -> Result<(user_credential::Model, Vec<user_profile::Model>), ErrorResponse> {
-        let redis_Connection = self
+        let redis_connection = self
             .cache.get_connection();
 
-        if redis_Connection.is_err() {
+        if redis_connection.is_err() {
             return Err(ErrorResponse::bad_request(400, "Gagal menghubungi server [1]".to_string()));
         }
-        let mut connection = redis_Connection.unwrap();
+        let mut connection = redis_connection.unwrap();
 
         let session_key = RedisUtil::new(session_id.as_str())
             .create_key_session_sign_in();
@@ -81,7 +73,7 @@ impl UserRepository {
             .all(&self.db)
             .await;
 
-        let mut profile_data: Vec<Model> = Vec::new();
+        let profile_data: Vec<Model>;
         if profile.is_err() {
             profile_data = vec![];
         } else {

@@ -1,8 +1,10 @@
-use crate::{common::response, AppState};
-use actix_web::{web, Responder, Result};
-use serde::Serialize;
 use std::option::Option::Some;
-use chrono::{FixedOffset, Utc};
+
+use actix_web::{Responder, Result, web};
+use chrono::Utc;
+use serde::Serialize;
+
+use crate::{AppState, common::response};
 
 #[derive(Serialize)]
 pub struct IndexResponse {

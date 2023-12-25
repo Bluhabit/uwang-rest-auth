@@ -1,14 +1,14 @@
 extern crate bcrypt;
 
-use crate::models::user::{UserCredentialResponse};
 use actix_web::{Responder, Result, web};
 use validator::Validate;
 
-use crate::{AppState, common};
+use crate::AppState;
 use crate::common::mail;
 use crate::common::response::{BaseResponse, ErrorResponse};
 use crate::common::utils::get_readable_validation_message;
 use crate::models::auth::{SignUpBasicRequest, VerifyOtpSignUpBasicRequest};
+use crate::models::user::UserCredentialResponse;
 use crate::repositories::auth::sign_up::SignUpRepository;
 
 pub async fn sign_up_basic(
@@ -26,8 +26,7 @@ pub async fn sign_up_basic(
 
     let user_credential = sign_up_repository.create_user_credential(
         &body.email,
-        &body.password,
-        &body.full_name,
+        &body.password
     ).await;
 
     if user_credential.is_err() {
@@ -122,11 +121,12 @@ pub async fn verify_otp_sign_up_basic(
     }
     let session = saved_session.unwrap();
 
+    let data = UserCredentialResponse::from_credential(user_verification);
     Ok(web::Json(BaseResponse::success(
         200,
         Some(serde_json::json!({
             "token":session.token,
-            "credential":UserCredentialResponse::from_credential(user_verification)
+            "credential":data
         })),
         "Berhasil melakukan pendaftaran".to_string())
     ))

@@ -3,39 +3,37 @@ use validator::Validate;
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct SignInBasicRequest {
-    #[validate(email(code="regex", message="Email tidak boleh kosong"))]
+    #[validate(email(code="regex", message="Email tidak boleh kosong."))]
     pub email:String,
-    #[validate(length(min=6,message="Password tidak boleh kosong"))]
+    #[validate(length(min=6,message="Password tidak boleh kosong,minimal 6 karakter."))]
     pub password:String
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct VerifyOtpSignInBasicRequest {
-    #[validate(length(min = 6))]
+    #[validate(length(min = 10,message="Session Id tidak boleh kosong, minimal 10 karakter."))]
     pub session_id: String,
-    #[validate(length(min = 4))]
+    #[validate(length(min = 4, message="Otp tidak boleh kosong, minimal 4 karakter."))]
     pub otp: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct SignInGoogleRequest {
-    #[validate(length(min = 6))]
+    #[validate(length(min = 10, message="Token tidak boleh kosong, minimal 10 karakter."))]
     pub token: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct SignUpBasicRequest {
-    #[validate(email)]
+    #[validate(email(code="regex",message="Email tidak valid."))]
     pub email: String,
-    #[validate(length(min = 6))]
-    pub password: String,
-    #[validate(length(min = 1))]
-    pub full_name: String,
+    #[validate(length(min = 6,message="Password tidak boleh kosong, minimal 6 karakter."))]
+    pub password: String
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct VerifyOtpSignUpBasicRequest {
-    #[validate(length(min = 1))]
+    #[validate(length(min = 10,message="Session Id tidak boleh kosong, minimal 10 karakter."))]
     pub session_id: String,
     #[validate(length(min = 4))]
     pub otp: String,
@@ -43,23 +41,23 @@ pub struct VerifyOtpSignUpBasicRequest {
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct ForgotPasswordRequest {
-    #[validate(email)]
+    #[validate(email(code="regex",message="Email tidak valid"))]
     pub email: String
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct VerifyOtpForgotPasswordRequest {
-    #[validate(length(min = 6))]
+    #[validate(length(min = 10,message="Session Id tidak boleh kosong, minimal 10 karakter."))]
     pub session_id: String,
-    #[validate(length(min = 4))]
+    #[validate(length(min = 4,message="Otp tidak boleh kosong, minimal 4 karakter."))]
     pub otp: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct SetForgotPasswordRequest {
-    #[validate(length(min=6))]
+    #[validate(length(min=6,message="Password tidak boleh kosong, minimal 6 karakter."))]
     pub password: String,
-    #[validate(length(min=6))]
+    #[validate(length(min=10,message="Session Id tidak boleh kosong, minimal 10 karakter."))]
     pub session_id: String
 }
 

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use bcrypt::{DEFAULT_COST, hash};
-use redis::{Client, Commands, RedisError, RedisResult};
+use redis::{Client, Commands, RedisResult};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter};
 use sea_orm::ActiveValue::Set;
 
@@ -71,10 +71,10 @@ impl ForgotPasswordRepository {
         otp: &str,
         user_id: &str,
     ) -> Result<OtpRedisModel, ErrorResponse> {
-        let mut connection = self.cache
+        let connection = self.cache
             .get_connection();
         let redis_key = RedisUtil::new(verification_id)
-            .create_key_otp_sign_in();
+            .create_key_otp_forgot_password();
 
         let saved: Result<String, redis::RedisError> = connection
             .unwrap()
@@ -203,8 +203,8 @@ impl ForgotPasswordRepository {
             .create_key_session_forgot_password();
 
         let user_id: RedisResult<String> = connection.get(session_key);
-        if user_id.is_err(){
-            return Err(ErrorResponse::bad_request(400,"Gagal menghubungi server [2]".to_string()))
+        if user_id.is_err() {
+            return Err(ErrorResponse::bad_request(400, "Gagal menghubungi server [2]".to_string()));
         }
 
         let get_user = user_credential::Entity::find_by_id(user_id.unwrap())

@@ -1,6 +1,6 @@
-use chrono::{FixedOffset, Utc};
 use sea_orm::ActiveValue::Set;
 use uuid::Uuid;
+
 use crate::common::otp_generator::generate_otp;
 use crate::entity::{user_credential, user_verification};
 use crate::entity::sea_orm_active_enums::VerificationType;

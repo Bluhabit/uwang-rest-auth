@@ -1,4 +1,5 @@
 use validator::ValidationErrors;
+
 use crate::common;
 use crate::common::response::ErrorResponse;
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
@@ -11,13 +12,13 @@ pub fn get_readable_validation_message(
     match err {
         None => String::from(""),
         Some(validation) => validation.field_errors().into_iter()
-            .map(|(field, b)| {
+            .map(|(_field, b)| {
                 let message: String = b.into_iter().map(|er| {
                     let message = match er.clone().message {
                         Some(val) => val.to_string(),
                         None => String::from("<no message>")
                     };
-                    return format!("{}, ", message);
+                    return format!("{} ", message);
                 }).collect();
                 return message;
             }).collect()
@@ -49,7 +50,7 @@ pub fn create_session_redis_from_user(
         (common::constant::REDIS_KEY_USER_ID.to_string(), user.id),
         (common::constant::REDIS_KEY_EMAIL.to_string(), user.email),
         (common::constant::REDIS_KEY_FULL_NAME.to_string(), user.full_name),
-        (common::constant::REDIS_KEY_SESSION_ID.to_string(), token),
+        (common::constant::REDIS_KEY_TOKEN.to_string(), token),
     ];
 }
 
