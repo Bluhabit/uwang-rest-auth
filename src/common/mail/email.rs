@@ -88,7 +88,7 @@ impl Email {
 
         let log = send.clone();
         println!("Result {}",log.code());
-        println!("Message {}",log.message().map(|s|s.to_string()).collect());
+        println!("Message {:?}",log.message().map(|s|s).collect::<Vec<&str>>());
         Ok(send)
     }
 
