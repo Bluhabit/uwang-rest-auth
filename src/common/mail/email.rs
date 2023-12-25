@@ -85,9 +85,10 @@ impl Email {
         let transport = self.new_transport()?;
 
         let send = transport.send(email).await?;
-        println!("Detail {}",send.clone().code().detail.to_string());
-        println!("Category {}",send.clone().code().category.to_string());
-        println!("Severity {}",send.clone().code().severity.to_string());
+
+        let log = send.clone();
+        println!("Result {}",log.code());
+        println!("Message {}",log.message().map(|s|s.to_string()).collect());
         Ok(send)
     }
 
