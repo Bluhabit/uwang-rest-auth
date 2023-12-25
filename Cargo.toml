@@ -8,6 +8,9 @@ authors = ["Trian triandamai@gmail.com"]
 [workspace]
 members = ["migration"]
 
+[profile.release]
+debug=true
+
 
 [dependencies]
 actix-web = "4.4.0"
