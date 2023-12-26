@@ -10,4 +10,4 @@ FROM debian:bullseye
 COPY --from=builder ./workdir/templates ./usr/local/bin/templates
 COPY --from=builder /workdir/target/release/uwang-rest-api /usr/local/bin
 EXPOSE 7005
-CMD ["./usr/local/bin/uwang-rest-api"]
+ENTRYPOINT ["/usr/local/bin/uwang-rest-api"]

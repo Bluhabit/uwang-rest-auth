@@ -61,7 +61,6 @@ impl Email {
         handlebars.register_template_file("base", "./templates/layouts/base.hbs")?;
 
         let content_template = handlebars.render(template_name, &data)?;
-
         Ok(content_template)
     }
 
@@ -101,7 +100,7 @@ impl Email {
         otp_code: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
         let data = serde_json::json!({
-            "full_name": name,
+            "name": name,
             "otp_code": otp_code
         });
         self.send_email("sign-up-basic-otp", "Rahasia - OTP ", &data)
@@ -114,7 +113,7 @@ impl Email {
         otp_code: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
         let data = serde_json::json!({
-            "full_name": name,
+            "name": name,
             "otp_code": otp_code
         });
         self.send_email("sign-in-basic-otp", "Rahasia - OTP", &data)
