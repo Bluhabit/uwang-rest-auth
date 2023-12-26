@@ -2,7 +2,7 @@ FROM rustlang/rust:nightly AS builder
 WORKDIR /workdir
 COPY ./Cargo.toml ./Cargo.lock ./
 COPY ./migration ./migration
-COPY ./templates .templates
+COPY ./templates ./templates
 COPY ./src ./src
 RUN cargo +nightly build --release
 
