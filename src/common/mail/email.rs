@@ -1,6 +1,5 @@
-use actix_web_lab::__reexports::tracing::log::{Level, log};
 use handlebars::Handlebars;
-use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor, Transport};
+use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::response::Response;
@@ -49,28 +48,12 @@ impl Email {
         Ok(transport)
     }
 
-    fn render_template(
-        &self,
-        template_name: &str,
-        data: &serde_json::Value,
-    ) -> Result<String, handlebars::RenderError> {
-        let mut handlebars = Handlebars::new();
-        handlebars
-            .register_template_file(template_name, &format!("./templates/{}.hbs", template_name))?;
-        handlebars.register_template_file("styles", "./templates/partials/style.hbs")?;
-        handlebars.register_template_file("base", "./templates/layouts/base.hbs")?;
-
-        let content_template = handlebars.render(template_name, &data)?;
-        Ok(content_template)
-    }
-
     async fn send_email(
         &self,
-        template_name: &str,
-        subject: &str,
-        data: &serde_json::Value,
+        html: String,
+        subject: &str
     ) -> Result<Response, Box<dyn std::error::Error>> {
-        let html_template = self.render_template(template_name, data)?;
+
         let email = Message::builder()
             .to(
                 format!("{} <{}>", self.name.as_str(), self.email.as_str())
@@ -81,16 +64,11 @@ impl Email {
             .from(self.from.as_str().parse().unwrap())
             .subject(subject)
             .header(ContentType::TEXT_HTML)
-            .body(html_template)?;
+            .body(html)?;
 
         let transport = self.new_transport()?;
 
         let send = transport.send(email).await?;
-
-        let log = send.clone();
-        log!(Level::Info, "Sending email: {}, {:?}", log.code(), log.message().map(|s|s).collect::<Vec<&str>>());
-        println!("Result {}",log.code());
-        println!("Message {:?}",log.message().map(|s|s).collect::<Vec<&str>>());
         Ok(send)
     }
 
@@ -99,11 +77,17 @@ impl Email {
         name: &str,
         otp_code: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
+        let mut handlebars = Handlebars::new();
+        handlebars.register_template_string("sign-in-basic-otp",include_str!("./templates/sign-in-basic-otp.hbs"))?;
+        handlebars.register_template_string("styles",include_str!("./templates/partials/style.hbs"))?;
+        handlebars.register_template_string("base",include_str!("./templates/layouts/base.hbs"))?;
         let data = serde_json::json!({
             "name": name,
             "otp_code": otp_code
         });
-        self.send_email("sign-up-basic-otp", "Rahasia - OTP ", &data)
+
+        let content_template = handlebars.render("sign-in-basic-otp", &data)?;
+        self.send_email(content_template, "Rahasia - OTP ")
             .await
     }
 
@@ -112,11 +96,39 @@ impl Email {
         name: &str,
         otp_code: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
+        let mut handlebars = Handlebars::new();
+        handlebars.register_template_string("sign-in-basic-otp",include_str!("./templates/sign-in-basic-otp.hbs"))?;
+        handlebars.register_template_string("styles",include_str!("./templates/partials/style.hbs"))?;
+        handlebars.register_template_string("base",include_str!("./templates/layouts/base.hbs"))?;
+
         let data = serde_json::json!({
             "name": name,
             "otp_code": otp_code
         });
-        self.send_email("sign-in-basic-otp", "Rahasia - OTP", &data)
+        let content_template = handlebars.render("sign-in-basic-otp", &data)?;
+
+        self.send_email(content_template, "Rahasia - OTP")
+            .await
+    }
+
+    pub async fn send_otp_forgot_password_basic(
+        &self,
+        name: &str,
+        otp_code: &str,
+    ) -> Result<Response, Box<dyn std::error::Error>> {
+        let mut handlebars = Handlebars::new();
+        handlebars.register_template_string("forgot-password",include_str!("./templates/forgot-password.hbs"))?;
+        handlebars.register_template_string("styles",include_str!("./templates/partials/style.hbs"))?;
+        handlebars.register_template_string("base",include_str!("./templates/layouts/base.hbs"))?;
+
+        let data = serde_json::json!({
+            "name": name,
+            "otp_code": otp_code
+        });
+
+        let content_template = handlebars.render("forgot-password", &data)?;
+
+        self.send_email(content_template, "Rahasia - OTP")
             .await
     }
 }

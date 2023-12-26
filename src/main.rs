@@ -137,15 +137,14 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 pub async fn index(
     _: Data<AppState>
 ) -> HttpResponse {
-    let mut hbs = Handlebars::new();
-    hbs.register_templates_directory(".png", "./templates").expect("");
-    hbs.register_template_file("sign-up-basic-otp", &format!("./templates/{}.hbs", "sign-up-basic-otp")).expect("");
-    hbs.register_template_file("styles", "./templates/partials/style.hbs").expect("");
-    hbs.register_template_file("base", "./templates/layouts/base.hbs").expect("");
+    let mut handlebars = Handlebars::new();
     let data = json!({
-        "full_name":"Tes",
-        "otp_Code":"2134"
+        "name":"Tes",
+        "otp_code":"2134"
     });
-    let body = hbs.render("sign-up-basic-otp", &data).unwrap();
+    handlebars.register_template_string("forgot-password", include_str!("./common/mail/templates/forgot-password.hbs")).expect("");
+    handlebars.register_template_string("styles", include_str!("./common/mail/templates/partials/style.hbs")).expect("");
+    handlebars.register_template_string("base", include_str!("./common/mail/templates/layouts/base.hbs")).expect("");
+    let body = handlebars.render("forgot-password", &data).expect("");
     HttpResponse::Ok().body(body)
 }
