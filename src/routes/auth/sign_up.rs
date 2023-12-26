@@ -63,10 +63,14 @@ pub async fn sign_up_basic(
         user.full_name.clone(),
     );
 
-    let _ = send_email.send_otp_sign_up_basic(
+    let sended = send_email.send_otp_sign_up_basic(
         user.full_name.as_str(),
         otp_data.otp.as_str(),
     ).await;
+
+    if sended.is_err(){
+        return Err(ErrorResponse::bad_request(400,sended.unwrap_err().to_string()))
+    }
 
 
     //send email otp

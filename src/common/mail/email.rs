@@ -38,7 +38,7 @@ impl Email {
 
 
         let transport =
-            AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(
+            AsyncSmtpTransport::<Tokio1Executor>::relay(
                 &self.config.smtp_host.to_owned()
             )?
                 .port(self.config.smtp_port)
