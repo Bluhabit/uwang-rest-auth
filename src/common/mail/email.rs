@@ -1,3 +1,4 @@
+use actix_web_lab::__reexports::tracing::log::{Level, log};
 use handlebars::Handlebars;
 use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
@@ -87,6 +88,7 @@ impl Email {
         let send = transport.send(email).await?;
 
         let log = send.clone();
+        log!(Level::Info, "Sending email: {}, {:?}", log.code(), log.message().map(|s|s).collect::<Vec<&str>>());
         println!("Result {}",log.code());
         println!("Message {:?}",log.message().map(|s|s).collect::<Vec<&str>>());
         Ok(send)
