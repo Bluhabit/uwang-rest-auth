@@ -2,6 +2,7 @@ use handlebars::Handlebars;
 use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
+use lettre::transport::smtp::client::{Tls, TlsParameters};
 use lettre::transport::smtp::response::Response;
 
 use crate::common::mail::config::Config;
@@ -36,12 +37,10 @@ impl Email {
             self.config.smtp_pass.to_owned(),
         );
 
-
         let transport =
-            AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(
+            AsyncSmtpTransport::<Tokio1Executor>::relay(
                 &self.config.smtp_host.to_owned()
-            )?
-                .port(self.config.smtp_port)
+            )?.port(self.config.smtp_port)
                 .credentials(creds)
                 .build();
 
@@ -51,9 +50,8 @@ impl Email {
     async fn send_email(
         &self,
         html: String,
-        subject: &str
+        subject: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
-
         let email = Message::builder()
             .to(
                 format!("{} <{}>", self.name.as_str(), self.email.as_str())
@@ -78,9 +76,9 @@ impl Email {
         otp_code: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
         let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("sign-in-basic-otp",include_str!("./templates/sign-in-basic-otp.hbs"))?;
-        handlebars.register_template_string("styles",include_str!("./templates/partials/style.hbs"))?;
-        handlebars.register_template_string("base",include_str!("./templates/layouts/base.hbs"))?;
+        handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs"))?;
+        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs"))?;
+        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs"))?;
         let data = serde_json::json!({
             "name": name,
             "otp_code": otp_code
@@ -97,9 +95,9 @@ impl Email {
         otp_code: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
         let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("sign-in-basic-otp",include_str!("./templates/sign-in-basic-otp.hbs"))?;
-        handlebars.register_template_string("styles",include_str!("./templates/partials/style.hbs"))?;
-        handlebars.register_template_string("base",include_str!("./templates/layouts/base.hbs"))?;
+        handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs"))?;
+        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs"))?;
+        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs"))?;
 
         let data = serde_json::json!({
             "name": name,
@@ -117,9 +115,9 @@ impl Email {
         otp_code: &str,
     ) -> Result<Response, Box<dyn std::error::Error>> {
         let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("forgot-password",include_str!("./templates/forgot-password.hbs"))?;
-        handlebars.register_template_string("styles",include_str!("./templates/partials/style.hbs"))?;
-        handlebars.register_template_string("base",include_str!("./templates/layouts/base.hbs"))?;
+        handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs"))?;
+        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs"))?;
+        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs"))?;
 
         let data = serde_json::json!({
             "name": name,
