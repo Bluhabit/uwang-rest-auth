@@ -1,9 +1,10 @@
 use actix_web_lab::__reexports::tracing::log::{Level, log};
 use handlebars::Handlebars;
-use lettre::{AsyncSmtpTransport, AsyncTransport, Message, SmtpTransport, Tokio1Executor, Transport};
+use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor, Transport};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::response::Response;
+
 use crate::common::mail::config::Config;
 
 pub struct Email {
@@ -39,26 +40,6 @@ impl Email {
 
         let transport =
             AsyncSmtpTransport::<Tokio1Executor>::relay(
-                &self.config.smtp_host.to_owned()
-            )?
-                .port(self.config.smtp_port)
-                .credentials(creds)
-                .build();
-
-        Ok(transport)
-    }
-
-    fn new_basic_transport(
-        &self
-    ) -> Result<SmtpTransport, lettre::transport::smtp::Error> {
-        let creds = Credentials::new(
-            self.config.smtp_user.to_owned(),
-            self.config.smtp_pass.to_owned(),
-        );
-
-
-        let transport =
-            SmtpTransport::relay(
                 &self.config.smtp_host.to_owned()
             )?
                 .port(self.config.smtp_port)
