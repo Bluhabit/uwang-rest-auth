@@ -11,6 +11,7 @@ use handlebars::Handlebars;
 use redis::Client;
 use sea_orm::{Database, DatabaseConnection};
 use serde_json::json;
+use crate::common::mail::email::Email;
 
 use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
@@ -146,5 +147,8 @@ pub async fn index(
     handlebars.register_template_string("styles", include_str!("./common/mail/templates/partials/style.hbs")).expect("");
     handlebars.register_template_string("base", include_str!("./common/mail/templates/layouts/base.hbs")).expect("");
     let body = handlebars.render("forgot-password", &data).expect("");
+    let mail = Email::new("".to_string(),"".to_string())
+        .send_by_mail_send()
+        .await.unwrap();
     HttpResponse::Ok().body(body)
 }

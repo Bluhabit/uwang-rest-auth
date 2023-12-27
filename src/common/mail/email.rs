@@ -2,10 +2,12 @@ use handlebars::Handlebars;
 use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
-use lettre::transport::smtp::client::{Tls, TlsParameters};
 use lettre::transport::smtp::response::Response;
+use mail_send::mail_builder::MessageBuilder;
+use mail_send::SmtpClientBuilder;
 
 use crate::common::mail::config::Config;
+use crate::common::response::ErrorResponse;
 
 pub struct Email {
     email: String,
@@ -128,5 +130,41 @@ impl Email {
 
         self.send_email(content_template, "Rahasia - OTP")
             .await
+    }
+
+    pub async fn send_by_mail_send(
+        &self
+    ) -> Result<String, ErrorResponse> {
+        let mut handlebars = Handlebars::new();
+        handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs")).expect("");
+        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs")).expect("");
+        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs")).expect("");
+
+        let data = serde_json::json!({
+            "name": "trian",
+            "otp_code": "2324"
+        });
+
+        let content_template = handlebars.render("forgot-password", &data).expect("");
+
+        let message = MessageBuilder::new()
+            .from(("Support", "support@bluhabit.id"))
+            .to(vec![("Trian", "triandamai@gmail.com")])
+            .subject("Hi")
+            .html_body(content_template)
+            .text_body("Tes");
+
+        let connection = SmtpClientBuilder::new("mail.bluhabit.id", 465)
+            .implicit_tls(true)
+            .credentials(("support@bluhabit.id", "ajmysertmddfnsui"))
+            .connect()
+            .await;
+
+
+
+        let send = connection.unwrap()
+            .send(message)
+            .await;
+        Ok("".to_string())
     }
 }
