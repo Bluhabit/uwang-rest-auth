@@ -3,14 +3,16 @@ use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::response::Response;
+use mail_send::mail_builder::headers::address::Address;
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::SmtpClientBuilder;
+use mail_send::Credentials as Creds;
 
 use crate::common::mail::config::Config;
 use crate::common::response::ErrorResponse;
 
 pub struct Email {
-    email: String,
+    to: String,
     name: String,
     from: String,
     config: Config,
@@ -18,13 +20,13 @@ pub struct Email {
 
 impl Email {
     pub fn new(
-        email: String,
+        to: String,
         name: String,
     ) -> Self {
         let conf = Config::init();
-        let from = format!("Bluhabit <{}>", conf.smtp_from.to_owned());
+        let from = conf.smtp_from.to_owned();
         Email {
-            email,
+            to,
             name,
             from,
             config: conf,
@@ -56,7 +58,7 @@ impl Email {
     ) -> Result<Response, Box<dyn std::error::Error>> {
         let email = Message::builder()
             .to(
-                format!("{} <{}>", self.name.as_str(), self.email.as_str())
+                format!("{} <{}>", self.name.as_str(), self.to.as_str())
                     .parse()
                     .unwrap(),
             )
@@ -76,95 +78,89 @@ impl Email {
         &self,
         name: &str,
         otp_code: &str,
-    ) -> Result<Response, Box<dyn std::error::Error>> {
-        let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs"))?;
-        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs"))?;
-        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs"))?;
+    ) -> Result<String, ErrorResponse> {
         let data = serde_json::json!({
             "name": name,
             "otp_code": otp_code
         });
 
-        let content_template = handlebars.render("sign-in-basic-otp", &data)?;
-        self.send_email(content_template, "Rahasia - OTP ")
-            .await
+        self.send_by_mail_send(
+            "Rahasia - OTP",
+            "sign-up-basic-otp",
+            &data,
+        ).await
     }
 
     pub async fn send_otp_sign_in_basic(
         &self,
         name: &str,
         otp_code: &str,
-    ) -> Result<Response, Box<dyn std::error::Error>> {
-        let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs"))?;
-        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs"))?;
-        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs"))?;
-
+    ) -> Result<String, ErrorResponse> {
         let data = serde_json::json!({
             "name": name,
             "otp_code": otp_code
         });
-        let content_template = handlebars.render("sign-in-basic-otp", &data)?;
 
-        self.send_email(content_template, "Rahasia - OTP")
-            .await
+        self.send_by_mail_send(
+            "Rahasia - OTP",
+            "sign-in-basic-otp",
+            &data,
+        ).await
     }
 
     pub async fn send_otp_forgot_password_basic(
         &self,
         name: &str,
         otp_code: &str,
-    ) -> Result<Response, Box<dyn std::error::Error>> {
-        let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs"))?;
-        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs"))?;
-        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs"))?;
-
+    ) -> Result<String, ErrorResponse> {
         let data = serde_json::json!({
             "name": name,
             "otp_code": otp_code
         });
 
-        let content_template = handlebars.render("forgot-password", &data)?;
-
-        self.send_email(content_template, "Rahasia - OTP")
-            .await
+        self.send_by_mail_send(
+            "Rahasia - OTP",
+            "forgot-password",
+            &data,
+        ).await
     }
 
-    pub async fn send_by_mail_send(
-        &self
+    async fn send_by_mail_send(
+        &self,
+        subject: &str,
+        template_name: &str,
+        data: &serde_json::Value,
     ) -> Result<String, ErrorResponse> {
         let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs")).expect("");
-        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs")).expect("");
-        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs")).expect("");
+        handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs")).expect("Panic forgot");
+        handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs")).expect("Panic sign in");
+        handlebars.register_template_string("sign-up-basic-otp", include_str!("./templates/sign-up-basic-otp.hbs")).expect("Panic sign up");
+        handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs")).expect("Panic style");
+        handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs")).expect("Panic base");
 
-        let data = serde_json::json!({
-            "name": "trian",
-            "otp_code": "2324"
-        });
 
-        let content_template = handlebars.render("forgot-password", &data).expect("");
+        let content_template = handlebars.render(template_name, &data).expect("Panic render");
 
         let message = MessageBuilder::new()
-            .from(("Support", "support@bluhabit.id"))
-            .to(vec![("Trian", "triandamai@gmail.com")])
-            .subject("Hi")
+            .from(("Bluhabit",self.from.as_str()))
+            .to(vec![Address::new_address(Some(&self.name), &*self.to.as_str())])
+            .subject(subject)
             .html_body(content_template)
-            .text_body("Tes");
+            .text_body(subject);
 
-        let connection = SmtpClientBuilder::new("mail.bluhabit.id", 465)
+        let mut connection = SmtpClientBuilder::new(&self.config.smtp_host, self.config.smtp_port)
             .implicit_tls(true)
-            .credentials(("support@bluhabit.id", "ajmysertmddfnsui"))
+            .credentials(Creds::new(&self.config.smtp_user, &self.config.smtp_pass))
             .connect()
-            .await;
+            .await
+            .unwrap();
 
 
-
-        let send = connection.unwrap()
+        let send = connection
             .send(message)
-            .await;
-        Ok("".to_string())
+            .await
+            .unwrap();
+
+        Ok("Success".to_string())
     }
 }

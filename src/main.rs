@@ -138,17 +138,10 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 pub async fn index(
     _: Data<AppState>
 ) -> HttpResponse {
-    let mut handlebars = Handlebars::new();
-    let data = json!({
-        "name":"Tes",
-        "otp_code":"2134"
-    });
-    handlebars.register_template_string("forgot-password", include_str!("./common/mail/templates/forgot-password.hbs")).expect("");
-    handlebars.register_template_string("styles", include_str!("./common/mail/templates/partials/style.hbs")).expect("");
-    handlebars.register_template_string("base", include_str!("./common/mail/templates/layouts/base.hbs")).expect("");
-    let body = handlebars.render("forgot-password", &data).expect("");
-    let mail = Email::new("".to_string(),"".to_string())
-        .send_by_mail_send()
-        .await.unwrap();
-    HttpResponse::Ok().body(body)
+
+    let mail = Email::new("triandamai@gmail.com".to_string(),"Trian".to_string())
+        .send_otp_sign_in_basic("Trian","1234")
+        .await
+        .unwrap();
+    HttpResponse::Ok().body(mail)
 }
