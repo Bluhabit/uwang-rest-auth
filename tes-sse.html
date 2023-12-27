@@ -8,14 +8,22 @@
 <input id="input" placeholder="Input nama">
 <button id="start">watch</button>
 <p id="show"></p>
+<audio autoplay src=""/>
 <script type="text/javascript">
     let eventSource;
     let input = document.getElementById("input")
     let btn = document.getElementById("start")
 
     function register(){
-        eventSource= new EventSource("http://localhost:8000/event/register/"+input.value)
-        eventSource.setRequestHeader("Bearer","tes")
+        eventSource= new EventSource(
+            "http://localhost:8000/event/subscribe",
+            {
+                headers: {
+                    'context1': input.value
+                }
+            }
+        )
+
         eventSource.addEventListener("message",event => {
             console.log(":ping",event)
         })
@@ -28,7 +36,7 @@
             console.log("databaru",event)
         })
 
-        eventSource.addEventListener("topic baru",(event)=>{
+        eventSource.addEventListener("topicbaru",(event)=>{
             console.log("databaru",event)
         })
 

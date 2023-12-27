@@ -6,6 +6,6 @@ COPY ./src ./src
 RUN cargo +nightly build --release
 
 FROM debian:bullseye
-COPY --from=0 /workdir/target/release/uwang-rest-api /usr/local/bin
+COPY --from=builder /workdir/target/release/uwang-rest-api /usr/local/bin
 EXPOSE 7005
 ENTRYPOINT ["/usr/local/bin/uwang-rest-api"]

@@ -10,6 +10,7 @@ pub struct Model {
     pub id: String,
     pub user_id: Option<String>,
     pub notification_id: Option<String>,
+    pub body: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
     pub is_read: Option<String>,
     pub created_at: DateTimeWithTimeZone,

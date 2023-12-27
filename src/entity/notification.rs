@@ -12,6 +12,7 @@ pub struct Model {
     pub title: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
     pub body: Option<String>,
+    pub assets: Option<String>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
     pub deleted: bool,

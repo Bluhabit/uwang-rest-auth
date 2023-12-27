@@ -1,16 +1,25 @@
 use std::string::ToString;
 use std::sync::Arc;
+
 use actix_cors::Cors;
 use actix_web::{App, http, HttpResponse, HttpServer, middleware, web};
 use actix_web::error::InternalError;
 use actix_web::http::StatusCode;
 use actix_web::web::Data;
 use dotenv::dotenv;
+use handlebars::Handlebars;
 use redis::Client;
 use sea_orm::{Database, DatabaseConnection};
+use serde_json::json;
+use crate::common::mail::email::Email;
 
 use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
+use crate::routes::auth::forgot_password::{forgot_password, set_new_password, verify_otp_forgot_password};
+use crate::routes::auth::sign_in::{sign_in_basic, sign_in_google, verify_otp_sign_in_basic};
+use crate::routes::auth::sign_up::{sign_up_basic, verify_otp_sign_up_basic};
+use crate::routes::index::hello;
+use crate::routes::user::user::complete_profile;
 
 mod common;
 
@@ -32,7 +41,6 @@ const DB_URL_KEY: &str = "DATABASE_URL";
 const REDIS_URL_KEY: &str = "REDIS_URL";
 const DB_URL_DEFAULT_VALUE: &str = "postgres://user:password@host:port/db";
 const REDIS_URL_DEFAULT_VALUE: &str = "redis://user:password@host:port";
-const ENV: &str = "";
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -58,6 +66,7 @@ async fn main() -> std::io::Result<()> {
 
     let sse_emitter = SseBroadcaster::create();
 
+
     let state: AppState = AppState {
         db: db.clone(),
         cache: cache.clone(),
@@ -69,9 +78,9 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::default()
             .allowed_origin_fn(|origin, _req_head| {
                 let origin = origin.as_bytes();
-                let allow = origin.ends_with(b".bluhabit.id");
+                let _ = origin.ends_with(b".bluhabit.id");
 
-                allow
+                true
             })
             .allowed_methods(vec!["GET", "POST", "PUT", "PATCH", "DELETE"])
             .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
@@ -105,8 +114,34 @@ async fn main() -> std::io::Result<()> {
 }
 
 pub fn init(cfg: &mut web::ServiceConfig) {
-    routes::user::user_handler(cfg);
-    routes::auth::auth_handler(cfg);
-    routes::index::index_handler(cfg);
+    cfg.route("/", web::get().to(hello));
+    cfg.route("/email", web::get().to(index));
+    cfg.service(
+        web::scope("/api/auth")
+            .route("/sign-up-basic", web::post().to(sign_up_basic))
+            .route("/sign-up-basic/verify-otp", web::post().to(verify_otp_sign_up_basic))
+            .route("/sign-in-basic", web::post().to(sign_in_basic))
+            .route("/sign-in-basic/verify-otp", web::post().to(verify_otp_sign_in_basic))
+            .route("/sign-in-google", web::post().to(sign_in_google))
+            .route("/forgot-password", web::post().to(forgot_password))
+            .route("/forgot-password/verify-otp", web::post().to(verify_otp_forgot_password))
+            .route("/forgot-password/set-password", web::post().to(set_new_password))
+    );
+    cfg.service(
+        web::scope("/api/user")
+            .route("/complete-profile", web::post().to(complete_profile))
+    );
+
     routes::event_stream::event_stream_handler(cfg)
+}
+
+pub async fn index(
+    _: Data<AppState>
+) -> HttpResponse {
+
+    let mail = Email::new("triandamai@gmail.com".to_string(),"Trian".to_string())
+        .send_otp_sign_in_basic("Trian","1234")
+        .await
+        .unwrap();
+    HttpResponse::Ok().body(mail)
 }
