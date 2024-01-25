@@ -51,6 +51,8 @@ p.text {
 
 .footer-bg {
   background-color: #1041B7;
+  text-align: center;
+  margin-top: 50px;
   padding: 2px 0;
   color: #fff;
   font-weight: 700;
