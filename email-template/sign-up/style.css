@@ -1,91 +1,56 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
 
-body {
+@media only screen and (max-width: 620px) {
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .body-style {
+    background-color: #f6f6f6;
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    line-height: 1.4;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
-    font-family: 'Inter', sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  img .logo {
+    max-width: 100%;
+    height: auto
+  }
 }
 
-header h1 {
-    text-align: left;
-    font-weight: 600;
-    font-size: 24px;
+.numberOtp-wrapper {
+  align-items: left;
 }
 
-p {
-    font-size: 12px;
-    margin-bottom: 18px;
-    line-height: 1.5;
-    font-weight: 400;
+.title-otp {
+  padding-bottom: 10px;
+  font-weight: 600;
+  font-size: 24px;
 }
 
-h2 {
-    font-size: 24px;
-    color: #1041B7;
-    font-weight: 600;
+.numberOtp {
+  color: #1041B7;
+  font-weight: 700;
+  font-size: 24px;
+  font-family: 'Inter', sans-serif;
 }
 
-.text-bold {
-    font-weight: bold;
-    font-weight: 500;
+p.text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  margin-bottom: 18px;
+  line-height: 1.5;
 }
 
-.logo {
-    margin: 0 auto;
-    width: 100px;
-    margin-top: 30px;
-}
-
-.konfirmation-page {
-    width: 50%;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 12px;
-}
-
-.wrapper {
-    margin-top: 20px;
-    padding: 10px 20px;
-}
-
-.footer {
-    text-align: center;
-    padding-top: 7px;
-}
-
-.footer p {
-    font-size: 12px;
-    line-height: 1.5;
-    margin: 0;
-}
-
-.footer p:first-child {
-    background-color: #E7ECF8;
-    padding: 16px;
-}
-
-.footer p:last-child {
-    background-color: #1041B7;
-    padding: 10px;
-    color: #fff;
-    font-weight: 700;
-}
-
-@media (max-width: 768px) {
-    .konfirmation-page {
-        width: 90%;
-    }
-}
-
-@media (max-width: 576px) {
-    .konfirmation-page {
-        width: 85%;
-    }
-}
-
-@media (max-width: 375px) {
-    .konfirmation-page {
-        width: 80%;
-    }
+.footer-bg {
+  background-color: #1041B7;
+  padding: 2px 0;
+  color: #fff;
+  font-weight: 700;
 }
