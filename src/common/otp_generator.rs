@@ -1,7 +1,8 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 use rand::{Rng, thread_rng};
+use validator::HasLen;
 
-pub fn generate_otp()->u32{
+pub fn generate_otp()->String{
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .unwrap()
@@ -10,5 +11,8 @@ pub fn generate_otp()->u32{
     let random_number:u32 = rng
         .gen_range(0..10000);
     let otp = (now as u32 ^ random_number) % 10000;
-    otp
+    if otp.to_string().length() < 4{
+        return format!("{}{}",otp,rng.gen_range(0..10))
+    }
+    format!("{}",otp)
 }

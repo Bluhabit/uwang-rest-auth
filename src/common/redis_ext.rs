@@ -12,6 +12,14 @@ impl RedisUtil {
             environment: env,
         }
     }
+
+    pub fn create_sign_in_attempt(&self)->String{
+        return format!(
+            "{}:attempt:sign-in:{}",
+            self.environment,
+            self.value
+        );
+    }
     pub fn create_key_otp_sign_in(
         &self
     ) -> String {

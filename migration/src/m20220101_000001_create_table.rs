@@ -28,14 +28,6 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        manager
-            .create_type(
-                Type::create()
-                    .as_enum(VerificationType::Table)
-                    .values(VerificationType::iter().skip(1))
-                    .to_owned()
-            )
-            .await?;
 
         manager
             .create_type(
@@ -109,6 +101,7 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(UserCredential::FullName).string().not_null())
+                    .col(ColumnDef::new(UserCredential::Username).string().not_null())
                     .col(ColumnDef::new(UserCredential::Password).string().not_null())
                     .col(
                         ColumnDef::new(UserCredential::Status)
@@ -159,41 +152,6 @@ impl MigrationTrait for Migration {
                             .default(Expr::current_timestamp()),
                     )
                     .col(ColumnDef::new(UserProfile::Deleted).boolean().not_null().default(false))
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_table(
-                Table::create()
-                    .table(UserVerification::Table)
-                    .if_not_exists()
-                    .col(
-                        ColumnDef::new(UserVerification::Id)
-                            .string()
-                            .primary_key()
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(UserVerification::Code).string().not_null())
-                    .col(
-                        ColumnDef::new(UserVerification::VerificationType)
-                            .enumeration(VerificationType::Table, VerificationType::iter().skip(1))
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(UserVerification::UserId).string())
-                    .col(
-                        ColumnDef::new(UserVerification::CreatedAt)
-                            .timestamp()
-                            .not_null()
-                            .default(Expr::current_timestamp()),
-                    )
-                    .col(
-                        ColumnDef::new(UserVerification::UpdatedAt)
-                            .timestamp()
-                            .not_null()
-                            .default(Expr::current_timestamp()),
-                    )
-                    .col(ColumnDef::new(UserVerification::Deleted).boolean().not_null().default(false))
                     .to_owned(),
             )
             .await?;
@@ -266,46 +224,6 @@ impl MigrationTrait for Migration {
                             .not_null().default(Expr::current_timestamp()),
                     )
                     .col(ColumnDef::new(AdminAccess::Deleted).boolean().not_null().default(false))
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_table(
-                Table::create()
-                    .table(Device::Table)
-                    .if_not_exists()
-                    .col(ColumnDef::new(Device::Id).string().primary_key().not_null())
-                    .col(ColumnDef::new(Device::DeviceName).string())
-                    .col(ColumnDef::new(Device::DeviceId).string())
-                    .col(ColumnDef::new(Device::DeviceOs).string())
-                    .col(ColumnDef::new(Device::UserId).string())
-                    .col(ColumnDef::new(Device::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Device::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Device::Deleted).boolean().not_null().default(false))
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .create_table(
-                Table::create()
-                    .table(UserLogin::Table)
-                    .if_not_exists()
-                    .col(
-                        ColumnDef::new(UserLogin::Id)
-                            .string()
-                            .primary_key()
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(UserLogin::Ip).string())
-                    .col(ColumnDef::new(UserLogin::Token).string())
-                    .col(ColumnDef::new(UserLogin::LoginAt).timestamp_with_time_zone().not_null())
-                    .col(ColumnDef::new(UserLogin::UserId).string())
-                    .col(ColumnDef::new(UserLogin::DeviceId).string())
-                    .col(ColumnDef::new(UserLogin::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserLogin::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserLogin::Deleted).boolean().not_null().default(false))
                     .to_owned(),
             )
             .await?;
@@ -586,14 +504,6 @@ impl MigrationTrait for Migration {
 
         manager.create_foreign_key(
             ForeignKey::create()
-                .name("fk-user-verification")
-                .from(UserVerification::Table, UserVerification::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
-
-        manager.create_foreign_key(
-            ForeignKey::create()
                 .name("fk-user-report")
                 .from(Report::Table, Report::ReferenceId)
                 .to(UserCredential::Table, UserCredential::Id)
@@ -629,30 +539,6 @@ impl MigrationTrait for Migration {
                 .name("fk-admin-access")
                 .from(AdminAccess::Table, AdminAccess::AccessId)
                 .to(SystemAccess::Table, SystemAccess::Id)
-                .to_owned()
-        ).await?;
-
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-device")
-                .from(Device::Table, Device::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
-
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-login")
-                .from(UserLogin::Table, UserLogin::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
-
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-login-device")
-                .from(UserLogin::Table, UserLogin::DeviceId)
-                .to(Device::Table, Device::Id)
                 .to_owned()
         ).await?;
 
@@ -818,18 +704,7 @@ enum UserCredential {
     AuthProvider,
     Status,
     FullName,
-    CreatedAt,
-    UpdatedAt,
-    Deleted,
-}
-
-#[derive(DeriveIden)]
-enum UserVerification {
-    Table,
-    Id,
-    Code,
-    UserId,
-    VerificationType,
+    Username,
     CreatedAt,
     UpdatedAt,
     Deleted,
@@ -890,33 +765,6 @@ enum SystemAccess {
     Name,
     Group,
     Permission,
-    CreatedAt,
-    UpdatedAt,
-    Deleted,
-}
-
-#[derive(DeriveIden)]
-enum UserLogin {
-    Table,
-    Id,
-    UserId,
-    DeviceId,
-    Ip,
-    Token,
-    LoginAt,
-    CreatedAt,
-    UpdatedAt,
-    Deleted,
-}
-
-#[derive(DeriveIden)]
-enum Device {
-    Table,
-    Id,
-    UserId,
-    DeviceName,
-    DeviceId,
-    DeviceOs,
     CreatedAt,
     UpdatedAt,
     Deleted,
@@ -1094,6 +942,8 @@ pub enum UserStatus {
     #[iden = "ACTIVE"]
     ACTIVE,
     #[iden = "INACTIVE"]
+    LOCKED,
+    #[iden = "LOCKED"]
     INACTIVE,
     #[iden = "SUSPENDED"]
     SUSPENDED,
@@ -1136,17 +986,6 @@ pub enum AuthProvider {
     MICROSOFT,
     #[iden = "TWITTER"]
     TWITTER,
-}
-
-#[derive(Iden, EnumIter)]
-pub enum VerificationType {
-    Table,
-    #[iden = "OTP"]
-    OTP,
-    #[iden = "RESET"]
-    RESET,
-    #[iden = "ACTIVATION"]
-    ACTIVATION,
 }
 
 #[derive(Iden, EnumIter)]
