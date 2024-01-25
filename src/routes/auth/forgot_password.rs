@@ -16,7 +16,7 @@ pub async fn forgot_password(
         let message = get_readable_validation_message(validate_body.err());
         return Err(ErrorResponse::bad_request(400, message));
     }
-    let mut forgot_password_repository = ForgotPasswordRepository::init(&state);
+    let forgot_password_repository = ForgotPasswordRepository::init(&state);
     let find_user_by_email = forgot_password_repository
         .get_user_by_email(body.email.clone())
         .await;
