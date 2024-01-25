@@ -17,14 +17,11 @@
 
  
 }
-img.logo {
-  max-width: 100%;
-  padding-top: 13px;
-  display: block;
-  margin: 0 auto;
-  margin-bottom: 30px;
+.logo{
+  display: grid;
+    place-items: center;
+    margin-bottom: 20px;
 }
-
 table.table-body {
   border: 0;
   border-collapse: separate;
@@ -85,35 +82,14 @@ td.td-second {
 }
 
 
-.numberOtp-wrapper {
-  padding: 12px 0px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.numberOtp {
-  color: #101828;
-  font-weight: 700;
-  font-size: 16px;
-}
-
-p.text {
-  font-size: 12px;
-  font-weight: 400;
-  margin: 0;
-  margin-bottom: 40px;
-}
-
-span.text-greeting {
-  color: black;
-  font-weight: bold
-}
-
 .card{
   background-color: white;
-  border-radius: 12px;
+  border-radius: 12px 12px 0 0;;
+  padding:10px 25px;
+}
+.card1{
+  background-color: #E7ECF8;
+  border-radius: 0 0 12px 12px;
   padding:10px 25px;
 }
 .card-title{
@@ -171,29 +147,15 @@ button{
   border : 0;
   width: 100%;
 }
-.point-number,.block{
-  display: block;
-  direction: column
-}
-.justify-evenly{
-  justify-content:space-between
-}
+
 .footer {
   clear: both;
   margin-top: 10px;
   text-align: center;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-p.footer-help {
-  margin: 0;
-  padding-bottom: 6px;
-}
-
-span.footer-support {
-  color: rgb(78, 78, 250);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
 }
 
 .footer-bg {
