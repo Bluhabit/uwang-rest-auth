@@ -17,6 +17,12 @@ pub struct VerifyOtpSignInBasicRequest {
     pub otp: String,
 }
 
+#[derive(Debug,Clone, Serialize, Deserialize, Validate)]
+pub struct ResendOtpSignInBasicRequest {
+    #[validate(length(min = 10,message="Session Id tidak boleh kosong, minimal 10 karakter."))]
+    pub session_id: String
+}
+
 #[derive(Debug, Clone,Serialize, Deserialize, Validate)]
 pub struct SignInGoogleRequest {
     #[validate(length(min = 10, message="Token tidak boleh kosong, minimal 10 karakter."))]

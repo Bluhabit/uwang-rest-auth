@@ -7,6 +7,7 @@ use serde_json::Value;
 use uuid::Uuid;
 
 use crate::{AppState, common};
+use crate::common::constant::REDIS_KEY_USER_ID;
 use crate::common::jwt::encode;
 use crate::common::mail::email;
 use crate::common::otp_generator::generate_otp;
@@ -34,7 +35,7 @@ impl SignInRepository {
         }
     }
 
-    // sign in email & password
+    ///== sign in email & password
     pub async fn sign_in_by_email(
         &mut self,
         email: &str,
@@ -56,7 +57,7 @@ impl SignInRepository {
         }
 
         let data_user = user_credential.unwrap();
-        let uuid = uuid::Uuid::new_v4().to_string();
+        let uuid = Uuid::new_v4().to_string();
         let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
         let session_id = RedisUtil::new(uuid.as_str()).create_key_otp_sign_in();
 
@@ -112,18 +113,14 @@ impl SignInRepository {
             return Err(ErrorResponse::bad_request(1003, "Email sudah digunakan akun lain".to_string()));
         }
 
-
         let generate_otp = generate_otp();
-        let current_date = chrono::Utc::now().naive_local().timestamp();
-
         let redis_connection = self.cache.get_connection();
         let saved_session_otp: Result<String, redis::RedisError> = redis_connection
             .unwrap()
             .hset_multiple(session_id.clone(), &[
                 (common::constant::REDIS_KEY_OTP, generate_otp.as_str()),
                 (common::constant::REDIS_KEY_USER_ID, data_user.id.as_str()),
-                (common::constant::REDIS_KEY_OTP_ATTEMPT, "0"),
-                (common::constant::REDIS_KEY_VALID_FROM, current_date.to_string().as_str())
+                (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
             ]);
 
         let _: RedisResult<_> = self.cache
@@ -148,8 +145,8 @@ impl SignInRepository {
         ).await;
         Ok(uuid)
     }
-    //end sign in email & password
-    //verify otp sign in
+    /// == end sign in email & password
+    /// ==verify otp sign in
     pub async fn verify_otp_sign_in(
         &self,
         session_id: &str,
@@ -204,10 +201,7 @@ impl SignInRepository {
         }
         let credential = credential.unwrap();
 
-        //not valid update redis
         if attempt >= 4 {
-            //update user status
-            //delete from redis
             let mut model = credential.into_active_model();
             model.status = Set(UserStatus::Locked);
             let _ = model.update(&self.db).await;
@@ -215,7 +209,6 @@ impl SignInRepository {
         }
 
         if !request_otp.eq(otp) {
-
             attempt = attempt + 1;
             let redis_connection = self.cache.get_connection();
             let _: RedisResult<String> = redis_connection
@@ -254,9 +247,83 @@ impl SignInRepository {
             })
         ))
     }
-    //end verify otp sign in
+    /// == end verify otp sign in
+    /// == resend otp
+    pub async fn resend_otp(
+        &self,
+        session_id: &str,
+    ) -> Result<String, ErrorResponse> {
+        let redis_connection = &self.cache
+            .get_connection();
+        if redis_connection.is_err() {
+            return Err(ErrorResponse::bad_request(
+                1001,
+                "Kami mengalami kendala menghubungi sumber data".to_string(),
+            ));
+        }
+        let redis_util = RedisUtil::new(session_id);
+        let redis_key = redis_util.create_key_otp_sign_in();
+        let generate_otp = generate_otp();
 
-    //sign in google
+        let redis_connection = self.cache
+            .get_connection();
+        let get_session: RedisResult<HashMap<String, String>> = redis_connection
+            .unwrap()
+            .hgetall(redis_key.clone());
+
+        if get_session.is_err() {
+            return Err(ErrorResponse::bad_request(
+                1001,
+                "Gagal membuat ulang otp, sesi tidak valid.".to_string(),
+            ));
+        }
+        let default_string = String::from("");
+        let get_session = get_session.unwrap();
+        let user_id = get_session.get(REDIS_KEY_USER_ID)
+            .unwrap_or(&default_string);
+        let find_user = user_credential::Entity::find_by_id(user_id)
+            .one(&self.db)
+            .await;
+        if find_user.is_err(){
+            return Err(ErrorResponse::bad_request(
+                1001,
+                "Gagal membuat ulang otp, sesi tidak valid.".to_string(),
+            ));
+        }
+        let user = find_user.unwrap();
+
+        if user.is_none(){
+            return Err(ErrorResponse::bad_request(
+                1001,
+                "Gagal membuat ulang otp, sesi tidak valid.".to_string(),
+            ));
+        }
+        let user = user.unwrap();
+
+        let redis_connection = self.cache
+            .get_connection();
+        let _: RedisResult<String> = redis_connection
+            .unwrap()
+            .hset_multiple(
+                redis_key, &[
+                    (common::constant::REDIS_KEY_OTP, generate_otp.as_str()),
+                    (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
+                ],
+            );
+        let email = email::Email::new(
+            user.email.clone(),
+            user.full_name.clone(),
+        );
+
+        let _ = email.send_otp_sign_in_basic(
+            serde_json::json!({
+
+            })
+        ).await;
+        Ok(session_id.to_string())
+    }
+    /// == end resend otp
+    /// == sign in google
     pub async fn sign_in_google(
         &self,
         google_credential: &SignInGoogleRequest,
@@ -359,7 +426,7 @@ impl SignInRepository {
         })));
     }
 
-    //end sign in google
+    /// == end sign in google
 
     async fn save_user_session_to_redis(
         &self,

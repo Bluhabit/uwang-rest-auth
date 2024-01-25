@@ -6,10 +6,10 @@ use validator::Validate;
 use crate::AppState;
 use crate::common::response::{BaseResponse, ErrorResponse};
 use crate::common::utils::get_readable_validation_message;
-use crate::models::auth::{SignInBasicRequest, SignInGoogleRequest, VerifyOtpSignInBasicRequest};
+use crate::models::auth::{ResendOtpSignInBasicRequest, SignInBasicRequest, SignInGoogleRequest, VerifyOtpSignInBasicRequest};
 use crate::repositories::auth::sign_in::SignInRepository;
 
-//region sign in basic
+/// == region sign in basic ==
 pub async fn sign_in_basic(
     state: web::Data<AppState>,
     body: web::Json<SignInBasicRequest>,
@@ -35,8 +35,8 @@ pub async fn sign_in_basic(
     )))
 }
 
-//end region
-//region verify otp
+/// == end region ==
+/// == region verify otp ==
 pub async fn verify_otp_sign_in_basic(
     state: web::Data<AppState>,
     body: web::Json<VerifyOtpSignInBasicRequest>,
@@ -49,24 +49,48 @@ pub async fn verify_otp_sign_in_basic(
     }
 
     let sign_in_repository = SignInRepository::init(&state);
-    let redis_otp = sign_in_repository
+    let verify_otp = sign_in_repository
         .verify_otp_sign_in(
             &body.session_id,
             &body.otp,
         ).await;
 
-    if redis_otp.is_err() {
-        return Err(redis_otp.unwrap_err());
+    if verify_otp.is_err() {
+        return Err(verify_otp.unwrap_err());
     }
 
     Ok(web::Json(BaseResponse::success(
         200,
-        redis_otp.unwrap(),
+        verify_otp.unwrap(),
         "Verifikasi otp berhasil".to_string(),
     )))
 }
+/// == end region verify otp ==
+pub async fn resend_otp_sign_in_basic(
+    state:web::Data<AppState>,
+    body: web::Json<ResendOtpSignInBasicRequest>
+)-> Result<impl Responder,ErrorResponse>{
+    let validate_body = body.validate();
+    if validate_body.is_err(){
+        let message = get_readable_validation_message(validate_body.err());
+        return Err(ErrorResponse::bad_request(400, message));
+    }
 
-//end region
+    let sign_in_repository = SignInRepository::init(&state);
+    let resend_otp = sign_in_repository
+        .resend_otp(body.session_id.as_str())
+        .await;
+
+    if resend_otp.is_err(){
+        return Err(resend_otp.unwrap_err());
+    }
+    Ok(web::Json(BaseResponse::success(
+        200,
+        resend_otp.unwrap(),
+        "Otp telah dikirim ke email kamu.".to_string(),
+    )))
+}
+/// == region sign in google ==
 pub async fn sign_in_google(
     state: web::Data<AppState>,
     body: web::Json<SignInGoogleRequest>,
