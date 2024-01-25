@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 @media only screen and (max-width: 620px) {
   * {
     font-family: 'Inter', sans-serif;
@@ -14,20 +15,6 @@
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
   }
-
- 
-}
-img.logo {
-  max-width: 100%;
-  padding-top: 13px;
-}
-.row {
-  display: flex;
-  justify-content: space-between; 
-}
-
-.column {
-  flex: 1; 
 }
 
 .logo-column {
@@ -37,58 +24,36 @@ img.logo {
 .text-column {
   text-align: right;
 }
-
-
-
-table.table-body {
-  border: 0;
-  border-collapse: separate;
-  background-color:  #F2F4F7;
-  ;
-  width: 100%;
-  mso-table-lspace: 0pt;
-  mso-table-rspace: 0pt;
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px;
 }
 
-td.td-first {
-  font-size: 14px;
-  vertical-align: top;
-  display: block;
-  max-width: 580px;
-  padding: 10px;
-  width: 580px;
-  margin: 0 auto;
+.logo-column {
+  grid-column: 1; 
 }
 
-.main {
-  border-collapse: separate;
-  mso-table-lspace: 0pt;
-  mso-table-rspace: 0pt;
-  background:white;
+.text-column {
+  grid-column: 2; 
+}
+
+.card-bottom {
+  background-color: white;
   border-radius: 12px;
-  width: 100%;
+  padding: 10px 25px;
+  display: grid;
+  grid-template-columns: 1fr; 
+  grid-template-rows: auto; 
+  gap: 10px;
 }
 
-td.wrapper {
-  font-family: sans-serif;
-  font-size: 14px;
-  vertical-align: top;
-  box-sizing: border-box;
-  padding: 20px;
-}
-
-table.main2 {
-  border-collapse: separate;
-  mso-table-lspace: 0pt;
-  mso-table-rspace: 0pt;
-  width: 100%;
-}
-
-td.td-second {
-  font-family: sans-serif;
-  font-size: 14px;
-  vertical-align: top;
-
+.card-regards {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .content {
@@ -97,33 +62,6 @@ td.td-second {
   margin: 0 auto;
   max-width: 580px;
   padding: 10px;
-}
-
-
-.numberOtp-wrapper {
-  padding: 12px 0px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.numberOtp {
-  color: #101828;
-  font-weight: 700;
-  font-size: 16px;
-}
-
-p.text {
-  font-size: 12px;
-  font-weight: 400;
-  margin: 0;
-  margin-bottom: 40px;
-}
-
-span.text-greeting {
-  color: black;
-  font-weight: bold
 }
 
 .card{
@@ -173,11 +111,22 @@ b{
 .margin-bottom{
   margin-bottom:25px;
 }
+.card-point {
+  display: flex;
+  align-items: center;
+}
+
+.card-point img {
+  padding-right: 10px;
+  width: 24px;
+  height: 24px;
+}
+
 button{
   background-color: #1041B7;
   color: white;
   border-radius: 12px;
-  padding: 12px;
+  padding: 10px;
   border : 0;
 }
 .point-number,.block{
@@ -192,17 +141,9 @@ button{
   margin-top: 10px;
   text-align: center;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-p.footer-help {
-  margin: 0;
-  padding-bottom: 6px;
-}
-
-span.footer-support {
-  color: rgb(78, 78, 250);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
 }
 
 .footer-bg {
