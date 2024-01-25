@@ -49,8 +49,13 @@ p.text {
   line-height: 1.5;
 }
 
+a {
+  color: #1041B7;
+}
+
 .footer-bg {
   background-color: #1041B7;
+  width: 500px;
   text-align: center;
   margin-top: 50px;
   padding: 2px 0;
