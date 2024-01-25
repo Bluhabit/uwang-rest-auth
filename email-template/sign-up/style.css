@@ -1,55 +1,56 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
 
 @media only screen and (max-width: 620px) {
-  body {
-    font-family: 'Inter', sans-serif;
-  }
-  .body-style {
-    background-color: #f6f6f6;
-    font-family: sans-serif;
-    -webkit-font-smoothing: antialiased;
-    font-size: 14px;
-    line-height: 1.4;
-    margin: 0;
-    padding: 0;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-  }
+    body {
+        font-family: 'Inter', sans-serif;
+    }
 
-  img .logo {
-    max-width: 100%;
-    height: auto
-  }
+    .body-style {
+        background-color: #f6f6f6;
+        font-family: sans-serif;
+        -webkit-font-smoothing: antialiased;
+        font-size: 14px;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    img .logo {
+        max-width: 100%;
+        height: auto
+    }
 }
 
 .numberOtp-wrapper {
-  align-items: left;
+    align-items: left;
 }
 
 .title-otp {
-  padding-bottom: 10px;
-  font-weight: 600;
-  font-size: 24px;
+    padding-bottom: 10px;
+    font-weight: 600;
+    font-size: 24px;
 }
 
 .numberOtp {
-  color: #1041B7;
-  font-weight: 700;
-  font-size: 24px;
-  font-family: 'Inter', sans-serif;
+    color: #1041B7;
+    font-weight: 700;
+    font-size: 24px;
+    font-family: 'Inter', sans-serif;
 }
 
 p.text {
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  margin-bottom: 18px;
-  line-height: 1.5;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    margin-bottom: 18px;
+    line-height: 1.5;
 }
 
 .footer-bg {
-  background-color: #1041B7;
-  padding: 2px 0;
-  color: #fff;
-  font-weight: 700;
+    background-color: #1041B7;
+    padding: 2px 0;
+    color: #fff;
+    font-weight: 700;
 }
