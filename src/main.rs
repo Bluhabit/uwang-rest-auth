@@ -136,14 +136,15 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 pub async fn index(
     _: Data<AppState>
 ) -> HttpResponse {
+    let mut mail = Email::new("triandamai@gmail.com".to_string(), "Trian".to_string());
 
-    let mail = Email::new("triandamai@gmail.com".to_string(),"Trian".to_string())
-        .send_otp_sign_in_basic(
-            serde_json::json!({
+    mail.send_otp_sign_up_basic(serde_json::json!({
+        "subject":"[Uwang] - Konfirmasi OTP",
+        "otp":"1234"
+    })).await.unwrap();
+    // mail.send_welcoming_user(serde_json::json!({
+    //     "subject":"Selamat bergabung di Uwang!"
+    // })).await.unwrap();
 
-            })
-        )
-        .await
-        .unwrap();
-    HttpResponse::Ok().body(mail)
+    HttpResponse::Ok().body("hhe")
 }

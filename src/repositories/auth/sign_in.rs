@@ -60,7 +60,6 @@ impl SignInRepository {
         let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
         let session_id = RedisUtil::new(uuid.as_str()).create_key_otp_sign_in();
 
-
         let mut sign_in_attempt: i32 = redis_connection
             .unwrap()
             .get(&sign_in_attempt_key)
@@ -85,8 +84,9 @@ impl SignInRepository {
                 "Akun kamu terkunci untuk sementara.".to_string(),
             ));
         }
+        let verify_password = bcrypt::verify(password, &data_user.password);
 
-        if bcrypt::verify(password, &data_user.password).is_err() {
+        if !verify_password.unwrap() {
             sign_in_attempt = sign_in_attempt + 1;
             let redis_connection = self.cache.get_connection();
             let _: RedisResult<String> = redis_connection
@@ -204,23 +204,24 @@ impl SignInRepository {
         }
         let credential = credential.unwrap();
 
+        //not valid update redis
+        if attempt >= 4 {
+            //update user status
+            //delete from redis
+            let mut model = credential.into_active_model();
+            model.status = Set(UserStatus::Locked);
+            let _ = model.update(&self.db).await;
+            return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba otp 3 kali.".to_string()));
+        }
+
         if !request_otp.eq(otp) {
-            //not valid update redis
-            if attempt >= 4 {
-                //update user status
-                //delete from redis
-                let mut model = credential.into_active_model();
-                model.status = Set(UserStatus::Locked);
-                let _ = model.update(&self.db).await;
-                return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba otp 3 kali.".to_string()));
-            }
 
             attempt = attempt + 1;
             let redis_connection = self.cache.get_connection();
             let _: RedisResult<String> = redis_connection
                 .unwrap()
                 .hset_multiple(
-                    session_id, &[
+                    redis_key, &[
                         (common::constant::REDIS_KEY_OTP_ATTEMPT, attempt)
                     ],
                 );

@@ -21,6 +21,7 @@ pub struct Email {
 const FORGOT_PASSWORD_OTP:&str = "forgot-password";
 const SIGN_IN_BASIC_OTP:&str="sign-in-basic-otp";
 const SIGN_UP_BASIC_OTP:&str="sign-up-basic-otp";
+const WELCOMING_USER:&str="welcoming-user";
 impl Email {
     pub fn new(
         to: String,
@@ -82,7 +83,7 @@ impl Email {
         data:serde_json::Value
     ) -> Result<String, ErrorResponse> {
         self.send_by_mail_send(
-            "Rahasia - OTP",
+            "[Uwang] - Konfirmasi OTP",
             SIGN_UP_BASIC_OTP,
             data,
         ).await
@@ -123,6 +124,17 @@ impl Email {
         ).await
     }
 
+    pub async fn send_welcoming_user(
+        &self,
+        data: serde_json::Value
+    ) -> Result<String, ErrorResponse> {
+        self.send_by_mail_send(
+            "Selamat bergabung di Uwang!",
+            WELCOMING_USER,
+            data,
+        ).await
+    }
+
     async fn send_by_mail_send(
         &self,
         subject: &str,
@@ -133,6 +145,7 @@ impl Email {
         handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs")).expect("Panic forgot");
         handlebars.register_template_string("fraud-activity", include_str!("./templates/fraud-activity.hbs")).expect("Panic fraud");
         handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs")).expect("Panic sign in");
+        handlebars.register_template_string("welcoming-user", include_str!("./templates/welcoming-user.hbs")).expect("Panic welcoming");
         handlebars.register_template_string("sign-up-basic-otp", include_str!("./templates/sign-up-basic-otp.hbs")).expect("Panic sign up");
         handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs")).expect("Panic style");
         handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs")).expect("Panic base");

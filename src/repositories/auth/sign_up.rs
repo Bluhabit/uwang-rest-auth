@@ -59,6 +59,7 @@ impl SignUpRepository {
             id: Set(uuid.to_string()),
             email: Set(email.to_string()),
             full_name: Set("n/a".to_string()),
+            username: Set("trian".to_string()),
             password: Set(hash_password.unwrap()),
             status: Set(UserStatus::WaitingConfirmation),
             auth_provider: Set(AuthProvider::Basic),
