@@ -8,10 +8,9 @@ use sea_orm::ActiveValue::Set;
 use crate::{AppState, common};
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
-use crate::common::utils::check_account_status_active_user;
-use crate::entity::{user_credential, user_verification};
+use crate::common::utils::check_account_user_status_active;
+use crate::entity::{user_credential};
 use crate::models::auth::OtpRedisModel;
-use crate::models::utils::create_user_verification;
 
 #[derive(Debug, Clone)]
 pub struct ForgotPasswordRepository {
@@ -45,25 +44,13 @@ impl ForgotPasswordRepository {
             return Err(ErrorResponse::bad_request(400, "Akun dengan email tersebut tidak ditemukan [2]".to_string()));
         }
 
-        let check_status = check_account_status_active_user(&user.unwrap());
+        let check_status = check_account_user_status_active(&user.unwrap());
         if check_status.is_err() {
             return Err(check_status.unwrap_err());
         }
         Ok(check_status.unwrap())
     }
 
-    pub async fn create_user_verification(
-        &self,
-        user: user_credential::Model,
-    ) -> Result<user_verification::Model, ErrorResponse> {
-        let verification = create_user_verification(user);
-
-        let user_verification = verification.insert(&self.db).await;
-        if user_verification.is_err() {
-            return Err(ErrorResponse::unauthorized("".to_string()));
-        }
-        Ok(user_verification.unwrap())
-    }
 
     pub async fn save_otp_forgot_password_to_redis(
         &mut self,
@@ -98,6 +85,7 @@ impl ForgotPasswordRepository {
             otp: otp.to_string(),
             user_id: user_id.to_string(),
             session_id: verification_id.to_string(),
+            attempt: "".to_string(),
         };
         Ok(data)
     }
@@ -143,6 +131,7 @@ impl ForgotPasswordRepository {
             user_id: user_id.unwrap().to_string(),
             otp: otp.unwrap().to_string(),
             session_id: session_key,
+            attempt: "".to_string(),
         };
         Ok(data)
     }

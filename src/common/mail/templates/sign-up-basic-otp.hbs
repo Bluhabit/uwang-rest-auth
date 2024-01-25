@@ -1,35 +1,129 @@
-{{#> base}}
-    <div class="header">
-        <img src="https://storage.bluhabit.id/assets/logo-uwang.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=OZVLVBYU7VKT2ECPDM8H%2F20231226%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231226T131758Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJPWlZMVkJZVTdWS1QyRUNQRE04SCIsImV4cCI6MTcwMzYwNTkwNiwicGFyZW50IjoiYmx1aGFiaXQifQ.XeShptmdFwXY6MrA8TVt-M4GfRgI5uC7lsXMaR8XgOvpxV7Yyi8KJig3o655h3wlURryLnGBs1RpsrToN1t3Fw&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=8cf3886103c295bc756364ea926af2d9d6d01ac97933e80ec0b464a13ad646b3" class="logo" />
-    </div>
-    <p>Halo {{name}}</p>
-    <p class="text">
-        Terima kasih telah mendaftar di Uwang! Untuk
-        menyelesaikan proses pendaftaran, kami memerlukan
-        verifikasi menggunakan kode OTP (One-Time Password)
-        berikut
-    </p>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>{{subject}}</title>
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
 
-    <div class="numberOtp-wrapper">{{otp_code}}</div>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+        }
 
-    <p class="text">
-        Mohon jangan berikan kode ini kepada siapapun,
-        termasuk tim dukungan kami. Kode ini hanya berlaku
-        untuk anda dan akan kedaluwarsa dalam 5 menit.
-    </p>
-    <p class="text">
-        Kunjungi halaman pendaftaran di aplikasi Uwang dan
-        gunakan kode OTP ini untuk mengatur ulang kata sandi
-        akun Anda.
-    </p>
-    <p class="text">
-        Jika Anda tidak merasa melakukan permintaan ini,
-        silakan abaikan email ini. Pastikan akun Anda tetap
-        aman dengan tidak memberikan informasi pribadi kepada
-        pihak lain.
-    </p>
-    <p class="text">
-        Salam hangat, <br />
-        <span class="text-greeting">Uwang</span>
-    </p>
-{{/base}}
+        header h1 {
+            text-align: left;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 12px;
+            margin-bottom: 18px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #1041B7;
+            font-weight: 600;
+        }
+
+        .text-bold {
+            font-weight: bold;
+            font-weight: 500;
+        }
+
+        .logo {
+            margin: 0 auto;
+            width: 100px;
+            margin-top: 30px;
+        }
+
+        .konfirmation-page {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+        }
+
+        .wrapper {
+            margin-top: 20px;
+            padding: 10px 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding-top: 7px;
+        }
+
+        .footer p {
+            font-size: 12px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .footer p:first-child {
+            background-color: #E7ECF8;
+            padding: 16px;
+        }
+
+        .footer p:last-child {
+            background-color: #1041B7;
+            padding: 10px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .konfirmation-page {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .konfirmation-page {
+                width: 85%;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .konfirmation-page {
+                width: 80%;
+            }
+        }
+    </style>
+<body>
+<main>
+    <section class="logo">
+        <img src="https://bluhabit.id/assets/img/logo-uwang.png" alt="logo-uwang">
+    </section>
+    <section class="konfirmation-page">
+        <div class="wrapper">
+            <header>
+                <h1>Konfirmasi Kode OTP</h1>
+            </header>
+            <p>Halo sobat Uwang,</p>
+            <p>Untuk melanjutkan proses pembuatan akun kamu, harap gunakan kode OTP berikut:</p>
+            <h2>{{otp}}</h2>
+            <p>Kode akan kedaluwarsa dalam 5 menit.</p>
+            <p>
+                    <span class="text-bold">
+                        Mohon jangan berikan kode ini kepada siapapun, termasuk tim kami.
+                    </span>
+            </p>
+            <p>Jika kamu tidak melakukan pendaftaran ini, mohon abaikan emali ini demi keamanan data diri Anda.
+                Untuk
+                bantuan, hubungi <a href="">support@uwang.id.</a></p>
+            <p>Salam hangat, <br> <span class="text-bold">Uwang</span></p>
+        </div>
+        <footer class="footer">
+            <p>Ini adalah email otomatis. Mohon untuk tidak membalas email ini.</p>
+            <p>Uwang &#169; 2024</p>
+        </footer>
+    </section>
+</main>
+</body>
+</html>
