@@ -66,6 +66,14 @@ pub enum ReportType {
     User,
 }
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "user_gender")]
+pub enum UserGender {
+    #[sea_orm(string_value = "FEMALE")]
+    Female,
+    #[sea_orm(string_value = "MALE")]
+    Male,
+}
+#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "user_status")]
 pub enum UserStatus {
     #[sea_orm(string_value = "ACTIVE")]

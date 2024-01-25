@@ -6,7 +6,7 @@ use validator::Validate;
 use crate::AppState;
 use crate::common::response::{BaseResponse, ErrorResponse};
 use crate::common::utils::get_readable_validation_message;
-use crate::models::auth::{ResendOtpSignUpBasicRequest, SignUpBasicRequest, VerifyOtpSignUpBasicRequest};
+use crate::models::auth::{CompleteProfileSignUpBasicRequest, ResendOtpSignUpBasicRequest, SignUpBasicRequest, VerifyOtpSignUpBasicRequest};
 use crate::repositories::auth::sign_up::SignUpRepository;
 
 pub async fn sign_up_basic(
@@ -49,10 +49,7 @@ pub async fn verify_otp_sign_up_basic(
 
     let sign_up_repository = SignUpRepository::init(&state);
     let redis_otp = sign_up_repository
-        .verify_otp_sign_up(
-            &body.session_id,
-            &body.otp,
-        )
+        .verify_otp_sign_up(&body.session_id, &body.otp)
         .await;
     if redis_otp.is_err() {
         return Err(redis_otp.unwrap_err());
@@ -88,6 +85,25 @@ pub async fn resend_otp_sign_up_basic(
     Ok(web::Json(BaseResponse::success(
         200,
         Some(resend_otp.unwrap()),
+        "Berhasil melakukan pendaftaran".to_string())
+    ))
+}
+
+pub async fn complete_profile_sign_up(
+    state: web::Data<AppState>,
+    body: web::Json<CompleteProfileSignUpBasicRequest>,
+) -> Result<impl Responder, ErrorResponse> {
+    let validate_body = body.validate();
+    if validate_body.is_err() {
+        let message = get_readable_validation_message(validate_body.err());
+        return Err(ErrorResponse::bad_request(400, message));
+    }
+
+
+
+    Ok(web::Json(BaseResponse::success(
+        200,
+        Some(body),
         "Berhasil melakukan pendaftaran".to_string())
     ))
 }

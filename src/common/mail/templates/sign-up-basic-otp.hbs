@@ -24,11 +24,12 @@
 
             img .logo {
                 max-width: 100%;
-                height: auto
+                height: auto;
             }
         }
 
         .numberOtp-wrapper {
+            display: flex;
             align-items: left;
         }
 
@@ -97,9 +98,6 @@
                 width: 100%;
               " width="100%">
                     <tr>
-                        <div style="padding: 20px 0px; text-align: center;">
-                            <img src="https://bluhabit.id/assets/img/logo-uwang.png" class="logo" alt="logo n'lingko" />
-                        </div>
                         <td class="wrapper" style="
                     font-family: sans-serif;
                     font-size: 14px;
@@ -118,6 +116,9 @@
                           font-size: 14px;
                           vertical-align: top;
                         " valign="top">
+                                        <div style="padding-bottom: 30px; padding-top: 20px; text-align: center;">
+                                            <img src="https://bluhabit.id/assets/img/logo-uwang.png" class="logo" alt="logo n'lingko" />
+                                        </div>
                                         <h1 class="title-otp">Konfirmasi Kode OTP</h1>
                                         <p class="text">Halo sobat Uwang,</p>
                                         <p class="text">
@@ -126,13 +127,14 @@
                                         </p>
 
                                         <div class="numberOtp-wrapper">
-                                            <h3 class="numberOtp">{{otp}}</h3>
+                                            <h3 class="numberOtp">4444</h3>
                                         </div>
                                         <p class="text">
                                             Kode akan kedaluwarsa dalam 5 menit.
                                         </p>
                                         <p class="text">
-                                            <span style="font-weight: 500;">Mohon jangan berikan kode ini kepada siapapun, termasuk tim kami.</span>
+                                                <span style="font-weight: 500;">Mohon jangan berikan kode ini kepada
+                                                    siapapun, termasuk tim kami.</span>
 
                                         </p>
                                         <p class="text">
@@ -151,12 +153,11 @@
                         </td>
                     </tr>
                 </table>
-
                 <div class="footer" style="
-                clear: both;
-                text-align: center;
-                width: 100%;
-              ">
+                                        clear: both;
+                                        text-align: center;
+                                        width: 100%;
+                                      ">
                     <p class="text" style="padding: 20px; background-color: #E7ECF8; margin: 0;">
                         Ini adalah email otomatis. Mohon untuk tidak membalas email ini.
                     </p>
@@ -169,4 +170,5 @@
     </tr>
 </table>
 </body>
+
 </html>

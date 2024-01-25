@@ -16,9 +16,13 @@ pub fn get_readable_validation_message(
         Some(validation) => validation.field_errors().into_iter()
             .map(|(_field, b)| {
                 let message: String = b.into_iter().map(|er| {
+                    if er.code.eq("dob"){
+                        return "Format tanggal lahir belum sesuai.".to_string()
+                    }
+
                     let message = match er.clone().message {
                         Some(val) => val.to_string(),
-                        None => String::from("<no message>")
+                        None => er.code.to_string()
                     };
                     return format!("{} ", message);
                 }).collect();

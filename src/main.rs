@@ -15,7 +15,7 @@ use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
 use crate::routes::auth::forgot_password::{forgot_password, set_new_password, verify_otp_forgot_password};
 use crate::routes::auth::sign_in::{resend_otp_sign_in_basic, sign_in_basic, sign_in_google, verify_otp_sign_in_basic};
-use crate::routes::auth::sign_up::{resend_otp_sign_up_basic, sign_up_basic, verify_otp_sign_up_basic};
+use crate::routes::auth::sign_up::{complete_profile_sign_up, resend_otp_sign_up_basic, sign_up_basic, verify_otp_sign_up_basic};
 use crate::routes::index::hello;
 use crate::routes::user::user::complete_profile;
 
@@ -119,6 +119,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/sign-up-basic", web::post().to(sign_up_basic))
             .route("/sign-up-basic/verify-otp", web::post().to(verify_otp_sign_up_basic))
             .route("/sign-up-basic/resend-otp",web::post().to(resend_otp_sign_up_basic))
+            .route("/sign-up-basic/complete-profile",web::post().to(complete_profile_sign_up))
 
             .route("/sign-in-basic", web::post().to(sign_in_basic))
             .route("/sign-in-basic/verify-otp", web::post().to(verify_otp_sign_in_basic))

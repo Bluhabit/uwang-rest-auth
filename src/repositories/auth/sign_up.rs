@@ -12,7 +12,7 @@ use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
 use crate::entity::{user_credential, user_profile};
-use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
+use crate::entity::sea_orm_active_enums::{AuthProvider, UserGender, UserStatus};
 use crate::entity::user_credential::Model;
 use crate::models::user::UserCredentialResponse;
 
@@ -58,9 +58,11 @@ impl SignUpRepository {
         let prepare_data = user_credential::ActiveModel {
             id: Set(uuid.to_string()),
             email: Set(email.to_string()),
-            full_name: Set("n/a".to_string()),
             username: Set("n/a".to_string()),
             password: Set("n/a".to_string()),
+            full_name: Set("n/a".to_string()),
+            date_of_birth:Set(None),
+            gender: Set(None),
             status: Set(UserStatus::WaitingConfirmation),
             auth_provider: Set(AuthProvider::Basic),
             created_at: Set(current_date),
@@ -284,5 +286,16 @@ impl SignUpRepository {
             })
         ).await;
         Ok(session_id.to_string())
+    }
+    /// == end resend otp
+    /// == complete profile
+    pub async fn complete_profile(
+        &mut self,
+        session_id:&str,
+        full_name:&str,
+        date_of_birth:&str
+    )->Result<user_credential::Model,ErrorResponse>{
+
+        Err(ErrorResponse::create(200,"".to_string()))
     }
 }
