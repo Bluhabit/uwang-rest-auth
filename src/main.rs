@@ -7,12 +7,10 @@ use actix_web::error::InternalError;
 use actix_web::http::StatusCode;
 use actix_web::web::Data;
 use dotenv::dotenv;
-use handlebars::Handlebars;
 use redis::Client;
 use sea_orm::{Database, DatabaseConnection};
-use serde_json::json;
-use crate::common::mail::email::Email;
 
+use crate::common::mail::email::Email;
 use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
 use crate::routes::auth::forgot_password::{forgot_password, set_new_password, verify_otp_forgot_password};
@@ -138,10 +136,15 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 pub async fn index(
     _: Data<AppState>
 ) -> HttpResponse {
+    let mut mail = Email::new("triandamai@gmail.com".to_string(), "Trian".to_string());
 
-    let mail = Email::new("triandamai@gmail.com".to_string(),"Trian".to_string())
-        .send_otp_sign_in_basic("Trian","1234")
-        .await
-        .unwrap();
-    HttpResponse::Ok().body(mail)
+    mail.send_otp_sign_up_basic(serde_json::json!({
+        "subject":"[Uwang] - Konfirmasi OTP",
+        "otp":"1234"
+    })).await.unwrap();
+    // mail.send_welcoming_user(serde_json::json!({
+    //     "subject":"Selamat bergabung di Uwang!"
+    // })).await.unwrap();
+
+    HttpResponse::Ok().body("hhe")
 }

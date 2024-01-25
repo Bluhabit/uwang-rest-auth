@@ -22,7 +22,7 @@ pub async fn sign_up_basic(
         return Err(ErrorResponse::bad_request(400, message));
     }
 
-    let mut sign_up_repository = SignUpRepository::init(&state);
+    let sign_up_repository = SignUpRepository::init(&state);
 
     let user_credential = sign_up_repository.create_user_credential(
         &body.email,
@@ -36,27 +36,6 @@ pub async fn sign_up_basic(
     let user = user_credential.unwrap();
 
     //begin save otp then send to user
-    let user_verification = sign_up_repository
-        .create_user_verification(user.clone())
-        .await;
-
-    if user_verification.is_err() {
-        return Err(user_verification.unwrap_err());
-    }
-    let verification_data = user_verification.unwrap();
-
-    let redis_otp = sign_up_repository
-        .save_otp_sign_up_to_redis(
-            verification_data.id.as_str(),
-            verification_data.code.as_str(),
-            verification_data.user_id.unwrap().as_str(),
-        ).await;
-
-    if redis_otp.is_err() {
-        return Err(redis_otp.unwrap_err());
-    }
-    let otp_data = redis_otp.unwrap();
-
 
     let send_email = mail::email::Email::new(
         user.email.clone(),
@@ -64,8 +43,9 @@ pub async fn sign_up_basic(
     );
 
     let sended = send_email.send_otp_sign_up_basic(
-        user.full_name.as_str(),
-        otp_data.otp.as_str(),
+       serde_json::json!({
+
+       })
     ).await;
 
     if sended.is_err(){
@@ -76,7 +56,7 @@ pub async fn sign_up_basic(
     //send email otp
     Ok(web::Json(BaseResponse::created(
         201,
-        Some(verification_data.id),
+        Some(""),
         "Registrasi berhasil, silahkan ceh email Anda".to_string(),
     )))
 }

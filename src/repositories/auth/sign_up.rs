@@ -11,11 +11,10 @@ use crate::common::jwt::encode;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
 use crate::common::utils::{create_session_from_user, create_session_redis_from_user};
-use crate::entity::{user_credential, user_verification};
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
+use crate::entity::user_credential;
 use crate::entity::user_credential::Model;
 use crate::models::auth::{OtpRedisModel, SessionRedisModel};
-use crate::models::utils::create_user_verification;
 
 #[derive(Debug, Clone)]
 pub struct SignUpRepository {
@@ -60,6 +59,7 @@ impl SignUpRepository {
             id: Set(uuid.to_string()),
             email: Set(email.to_string()),
             full_name: Set("n/a".to_string()),
+            username: Set("trian".to_string()),
             password: Set(hash_password.unwrap()),
             status: Set(UserStatus::WaitingConfirmation),
             auth_provider: Set(AuthProvider::Basic),
@@ -75,19 +75,95 @@ impl SignUpRepository {
         }
         Ok(saved_data.unwrap())
     }
-
-    pub async fn create_user_verification(
-        &self,
-        user: Model,
-    ) -> Result<user_verification::Model, ErrorResponse> {
-        let verification = create_user_verification(user);
-
-        let user_verification = verification.insert(&self.db).await;
-        if user_verification.is_err() {
-            return Err(ErrorResponse::unauthorized("".to_string()));
-        }
-        Ok(user_verification.unwrap())
-    }
+    // pub async fn verify_otp_sign_in(
+    //     &self,
+    //     session_id: &str,
+    //     request_otp: &str,
+    // ) -> Result<UserCredentialResponse, ErrorResponse> {
+    //     //obtain connection redis from main.rs via AppState
+    //     let redis_connection = self.cache
+    //         .get_connection();
+    //     if redis_connection.is_err() {
+    //         return Err(ErrorResponse::bad_request(
+    //             1001,
+    //             "Kami mengalami kendala menghubungi sumber data".to_string(),
+    //         ));
+    //     }
+    //     //create key for otp sign in
+    //     // return  (dev):otp:sign-in:(uuid)
+    //     let redis_key = RedisUtil::new(session_id)
+    //         .create_key_otp_sign_in();
+    //
+    //     let session_redis: RedisResult<HashMap<String, String>> = redis_connection
+    //         .unwrap()
+    //         .hgetall(redis_key.clone());
+    //     if session_redis.is_err() {
+    //         return Err(ErrorResponse::unauthorized("Otp tidak valid atau sudah kadaluarsa [1]".to_string()));
+    //     }
+    //     let current_date = chrono::Utc::now().naive_local();
+    //     const DEFAULT_OTP_ATTEMPT: String = String::from("0");
+    //     const DEFAULT_STRING: String = String::from("");
+    //     let redis = session_redis.unwrap();
+    //
+    //     let otp = redis.get(common::constant::REDIS_KEY_OTP)
+    //         .unwrap_or(&DEFAULT_STRING)
+    //         .as_str();
+    //     let user_id = redis.get(common::constant::REDIS_KEY_USER_ID)
+    //         .unwrap_or(&DEFAULT_STRING)
+    //         .as_str();
+    //     let mut attempt: i16 = redis.get(common::constant::REDIS_KEY_OTP_ATTEMPT)
+    //         .unwrap_or(&DEFAULT_OTP_ATTEMPT)
+    //         .parse()
+    //         .unwrap_or(0);
+    //     let mut valid_from: i64 = redis.get(common::constant::REDIS_KEY_VALID_FROM)
+    //         .unwrap_or(&current_date.timestamp().to_string())
+    //         .parse()
+    //         .unwrap_or(current_date.timestamp());
+    //
+    //     if request_otp.eq(otp) {
+    //         //not valid update redis
+    //         if attempt >= 4 && valid_from >= current_date.timestamp() {
+    //             //set new data
+    //             return Err(ErrorResponse::unauthorized("Anda sudah mencoba otp 3 kali, silahkan coba 1 jam lagi".to_string()));
+    //         }
+    //
+    //         attempt = (attempt + 1);
+    //         if attempt == 3 {
+    //             valid_from = (chrono::Utc::now() + Duration::hours(1)).timestamp()
+    //         }
+    //
+    //         let _ = redis_connection.unwrap()
+    //             .hset_multiple(redis_key.clone(), &[
+    //                 (common::constant::REDIS_KEY_OTP, otp),
+    //                 (common::constant::REDIS_KEY_USER_ID, user_id),
+    //                 (common::constant::REDIS_KEY_OTP_ATTEMPT, attempt.to_string().as_str()),
+    //                 (common::constant::REDIS_KEY_VALID_FROM, valid_from.to_string().as_str())
+    //             ]);
+    //         return Err(ErrorResponse::unauthorized("Otp tidak valid atau sudah kadaluarsa [2]".to_string()));
+    //     }
+    //
+    //     let user = user_credential::Entity::find_by_id(user_id.clone())
+    //         .one(&self.db)
+    //         .await;
+    //
+    //     if user.is_err() {
+    //
+    //         return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [1]".to_string()));
+    //     }
+    //     let credential = user.unwrap();
+    //     if credential.is_none() {
+    //         return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [2]".to_string()));
+    //     }
+    //
+    //     let profile = user_profile::Entity::find()
+    //         .filter(user_profile::Column::UserId.eq(user_id.clone()))
+    //         .all(&self.db)
+    //         .await
+    //         .unwrap_or(vec![]);
+    //
+    //     Ok(data)
+    // }
+    //
 
     pub async fn save_otp_sign_up_to_redis(
         &mut self,
@@ -108,7 +184,7 @@ impl SignUpRepository {
             ]);
 
         let _: RedisResult<_> = self.cache
-            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP);
+            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_UP);
 
         if saved.is_err() {
             return Err(ErrorResponse::unauthorized(
@@ -119,6 +195,7 @@ impl SignUpRepository {
             otp: otp.to_string(),
             user_id: user_id.to_string(),
             session_id: verification_id.to_string(),
+            attempt: "".to_string(),
         };
         Ok(data)
     }
@@ -163,6 +240,7 @@ impl SignUpRepository {
             user_id: user_id.unwrap().to_string(),
             otp: otp.unwrap().to_string(),
             session_id: session_key,
+            attempt: "".to_string(),
         };
         Ok(data)
     }
