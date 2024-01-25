@@ -19,11 +19,12 @@
 
   img .logo {
     max-width: 100%;
-    height: auto
+    height: auto;
   }
 }
 
 .numberOtp-wrapper {
+  display: flex;
   align-items: left;
 }
 
