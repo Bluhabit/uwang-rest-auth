@@ -32,9 +32,7 @@ pub struct SignInGoogleRequest {
 #[derive(Debug,Clone, Serialize, Deserialize, Validate)]
 pub struct SignUpBasicRequest {
     #[validate(email(code="regex",message="Email tidak valid."))]
-    pub email: String,
-    #[validate(length(min = 6,message="Password tidak boleh kosong, minimal 6 karakter."))]
-    pub password: String
+    pub email: String
 }
 
 #[derive(Debug,Clone, Serialize, Deserialize, Validate)]
@@ -43,6 +41,12 @@ pub struct VerifyOtpSignUpBasicRequest {
     pub session_id: String,
     #[validate(length(min = 4))]
     pub otp: String,
+}
+
+#[derive(Debug,Clone, Serialize, Deserialize, Validate)]
+pub struct ResendOtpSignUpBasicRequest {
+    #[validate(length(min = 10,message="Session Id tidak boleh kosong, minimal 10 karakter."))]
+    pub session_id: String
 }
 
 #[derive(Debug,Clone, Serialize, Deserialize, Validate)]

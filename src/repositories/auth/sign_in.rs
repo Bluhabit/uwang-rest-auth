@@ -7,17 +7,15 @@ use serde_json::Value;
 use uuid::Uuid;
 
 use crate::{AppState, common};
-use crate::common::constant::REDIS_KEY_USER_ID;
-use crate::common::jwt::encode;
 use crate::common::mail::email;
 use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
-use crate::common::utils::{check_account_user_status_active, create_session_from_user, create_session_redis_from_user};
+use crate::common::utils::check_account_user_status_active;
 use crate::entity::{user_credential, user_profile};
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
-use crate::entity::user_credential::{Model as UserCredential, Model};
-use crate::models::auth::{SessionRedisModel, SignInGoogleRequest};
+use crate::entity::user_credential::Model;
+use crate::models::auth::SignInGoogleRequest;
 use crate::models::user::UserCredentialResponse;
 
 #[derive(Debug, Clone)]
@@ -57,9 +55,9 @@ impl SignInRepository {
         }
 
         let data_user = user_credential.unwrap();
-        let uuid = Uuid::new_v4().to_string();
+        let session_id = Uuid::new_v4().to_string();
         let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
-        let session_id = RedisUtil::new(uuid.as_str()).create_key_otp_sign_in();
+        let redis_key = RedisUtil::new(session_id.as_str()).create_key_otp_sign_in();
 
         let mut sign_in_attempt: i32 = redis_connection
             .unwrap()
@@ -70,16 +68,6 @@ impl SignInRepository {
             .unwrap_or(0);
 
         if data_user.status == UserStatus::Locked {
-            let email = email::Email::new(
-                data_user.email,
-                data_user.full_name.clone(),
-            );
-
-            let _ = email.send_otp_sign_in_basic(
-                serde_json::json!({
-
-                })
-            ).await;
             return Err(ErrorResponse::bad_request(
                 1007,
                 "Akun kamu terkunci untuk sementara.".to_string(),
@@ -92,12 +80,25 @@ impl SignInRepository {
             let redis_connection = self.cache.get_connection();
             let _: RedisResult<String> = redis_connection
                 .unwrap()
-                .set(sign_in_attempt_key, format!("{}", sign_in_attempt).as_str());
+                .set(sign_in_attempt_key.clone(), format!("{}", sign_in_attempt).as_str());
 
             if sign_in_attempt >= 3 {
                 let mut user_active_model = data_user.clone().into_active_model();
                 user_active_model.status = Set(UserStatus::Locked);
                 let _ = user_active_model.update(&self.db).await;
+                let redis_connection = self.cache.get_connection();
+                let _: RedisResult<String> = redis_connection
+                    .unwrap()
+                    .del(sign_in_attempt_key);
+
+                let email = email::Email::new(
+                    data_user.email,
+                    data_user.full_name.clone(),
+                );
+
+                let _ = email.send_otp_sign_in_basic(
+                    serde_json::json!({})
+                ).await;
             }
             return Err(ErrorResponse::bad_request(
                 1007,
@@ -117,14 +118,14 @@ impl SignInRepository {
         let redis_connection = self.cache.get_connection();
         let saved_session_otp: Result<String, redis::RedisError> = redis_connection
             .unwrap()
-            .hset_multiple(session_id.clone(), &[
+            .hset_multiple(redis_key.clone(), &[
                 (common::constant::REDIS_KEY_OTP, generate_otp.as_str()),
                 (common::constant::REDIS_KEY_USER_ID, data_user.id.as_str()),
                 (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
             ]);
 
         let _: RedisResult<_> = self.cache
-            .expire::<String, String>(session_id.clone(), common::constant::TTL_OTP_SIGN_IN);
+            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_IN);
 
         if saved_session_otp.is_err() {
             return Err(ErrorResponse::unauthorized(
@@ -143,16 +144,15 @@ impl SignInRepository {
 
             })
         ).await;
-        Ok(uuid)
+        Ok(session_id)
     }
     /// == end sign in email & password
-    /// ==verify otp sign in
+    /// == verify otp sign in
     pub async fn verify_otp_sign_in(
         &self,
         session_id: &str,
         request_otp: &str,
     ) -> Result<Option<Value>, ErrorResponse> {
-        //obtain connection redis from main.rs via AppState
         let redis_connection = &self.cache
             .get_connection();
         if redis_connection.is_err() {
@@ -161,7 +161,7 @@ impl SignInRepository {
                 "Kami mengalami kendala menghubungi sumber data".to_string(),
             ));
         }
-        //create key for otp sign in
+
         let redis_key = RedisUtil::new(session_id)
             .create_key_otp_sign_in();
 
@@ -228,8 +228,11 @@ impl SignInRepository {
             .await
             .unwrap_or(vec![]);
 
-        let save_session = self
-            .save_user_session_to_redis(&credential)
+        let save_session = common::utils::save_user_session_to_redis(
+            self.cache.get_connection().unwrap(),
+            &redis_key,
+            &credential,
+        )
             .await;
 
         let credential_response = UserCredentialResponse::from_credential_with_profile(
@@ -238,8 +241,11 @@ impl SignInRepository {
         );
         let save_session = save_session.unwrap();
 
-        let token = save_session.token;
+        let _: RedisResult<String> = self.cache.get_connection()
+            .unwrap()
+            .del(redis_key);
 
+        let token = save_session.token;
         Ok(Some(
             serde_json::json!({
                 "token":token,
@@ -249,7 +255,7 @@ impl SignInRepository {
     }
     /// == end verify otp sign in
     /// == resend otp
-    pub async fn resend_otp(
+    pub async fn resend_otp_sign_in_basic(
         &self,
         session_id: &str,
     ) -> Result<String, ErrorResponse> {
@@ -279,12 +285,12 @@ impl SignInRepository {
         }
         let default_string = String::from("");
         let get_session = get_session.unwrap();
-        let user_id = get_session.get(REDIS_KEY_USER_ID)
+        let user_id = get_session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
         let find_user = user_credential::Entity::find_by_id(user_id)
             .one(&self.db)
             .await;
-        if find_user.is_err(){
+        if find_user.is_err() {
             return Err(ErrorResponse::bad_request(
                 1001,
                 "Gagal membuat ulang otp, sesi tidak valid.".to_string(),
@@ -292,7 +298,7 @@ impl SignInRepository {
         }
         let user = find_user.unwrap();
 
-        if user.is_none(){
+        if user.is_none() {
             return Err(ErrorResponse::bad_request(
                 1001,
                 "Gagal membuat ulang otp, sesi tidak valid.".to_string(),
@@ -389,7 +395,6 @@ impl SignInRepository {
         }
 
         let user_credential = check_status.unwrap();
-
         if user_credential.auth_provider != AuthProvider::Google {
             return Err(
                 ErrorResponse::bad_request(
@@ -403,16 +408,20 @@ impl SignInRepository {
             .all(&self.db)
             .await
             .unwrap_or(vec![]);
-
-        let saved_session = self.save_user_session_to_redis(
-            &user_credential
+        let uuid = uuid::Uuid::new_v4();
+        let redis_key = RedisUtil::new(uuid.clone().to_string().as_str())
+            .create_key_session_sign_in();
+        let save_session = common::utils::save_user_session_to_redis(
+            self.cache.get_connection().unwrap(),
+            &redis_key,
+            &user_credential,
         ).await;
 
-        if saved_session.is_err() {
-            let err = saved_session;
+        if save_session.is_err() {
+            let err = save_session;
             return Err(err.unwrap_err());
         }
-        let saved_session = saved_session.unwrap();
+        let saved_session = save_session.unwrap();
 
         let credential_response = UserCredentialResponse::from_credential_with_profile(
             user_credential,
@@ -424,44 +433,5 @@ impl SignInRepository {
             "token":token,
             "credential":credential_response
         })));
-    }
-
-    /// == end sign in google
-
-    async fn save_user_session_to_redis(
-        &self,
-        user: &UserCredential,
-    ) -> Result<SessionRedisModel, ErrorResponse> {
-        let connection = self.cache
-            .get_connection();
-        if connection.is_err() {
-            return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
-        }
-
-        let session_key = RedisUtil::new(user.id.as_str())
-            .create_key_session_sign_in();
-
-
-        let generate_token = encode(user.id.clone());
-        if generate_token.is_none() {
-            return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
-        }
-
-        let _: Result<String, redis::RedisError> = connection
-            .unwrap()
-            .hset_multiple(
-                session_key,
-                &*create_session_redis_from_user(
-                    user.clone(),
-                    generate_token
-                        .clone()
-                        .unwrap(),
-                ),
-            );
-
-        Ok(create_session_from_user(
-            user.to_owned(),
-            generate_token.unwrap(),
-        ))
     }
 }
