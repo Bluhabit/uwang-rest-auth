@@ -99,8 +99,14 @@ pub async fn complete_profile_sign_up(
         return Err(ErrorResponse::bad_request(400, message));
     }
 
+    let mut sign_up_repository = SignUpRepository::init(&state);
+    let complete_profile = sign_up_repository
+        .complete_profile(&body.session_id, &body.full_name, &body.date_of_birth)
+        .await;
 
-
+    if complete_profile.is_err(){
+        return Err(complete_profile.unwrap_err());
+    }
     Ok(web::Json(BaseResponse::success(
         200,
         Some(body),
