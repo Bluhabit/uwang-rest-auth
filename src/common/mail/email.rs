@@ -3,10 +3,10 @@ use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor};
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::transport::smtp::response::Response;
+use mail_send::Credentials as Creds;
 use mail_send::mail_builder::headers::address::Address;
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::SmtpClientBuilder;
-use mail_send::Credentials as Creds;
 
 use crate::common::mail::config::Config;
 use crate::common::response::ErrorResponse;
@@ -18,6 +18,9 @@ pub struct Email {
     config: Config,
 }
 
+const FORGOT_PASSWORD_OTP:&str = "forgot-password";
+const SIGN_IN_BASIC_OTP:&str="sign-in-basic-otp";
+const SIGN_UP_BASIC_OTP:&str="sign-up-basic-otp";
 impl Email {
     pub fn new(
         to: String,
@@ -76,52 +79,47 @@ impl Email {
 
     pub async fn send_otp_sign_up_basic(
         &self,
-        name: &str,
-        otp_code: &str,
+        data:serde_json::Value
     ) -> Result<String, ErrorResponse> {
-        let data = serde_json::json!({
-            "name": name,
-            "otp_code": otp_code
-        });
+        self.send_by_mail_send(
+            "Rahasia - OTP",
+            SIGN_UP_BASIC_OTP,
+            data,
+        ).await
+    }
+
+    pub async fn send_otp_fraud_activity(
+        &self,
+        data:serde_json::Value
+    ) -> Result<String, ErrorResponse> {
 
         self.send_by_mail_send(
             "Rahasia - OTP",
-            "sign-up-basic-otp",
-            &data,
+            SIGN_IN_BASIC_OTP,
+            data,
         ).await
     }
 
     pub async fn send_otp_sign_in_basic(
         &self,
-        name: &str,
-        otp_code: &str,
+        data:serde_json::Value,
     ) -> Result<String, ErrorResponse> {
-        let data = serde_json::json!({
-            "name": name,
-            "otp_code": otp_code
-        });
 
         self.send_by_mail_send(
             "Rahasia - OTP",
-            "sign-in-basic-otp",
-            &data,
+            SIGN_IN_BASIC_OTP,
+            data,
         ).await
     }
 
     pub async fn send_otp_forgot_password_basic(
         &self,
-        name: &str,
-        otp_code: &str,
+        data: serde_json::Value
     ) -> Result<String, ErrorResponse> {
-        let data = serde_json::json!({
-            "name": name,
-            "otp_code": otp_code
-        });
-
         self.send_by_mail_send(
             "Rahasia - OTP",
-            "forgot-password",
-            &data,
+            FORGOT_PASSWORD_OTP,
+            data,
         ).await
     }
 
@@ -129,10 +127,11 @@ impl Email {
         &self,
         subject: &str,
         template_name: &str,
-        data: &serde_json::Value,
+        data: serde_json::Value,
     ) -> Result<String, ErrorResponse> {
         let mut handlebars = Handlebars::new();
         handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs")).expect("Panic forgot");
+        handlebars.register_template_string("fraud-activity", include_str!("./templates/fraud-activity.hbs")).expect("Panic fraud");
         handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs")).expect("Panic sign in");
         handlebars.register_template_string("sign-up-basic-otp", include_str!("./templates/sign-up-basic-otp.hbs")).expect("Panic sign up");
         handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs")).expect("Panic style");
@@ -156,7 +155,7 @@ impl Email {
             .unwrap();
 
 
-        let send = connection
+        let _ = connection
             .send(message)
             .await
             .unwrap();

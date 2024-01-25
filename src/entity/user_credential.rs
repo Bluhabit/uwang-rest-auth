@@ -13,6 +13,7 @@ pub struct Model {
     #[sea_orm(unique)]
     pub email: String,
     pub full_name: String,
+    pub username: String,
     pub password: String,
     pub status: UserStatus,
     pub auth_provider: AuthProvider,
@@ -27,8 +28,6 @@ pub enum Relation {
     Admin,
     #[sea_orm(has_many = "super::admin_access::Entity")]
     AdminAccess,
-    #[sea_orm(has_many = "super::device::Entity")]
-    Device,
     #[sea_orm(has_many = "super::group::Entity")]
     Group,
     #[sea_orm(has_many = "super::group_member::Entity")]
@@ -41,16 +40,12 @@ pub enum Relation {
     PostComment,
     #[sea_orm(has_many = "super::post_mention::Entity")]
     PostMention,
-    #[sea_orm(has_many = "super::user_login::Entity")]
-    UserLogin,
     #[sea_orm(has_many = "super::user_notification::Entity")]
     UserNotification,
     #[sea_orm(has_many = "super::user_profile::Entity")]
     UserProfile,
     #[sea_orm(has_many = "super::user_push_token::Entity")]
     UserPushToken,
-    #[sea_orm(has_many = "super::user_verification::Entity")]
-    UserVerification,
 }
 
 impl Related<super::admin::Entity> for Entity {
@@ -62,12 +57,6 @@ impl Related<super::admin::Entity> for Entity {
 impl Related<super::admin_access::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::AdminAccess.def()
-    }
-}
-
-impl Related<super::device::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Device.def()
     }
 }
 
@@ -107,12 +96,6 @@ impl Related<super::post_mention::Entity> for Entity {
     }
 }
 
-impl Related<super::user_login::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserLogin.def()
-    }
-}
-
 impl Related<super::user_notification::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::UserNotification.def()
@@ -128,12 +111,6 @@ impl Related<super::user_profile::Entity> for Entity {
 impl Related<super::user_push_token::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::UserPushToken.def()
-    }
-}
-
-impl Related<super::user_verification::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserVerification.def()
     }
 }
 

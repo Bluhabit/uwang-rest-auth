@@ -25,19 +25,21 @@ pub fn get_readable_validation_message(
     }
 }
 
-pub fn check_account_status_active_user(
+pub fn check_account_user_status_active(
     credential: &user_credential::Model
 ) -> Result<user_credential::Model, ErrorResponse> {
     match credential.status {
         UserStatus::Active => Ok(credential.clone()),
-        UserStatus::Inactive => Err(ErrorResponse::unauthorized("Akun Anda tidak aktif".to_string())),
-        UserStatus::Suspended => Err(ErrorResponse::unauthorized("Akun Anda ditangguhkan, anda tidak dapat melanjutkan proses ini".to_string())),
+        UserStatus::Locked => Err(ErrorResponse::unauthorized("Akun Anda dibatasi untuk sementara.".to_string())),
+        UserStatus::Inactive => Err(ErrorResponse::unauthorized("Akun Anda tidak aktif.".to_string())),
+        UserStatus::Suspended => Err(ErrorResponse::unauthorized("Akun Anda ditangguhkan, anda tidak dapat melanjutkan proses ini.".to_string())),
         UserStatus::WaitingConfirmation => {
             if credential.auth_provider == AuthProvider::Google {
                 return Ok(credential.clone());
             }
-            return Err(ErrorResponse::unauthorized("Akun Anda belum terkonfirmasi, silahkan cek email untuk mengkonfirmasi".to_string()));
+            return Err(ErrorResponse::unauthorized("Akun Anda belum terkonfirmasi, silahkan cek email untuk mengkonfirmasi.".to_string()));
         }
+
     }
 }
 

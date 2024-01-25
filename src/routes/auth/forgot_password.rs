@@ -26,27 +26,6 @@ pub async fn forgot_password(
     }
     let user = find_user_by_email.unwrap();
 
-    let user_verification =
-        forgot_password_repository
-            .create_user_verification(user.clone())
-            .await;
-
-    if user_verification.is_err() {
-        return Err(user_verification.unwrap_err());
-    }
-    let verification = user_verification.unwrap();
-
-    let redis_otp = forgot_password_repository
-        .save_otp_forgot_password_to_redis(
-            verification.id.as_str(),
-            verification.code.as_str(),
-            user.id.as_str(),
-        )
-        .await;
-    if redis_otp.is_err() {
-        return Err(redis_otp.unwrap_err());
-    }
-    let session = redis_otp.unwrap();
     //sending email
     let email = email::Email::new(
         user.email,
@@ -54,13 +33,14 @@ pub async fn forgot_password(
     );
 
     let _ = email.send_otp_forgot_password_basic(
-        &user.full_name,
-        &verification.code,
+        serde_json::json!({
+
+        })
     ).await;
     //all process success
     Ok(web::Json(BaseResponse::success(
         200,
-        Some(session.session_id),
+        Some(""),
         "Kode OTP sudah dikirim ke email Anda ".to_string(),
     )))
 }
