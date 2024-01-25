@@ -1,6 +1,8 @@
+use redis::{Commands, Connection};
 use validator::ValidationErrors;
 
 use crate::common;
+use crate::common::jwt::encode;
 use crate::common::response::ErrorResponse;
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential;
@@ -67,3 +69,33 @@ pub fn create_session_from_user(
         token,
     }
 }
+
+pub async fn save_user_session_to_redis(
+    mut connection:Connection,
+    key:&str,
+    user: &user_credential::Model
+) -> Result<SessionRedisModel, ErrorResponse> {
+
+
+    let generate_token = encode(user.id.clone());
+    if generate_token.is_none() {
+        return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
+    }
+
+    let _: Result<String, redis::RedisError> = connection
+        .hset_multiple(
+            key,
+            &*create_session_redis_from_user(
+                user.clone(),
+                generate_token
+                    .clone()
+                    .unwrap(),
+            ),
+        );
+
+    Ok(create_session_from_user(
+        user.to_owned(),
+        generate_token.unwrap(),
+    ))
+}
+

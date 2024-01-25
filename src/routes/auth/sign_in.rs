@@ -78,7 +78,7 @@ pub async fn resend_otp_sign_in_basic(
 
     let sign_in_repository = SignInRepository::init(&state);
     let resend_otp = sign_in_repository
-        .resend_otp(body.session_id.as_str())
+        .resend_otp_sign_in_basic(body.session_id.as_str())
         .await;
 
     if resend_otp.is_err(){
