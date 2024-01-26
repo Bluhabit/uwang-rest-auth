@@ -5,125 +5,173 @@
     <style type="text/css">
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
+        @media only screen and (max-width: 620px) {
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+
+            .body-style {
+                background-color: #f6f6f6;
+                font-family: sans-serif;
+                -webkit-font-smoothing: antialiased;
+                font-size: 14px;
+                line-height: 1.4;
+                margin: 0;
+                padding: 0;
+                -ms-text-size-adjust: 100%;
+                -webkit-text-size-adjust: 100%;
+            }
+
+            img .logo {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        .numberOtp-wrapper {
+            display: flex;
+            align-items: left;
+        }
+
+        .title-otp {
+            padding-bottom: 10px;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        .numberOtp {
+            color: #1041B7;
+            font-weight: 700;
+            font-size: 24px;
             font-family: 'Inter', sans-serif;
         }
 
-        header h1 {
-            text-align: left;
-            font-weight: 600;
-            font-size: 24px;
-        }
-
-        p {
+        p.text {
+            font-family: 'Inter', sans-serif;
             font-size: 12px;
+            font-weight: 400;
             margin-bottom: 18px;
             line-height: 1.5;
-            font-weight: 400;
         }
 
-        h2 {
-            font-size: 24px;
-            color: #1041B7;
-            font-weight: 600;
-        }
-
-        .text-bold {
-            font-weight: bold;
-            font-weight: 500;
-        }
-
-        .logo {
-            margin: 0 auto;
-            width: 100px;
-            margin-top: 30px;
-        }
-
-        .konfirmation-page {
-            width: 50%;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 12px;
-        }
-
-        .wrapper {
-            margin-top: 20px;
-            padding: 10px 20px;
-        }
-
-        .footer {
-            text-align: center;
-            padding-top: 7px;
-        }
-
-        .footer p {
-            font-size: 12px;
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .footer p:first-child {
-            background-color: #E7ECF8;
-            padding: 16px;
-        }
-
-        .footer p:last-child {
+        .footer-bg {
             background-color: #1041B7;
-            padding: 10px;
+            padding: 2px 0;
             color: #fff;
             font-weight: 700;
         }
-
-        @media (max-width: 768px) {
-            .konfirmation-page {
-                width: 90%;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .konfirmation-page {
-                width: 85%;
-            }
-        }
-
-        @media (max-width: 375px) {
-            .konfirmation-page {
-                width: 80%;
-            }
-        }
     </style>
-<body>
-<main>
-    <section class="logo">
-        <img src="https://bluhabit.id/assets/img/logo-uwang.png" alt="logo-uwang">
-    </section>
-    <section class="konfirmation-page">
-        <div class="wrapper">
-            <header>
-                <h1>Konfirmasi Kode OTP</h1>
-            </header>
-            <p>Halo sobat Uwang,</p>
-            <p>Untuk melanjutkan proses pembuatan akun kamu, harap gunakan kode OTP berikut:</p>
-            <h2>{{otp}}</h2>
-            <p>Kode akan kedaluwarsa dalam 5 menit.</p>
-            <p>
-                    <span class="text-bold">
-                        Mohon jangan berikan kode ini kepada siapapun, termasuk tim kami.
-                    </span>
-            </p>
-            <p>Jika kamu tidak melakukan pendaftaran ini, mohon abaikan emali ini demi keamanan data diri Anda.
-                Untuk
-                bantuan, hubungi <a href="">support@uwang.id.</a></p>
-            <p>Salam hangat, <br> <span class="text-bold">Uwang</span></p>
-        </div>
-        <footer class="footer">
-            <p>Ini adalah email otomatis. Mohon untuk tidak membalas email ini.</p>
-            <p>Uwang &#169; 2024</p>
-        </footer>
-    </section>
-</main>
+<body class="body-style">
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body" style="
+        border-collapse: separate;
+        background-color: #f6f6f6;
+        width: 100%;
+      " width="100%" bgcolor="#f6f6f6">
+    <tr>
+        <td style="
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            vertical-align: top;
+          " valign="top">
+            &nbsp;
+        </td>
+        <td class="container" style="
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            display: block;
+            max-width: 580px;
+            padding: 10px;
+            width: 580px;
+            margin: 0 auto;
+          " width="580" valign="top">
+            <div class="content" style="
+              box-sizing: border-box;
+              display: block;
+              margin: 0 auto;
+              max-width: 580px;
+              padding: 10px;
+            ">
+                <table role="presentation" class="main" style="
+                border-collapse: separate;
+                background: #ffffff;
+                border-top-right-radius: 12px;
+                border-top-left-radius: 12px;
+                display: flex;
+                width: 500px ;
+              " >
+                    <tr>
+                        <td class="wrapper" style="
+                    font-family: sans-serif;
+                    font-size: 14px;
+                    vertical-align: top;
+                    box-sizing: border-box;
+                    padding: 20px;
+                    margin-bottom: 0px;
+                  " valign="top">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="
+                      border-collapse: separate;
+                      width: 100%;
+                    " width="100%">
+                                <tr>
+                                    <td style="
+                          font-family: sans-serif;
+                          font-size: 14px;
+                          vertical-align: top;
+                        " valign="top">
+                                        <div style="padding-bottom: 30px; padding-top: 20px; text-align: center;">
+                                            <img src="https://bluhabit.id/assets/img/logo-uwang.png" class="logo"
+                                                 alt="logo n'lingko" />
+                                        </div>
+                                        <h1 class="title-otp">Konfirmasi Kode OTP</h1>
+                                        <p class="text">Halo sobat Uwang,</p>
+                                        <p class="text">
+                                            Untuk melanjutkan proses pembuatan akun kamu, harap gunakan kode OTP
+                                            berikut:
+                                        </p>
+
+                                        <div class="numberOtp-wrapper">
+                                            <h3 class="numberOtp">4444</h3>
+                                        </div>
+                                        <p class="text">
+                                            Kode akan kedaluwarsa dalam 5 menit.
+                                        </p>
+                                        <p class="text">
+                                                <span style="font-weight: 500;">Mohon jangan berikan kode ini kepada
+                                                    siapapun, termasuk tim kami.</span>
+
+                                        </p>
+                                        <p class="text">
+                                            Jika kamu tidak melakukan pendaftaran ini, mohon abaikan emali ini demi
+                                            keamanan data diri Anda.
+                                            Untuk
+                                            bantuan, hubungi <a href="">support@uwang.id.</a>
+                                        </p>
+                                        <p class="text">
+                                            Salam hangat, <br />
+                                            <span style="color: black; font-weight: 500">Uwang</span>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <div class="footer" style="
+                                                clear: both;
+                                                text-align: center;
+                                                width: 100%;
+                                              ">
+                    <p class="text" style="padding: 10px; background-color: #E7ECF8; margin: 0; width: 480px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                        Ini adalah email otomatis. Mohon untuk tidak membalas email ini.
+                    </p>
+                </div>
+                <div class="footer-bg">
+                    <p>Uwang &#169; 2024</p>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
 </body>
+
 </html>

@@ -22,6 +22,15 @@ impl MigrationTrait for Migration {
         manager
             .create_type(
                 Type::create()
+                    .as_enum(UserGender::Table)
+                    .values(UserGender::iter().skip(1))
+                    .to_owned()
+            )
+            .await?;
+
+        manager
+            .create_type(
+                Type::create()
                     .as_enum(AuthProvider::Table)
                     .values(AuthProvider::iter().skip(1))
                     .to_owned()
@@ -100,9 +109,16 @@ impl MigrationTrait for Migration {
                             .unique_key()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(UserCredential::FullName).string().not_null())
-                    .col(ColumnDef::new(UserCredential::Username).string().not_null())
                     .col(ColumnDef::new(UserCredential::Password).string().not_null())
+                    .col(ColumnDef::new(UserCredential::Username).string().not_null())
+                    .col(ColumnDef::new(UserCredential::FullName).string().not_null())
+                    .col(ColumnDef::new(UserCredential::DateOfBirth)
+                        .date()
+                        .null()
+                    )
+                    .col(ColumnDef::new(UserCredential::Gender)
+                        .enumeration(UserGender::Table, UserGender::iter().skip(1))
+                        .null())
                     .col(
                         ColumnDef::new(UserCredential::Status)
                             .enumeration(UserStatus::Table, UserStatus::iter().skip(1))
@@ -700,11 +716,13 @@ enum UserCredential {
     Table,
     Id,
     Email,
+    Username,
     Password,
     AuthProvider,
     Status,
     FullName,
-    Username,
+    DateOfBirth,
+    Gender,
     CreatedAt,
     UpdatedAt,
     Deleted,
@@ -843,6 +861,7 @@ enum PostComment {
     UpdatedAt,
     Deleted,
 }
+
 #[derive(DeriveIden)]
 enum Group {
     Table,
@@ -949,6 +968,15 @@ pub enum UserStatus {
     SUSPENDED,
     #[iden = "WAITING_CONFIRMATION"]
     WAITING,
+}
+
+#[derive(Iden, EnumIter)]
+pub enum UserGender {
+    Table,
+    #[iden = "MALE"]
+    MALE,
+    #[iden = "FEMALE"]
+    FEMALE,
 }
 
 #[derive(Iden, EnumIter)]
