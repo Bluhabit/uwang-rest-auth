@@ -1,13 +1,17 @@
 use std::collections::HashMap;
+use std::str::FromStr;
+use bcrypt::DEFAULT_COST;
+use chrono::NaiveDate;
 
 use redis::{Client, Commands, RedisResult};
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter};
 use sea_orm::ActiveValue::Set;
 use serde_json::Value;
 use uuid::Uuid;
 
 use crate::{AppState, common};
 use crate::common::mail::email;
+use crate::common::mail::email::Email;
 use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
@@ -61,7 +65,7 @@ impl SignUpRepository {
             username: Set("n/a".to_string()),
             password: Set("n/a".to_string()),
             full_name: Set("n/a".to_string()),
-            date_of_birth:Set(None),
+            date_of_birth: Set(None),
             gender: Set(None),
             status: Set(UserStatus::WaitingConfirmation),
             auth_provider: Set(AuthProvider::Basic),
@@ -187,7 +191,6 @@ impl SignUpRepository {
 
         let save_session = common::utils::save_user_session_to_redis(
             self.cache.get_connection().unwrap(),
-            &redis_key,
             &credential,
         ).await;
 
@@ -289,13 +292,139 @@ impl SignUpRepository {
     }
     /// == end resend otp
     /// == complete profile
-    pub async fn complete_profile(
+    pub async fn complete_profile_sign_up(
         &mut self,
-        session_id:&str,
-        full_name:&str,
-        date_of_birth:&str
-    )->Result<user_credential::Model,ErrorResponse>{
+        session_id: &str,
+        full_name: &str,
+        date_of_birth: &str,
+        gender: &UserGender,
+    ) -> Result<UserCredentialResponse, ErrorResponse> {
+        let redis_connection = &self.cache
+            .get_connection();
+        if redis_connection.is_err() {
+            return Err(ErrorResponse::bad_request(
+                1001,
+                "Kami mengalami kendala menghubungi sumber data".to_string(),
+            ));
+        }
+        let redis_util = RedisUtil::new(session_id);
+        let redis_key = redis_util.create_key_session_sign_in();
 
-        Err(ErrorResponse::create(200,"".to_string()))
+        let redis_connection = self.cache
+            .get_connection();
+        let session: RedisResult<HashMap<String, String>> = redis_connection
+            .unwrap()
+            .hgetall(redis_key);
+        if session.is_err() {
+            return Err(ErrorResponse::bad_request(1002, "Sesi tidak valid.".to_string()));
+        }
+
+        let default_string = String::from("");
+        let session = session.unwrap();
+        let user_id = session.get(common::constant::REDIS_KEY_USER_ID)
+            .unwrap_or(&default_string);
+
+        let find_user = user_credential::Entity::find_by_id(user_id)
+            .one(&self.db)
+            .await;
+
+        if find_user.is_err() {
+            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
+        }
+        let user = find_user.unwrap();
+        if user.is_none() {
+            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
+        }
+        let mut user = user.unwrap().into_active_model();
+        let date = NaiveDate::from_str(date_of_birth).unwrap();
+
+        user.date_of_birth = Set(Some(date));
+        user.full_name = Set(full_name.to_string());
+        user.gender = Set(Some(gender.to_owned()));
+
+        let updated_result = user.update(&self.db).await;
+        if updated_result.is_err() {
+            return Err(ErrorResponse::bad_request(1000, "Gagal melengkapi profil.".to_string()));
+        }
+        let updated_result = updated_result.unwrap();
+
+        let response = UserCredentialResponse::from_credential(updated_result);
+
+        Ok(response)
+    }
+    /// == end complete profile
+    /// == set password
+    pub async fn set_password_sign_up(
+        &mut self,
+        session_id: &str,
+        new_password: &str,
+    ) -> Result<UserCredentialResponse, ErrorResponse> {
+        let redis_connection = &self.cache
+            .get_connection();
+        if redis_connection.is_err() {
+            return Err(ErrorResponse::bad_request(
+                1001,
+                "Kami mengalami kendala menghubungi sumber data".to_string(),
+            ));
+        }
+        let redis_util = RedisUtil::new(session_id);
+        let redis_key = redis_util.create_key_session_sign_in();
+
+        let redis_connection = self.cache
+            .get_connection();
+        let session: RedisResult<HashMap<String, String>> = redis_connection
+            .unwrap()
+            .hgetall(redis_key);
+        if session.is_err() {
+            return Err(ErrorResponse::bad_request(1002, "Sesi tidak valid.".to_string()));
+        }
+
+        let default_string = String::from("");
+        let session = session.unwrap();
+        let user_id = session.get(common::constant::REDIS_KEY_USER_ID)
+            .unwrap_or(&default_string);
+
+        let find_user = user_credential::Entity::find_by_id(user_id)
+            .one(&self.db)
+            .await;
+
+        if find_user.is_err() {
+            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
+        }
+        let user = find_user.unwrap();
+        if user.is_none() {
+            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
+        }
+        let mut user = user.unwrap().into_active_model();
+
+        let hash_password = bcrypt::hash(new_password, DEFAULT_COST);
+        if hash_password.is_err() {
+            return Err(ErrorResponse::bad_request(1000, "Gagal membuat password.".to_string()));
+        }
+        if hash_password.is_ok() {
+            return Err(ErrorResponse::bad_request(1000, "Gagal membuat password.".to_string()));
+        }
+        let password = hash_password.unwrap();
+        user.password = Set(password);
+
+        let updated_result = user.update(&self.db).await;
+        if updated_result.is_err() {
+            return Err(ErrorResponse::bad_request(1000, "Gagal melengkapi profil.".to_string()));
+        }
+
+
+        let updated_result = updated_result.unwrap();
+        let mail_data = updated_result.clone();
+        let mail = Email::new(
+            mail_data.email,
+            mail_data.full_name,
+        );
+        let _ = mail.send_welcoming_user(serde_json::json!({
+
+        })).await;
+
+        let response = UserCredentialResponse::from_credential(updated_result);
+
+        Ok(response)
     }
 }

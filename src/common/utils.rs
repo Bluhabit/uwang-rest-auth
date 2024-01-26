@@ -3,6 +3,7 @@ use validator::ValidationErrors;
 
 use crate::common;
 use crate::common::jwt::encode;
+use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential;
@@ -76,10 +77,10 @@ pub fn create_session_from_user(
 
 pub async fn save_user_session_to_redis(
     mut connection:Connection,
-    key:&str,
     user: &user_credential::Model
 ) -> Result<SessionRedisModel, ErrorResponse> {
-
+    let redis_util = RedisUtil::new(&user.id.clone());
+    let redis_key = redis_util.create_key_session_sign_in();
 
     let generate_token = encode(user.id.clone());
     if generate_token.is_none() {
@@ -88,7 +89,7 @@ pub async fn save_user_session_to_redis(
 
     let _: Result<String, redis::RedisError> = connection
         .hset_multiple(
-            key,
+            redis_key,
             &*create_session_redis_from_user(
                 user.clone(),
                 generate_token

@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationError};
 
@@ -54,6 +53,8 @@ pub struct ResendOtpSignUpBasicRequest {
 pub struct CompleteProfileSignUpBasicRequest {
     #[validate(length(min = 10, message = "Session id tidak boleh kosong, minimal 10 karakter."))]
     pub session_id: String,
+    #[validate(length(min = 1, message = "Gender tidak boleh kosong."))]
+    pub gender: String,
     #[validate(length(min = 3, message = "Nama lengkap tidak boleh kosong, minimal 3 karakter."))]
     pub full_name: String,
     #[validate(length(min = 2, message = "Tanggal lahir tidak boleh kosong."), custom(function= "validate_date_of_birth",code="dob"))]

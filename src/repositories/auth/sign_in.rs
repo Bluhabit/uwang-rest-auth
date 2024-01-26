@@ -230,7 +230,6 @@ impl SignInRepository {
 
         let save_session = common::utils::save_user_session_to_redis(
             self.cache.get_connection().unwrap(),
-            &redis_key,
             &credential,
         )
             .await;
@@ -413,7 +412,6 @@ impl SignInRepository {
             .create_key_session_sign_in();
         let save_session = common::utils::save_user_session_to_redis(
             self.cache.get_connection().unwrap(),
-            &redis_key,
             &user_credential,
         ).await;
 
