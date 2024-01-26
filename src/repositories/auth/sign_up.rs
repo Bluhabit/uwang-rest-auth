@@ -1,8 +1,7 @@
 use std::collections::HashMap;
-use std::str::FromStr;
+
 use bcrypt::DEFAULT_COST;
 use chrono::NaiveDate;
-
 use redis::{Client, Commands, RedisResult};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter};
 use sea_orm::ActiveValue::Set;
@@ -160,16 +159,20 @@ impl SignUpRepository {
             .await;
 
         if user.is_err() {
-            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [1]".to_string()));
+            return Err(ErrorResponse::unauthorized("Otp tidak valid atau sudah kadaluarsa.".to_string()));
         }
         let credential = user.unwrap();
         if credential.is_none() {
-            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [2]".to_string()));
+            return Err(ErrorResponse::unauthorized("Otp tidak valid atau sudah kadaluarsa.".to_string()));
         }
         let credential = credential.unwrap();
 
+        if credential.status != UserStatus::WaitingConfirmation {
+            return Err(ErrorResponse::unauthorized("Akun sudah terverifikasi, silahkan masuk menggunakan akun Kamu.".to_string()));
+        }
+
         if attempt_otp_sign_up >= 4 {
-            return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba otp 3 kali.".to_string()));
+            return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba otp sebanyak 3 kali.".to_string()));
         }
 
         if !request_otp.eq(otp) {
@@ -182,7 +185,13 @@ impl SignUpRepository {
                 );
             return Err(ErrorResponse::unauthorized("Kode OTP Salah.".to_string()));
         }
-
+        let mut  credential = credential.into_active_model();
+        credential.status = Set(UserStatus::Active);
+        let credential = credential.update(&self.db).await;
+        if credential.is_err(){
+            return Err(ErrorResponse::unauthorized("Gagal memverifikasi akun, code [1000].".to_string()));
+        }
+        let credential = credential.unwrap();
         let profile = user_profile::Entity::find()
             .filter(user_profile::Column::UserId.eq(user_id))
             .all(&self.db)
@@ -335,8 +344,12 @@ impl SignUpRepository {
         if user.is_none() {
             return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
         }
-        let mut user = user.unwrap().into_active_model();
-        let date = NaiveDate::from_str(date_of_birth).unwrap();
+        let user = user.unwrap();
+        if user.status == UserStatus::WaitingConfirmation{
+            return Err(ErrorResponse::unauthorized("Kamu belum melakukan verifikasi.".to_string()));
+        }
+        let mut user = user.into_active_model();
+        let date = NaiveDate::parse_from_str(date_of_birth,"%d-%m-%Y").unwrap();
 
         user.date_of_birth = Set(Some(date));
         user.full_name = Set(full_name.to_string());
@@ -395,13 +408,17 @@ impl SignUpRepository {
         if user.is_none() {
             return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
         }
-        let mut user = user.unwrap().into_active_model();
+        let user = user.unwrap();
+        if user.status == UserStatus::WaitingConfirmation{
+            return Err(ErrorResponse::unauthorized("Kamu belum melakukan verifikasi.".to_string()));
+        }
 
+        let mut user = user.into_active_model();
         let hash_password = bcrypt::hash(new_password, DEFAULT_COST);
         if hash_password.is_err() {
             return Err(ErrorResponse::bad_request(1000, "Gagal membuat password.".to_string()));
         }
-        if hash_password.is_ok() {
+        if !hash_password.is_ok() {
             return Err(ErrorResponse::bad_request(1000, "Gagal membuat password.".to_string()));
         }
         let password = hash_password.unwrap();

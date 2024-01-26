@@ -9,6 +9,7 @@ use crate::common::utils::get_readable_validation_message;
 use crate::entity::sea_orm_active_enums::UserGender;
 use crate::models::auth::{CompleteProfileSignUpBasicRequest, ResendOtpSignUpBasicRequest, SetPasswordSignUpBasicRequest, SignUpBasicRequest, VerifyOtpSignUpBasicRequest};
 use crate::repositories::auth::sign_up::SignUpRepository;
+use crate::request_filter::jwt_middleware::JwtMiddleware;
 
 pub async fn sign_up_basic(
     state: web::Data<AppState>,
@@ -92,6 +93,7 @@ pub async fn resend_otp_sign_up_basic(
 
 pub async fn complete_profile_sign_up(
     state: web::Data<AppState>,
+    jwt: JwtMiddleware,
     body: web::Json<CompleteProfileSignUpBasicRequest>,
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
@@ -105,7 +107,7 @@ pub async fn complete_profile_sign_up(
     }
     let mut sign_up_repository = SignUpRepository::init(&state);
     let complete_profile = sign_up_repository
-        .complete_profile_sign_up(&body.session_id, &body.full_name, &body.date_of_birth, &gender)
+        .complete_profile_sign_up(&jwt.session_id, &body.full_name, &body.date_of_birth, &gender)
         .await;
 
     if complete_profile.is_err() {
@@ -120,6 +122,7 @@ pub async fn complete_profile_sign_up(
 
 pub async fn set_password_sign_up(
     state: web::Data<AppState>,
+    jwt: JwtMiddleware,
     body: web::Json<SetPasswordSignUpBasicRequest>,
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
@@ -129,7 +132,7 @@ pub async fn set_password_sign_up(
     }
     let mut sign_up_repository = SignUpRepository::init(&state);
     let set_password = sign_up_repository
-        .set_password_sign_up(&body.session_id, &body.new_password)
+        .set_password_sign_up(&jwt.session_id, &body.new_password)
         .await;
     if set_password.is_err() {
         return Err(set_password.unwrap_err());

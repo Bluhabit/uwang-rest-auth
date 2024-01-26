@@ -21,6 +21,10 @@ pub fn get_readable_validation_message(
                         return "Format tanggal lahir belum sesuai.".to_string()
                     }
 
+                    if er.code.eq("gender"){
+                        return "Gender tidak sesuai.".to_string()
+                    }
+
                     let message = match er.clone().message {
                         Some(val) => val.to_string(),
                         None => er.code.to_string()

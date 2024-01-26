@@ -193,11 +193,11 @@ impl SignInRepository {
             .await;
 
         if user.is_err() {
-            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [1]".to_string()));
+            return Err(ErrorResponse::unauthorized("Otp tidak valid atau sudah kadaluarsa.".to_string()));
         }
         let credential = user.unwrap();
         if credential.is_none() {
-            return Err(ErrorResponse::unauthorized("Akun tidak ditemukan [2]".to_string()));
+            return Err(ErrorResponse::unauthorized("Otp tidak valid atau sudah kadaluarsa.".to_string()));
         }
         let credential = credential.unwrap();
 
@@ -205,7 +205,7 @@ impl SignInRepository {
             let mut model = credential.into_active_model();
             model.status = Set(UserStatus::Locked);
             let _ = model.update(&self.db).await;
-            return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba otp 3 kali.".to_string()));
+            return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba sebanyak otp 3 kali.".to_string()));
         }
 
         if !request_otp.eq(otp) {

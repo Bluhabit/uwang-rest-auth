@@ -51,13 +51,11 @@ pub struct ResendOtpSignUpBasicRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct CompleteProfileSignUpBasicRequest {
-    #[validate(length(min = 10, message = "Session id tidak boleh kosong, minimal 10 karakter."))]
-    pub session_id: String,
-    #[validate(length(min = 1, message = "Gender tidak boleh kosong."))]
+    #[validate(length(min = 1, message = "Gender tidak boleh kosong."), custom(function = "validate_gender"))]
     pub gender: String,
     #[validate(length(min = 3, message = "Nama lengkap tidak boleh kosong, minimal 3 karakter."))]
     pub full_name: String,
-    #[validate(length(min = 2, message = "Tanggal lahir tidak boleh kosong."), custom(function= "validate_date_of_birth",code="dob"))]
+    #[validate(length(min = 2, message = "Tanggal lahir tidak boleh kosong."), custom(function = "validate_date_of_birth"))]
     pub date_of_birth: String,
 }
 
@@ -69,10 +67,15 @@ fn validate_date_of_birth(date_of_birth: &str) -> Result<(), ValidationError> {
     Ok(())
 }
 
+fn validate_gender(gender: &str) -> Result<(), ValidationError> {
+    if gender.eq("M") || gender.eq("F") {
+        return Ok(());
+    }
+    Err(ValidationError::new("gender"))
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct SetPasswordSignUpBasicRequest {
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
-    pub session_id: String,
     #[validate(length(min = 8, message = "Passwrod tidak boleh kosong, minimal 8 karakter."))]
     pub new_password: String,
 }
