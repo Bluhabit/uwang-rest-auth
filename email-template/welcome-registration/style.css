@@ -60,27 +60,26 @@ td.td-second{
   font-size: 14px;
   vertical-align: top;
 }
-.logo-column {
-  text-align: left; 
-}
+
 
 .text-column {
   text-align: right;
 }
 .grid-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  grid-template-rows: 1fr; 
-  align-items: center;
+  grid-template-columns: auto auto;
+  gap: 10px; 
 }
 
-.logo-column {
-  grid-column: 1;
+.logo-column img {
+  max-width: 100%; 
+  height: auto; 
 }
 
-.text-column {
-  grid-column: 2;
+.finansial-text {
+  margin: 0; 
+  font-size: 18px; 
+  font-weight: bold;
 }
 
 .card-bottom {
@@ -89,7 +88,6 @@ td.td-second{
   padding: 10px 25px;
   display: grid;
   grid-template-columns: 1fr; 
-  grid-template-rows: auto; 
   gap: 10px;
 }
 
@@ -97,8 +95,6 @@ td.td-second{
   display: grid;
   grid-template-columns: 1fr 1fr; 
   gap: 20px;
-  justify-content: space-evenly;
-  align-items: center;
 }
 
 .content {
@@ -157,16 +153,21 @@ b{
   margin-bottom:25px;
 }
 .card-point {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
 }
 
 .card-point img {
-  padding-right: 10px;
   width: 24px;
   height: 24px;
 }
 
+.card-point p {
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  margin: 0; 
+}
 button{
   background-color: #1041B7;
   color: white;
@@ -174,12 +175,9 @@ button{
   padding: 10px;
   border : 0;
 }
-.point-number,.block{
+.point-number{
   display: block;
   direction: column
-}
-.justify-evenly{
-  justify-content:space-between
 }
 .footer {
   clear: both;
