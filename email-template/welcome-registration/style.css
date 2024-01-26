@@ -60,26 +60,24 @@ td.td-second{
   font-size: 14px;
   vertical-align: top;
 }
+.grid-container {
+  display: flex;
+}
 
+.logo-column {
+  margin-top: 10px;
+  flex: 0 0 auto; /* Set flex basis to auto to allow content to determine size */
+}
 
 .text-column {
-  text-align: right;
-}
-.grid-container {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 10px; 
+  margin-left: auto; /* Push text to the right */
 }
 
-.logo-column img {
-  max-width: 100%; 
-  height: auto; 
-}
-
+/* Additional styling for better appearance */
 .finansial-text {
-  margin: 0; 
-  font-size: 18px; 
+  font-size: 18px;
   font-weight: bold;
+  color: #333;
 }
 
 .card-bottom {
@@ -92,9 +90,19 @@ td.td-second{
 }
 
 .card-regards {
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  gap: 20px;
+  display: flex;
+  grid-template-columns: auto auto auto; /* Satu fraksi untuk setiap kolom */
+  grid-gap: 10px; /* Sesuaikan dengan ruang antar kolom */
+  align-items: center; /* Untuk membuat isi kolom berada di tengah secara vertikal */
+}
+
+.card-regards img {
+  max-width: 100%;
+  height: auto;
+}
+
+.card-regards button {
+  width: 100%;
 }
 
 .content {
@@ -119,7 +127,9 @@ td.td-second{
   flex:row;
   align-items: center;
 }
-
+.card-footer span{
+  padding-top:5px;
+}
 .text-style{
   line-height: 1.6;
 }
@@ -152,21 +162,17 @@ b{
 .margin-bottom{
   margin-bottom:25px;
 }
+
 .card-point {
-  display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+  display: flex;
+  grid-template-columns: auto auto;
 }
 
 .card-point img {
+  padding-right:15px;
+  padding-top:6px;
   width: 24px;
-  height: 24px;
-}
-
-.card-point p {
-  white-space: nowrap;
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-  margin: 0; 
+  height:24px;
 }
 button{
   background-color: #1041B7;
