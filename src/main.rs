@@ -116,7 +116,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
     cfg.route("/", web::get().to(hello));
     cfg.route("/email", web::get().to(index));
     cfg.service(
-        web::scope("/auth")
+        web::scope("/v1")
             .route("/sign-up-basic", web::post().to(sign_up_basic))
             .route("/sign-up-basic/verify-otp", web::post().to(verify_otp_sign_up_basic))
             .route("/sign-up-basic/resend-otp", web::post().to(resend_otp_sign_up_basic))
@@ -131,10 +131,6 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/forgot-password", web::post().to(forgot_password))
             .route("/forgot-password/verify-otp", web::post().to(verify_otp_forgot_password))
             .route("/forgot-password/set-password", web::post().to(set_new_password))
-    );
-    cfg.service(
-        web::scope("/user")
-            .route("/complete-profile", web::post().to(complete_profile))
     );
 
     routes::event_stream::event_stream_handler(cfg)
