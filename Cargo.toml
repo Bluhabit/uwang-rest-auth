@@ -19,7 +19,7 @@ actix-cors = "0.6.4"
 serde = { version = "1.0", features = ["derive"] }
 dotenv = "0.15.0"
 tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread"] }
-chrono = { version = "0.4.31", features = ["serde"] }
+chrono = { version = "0.4.31", features = ["serde","unstable-locales"] }
 migration = { path = "migration" }
 uuid = { version = "1.4.1", features = ["v4", "fast-rng", "macro-diagnostics"] }
 validator = { version = "0.16.1", features = ["derive"] }

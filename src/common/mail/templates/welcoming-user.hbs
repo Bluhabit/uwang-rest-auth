@@ -1,14 +1,13 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>{{subject}}</title>
-    <style type="text/css">
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
         @media only screen and (max-width: 620px) {
             * {
-                font-family: 'Plus Jakarta Sans', sans-serif;
+                font-family: 'Inter', sans-serif;
             }
-
             .body-style {
                 background-color: #f6f6f6;
                 -webkit-font-smoothing: antialiased;
@@ -20,40 +19,16 @@
                 -webkit-text-size-adjust: 100%;
             }
         }
-
-        img.logo {
-            max-width: 100%;
-            padding-top: 13px;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .column {
-            flex: 1;
-        }
-
-        .logo-column {
-            text-align: left;
-        }
-
-        .text-column {
-            text-align: right;
-        }
-
-
-        table.table-body {
-            border: 0;
+        table.table-body{
+            border :0;
             border-collapse: separate;
-            background-color: #F2F4F7;;
-            width: 100%;
+            background-color: #f6f6f6;
+            width:100%;
             mso-table-lspace: 0pt;
             mso-table-rspace: 0pt;
         }
-
-        td.td-first {
+        td.td-first{
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 14px;
             vertical-align: top;
             display: block;
@@ -62,36 +37,75 @@
             width: 580px;
             margin: 0 auto;
         }
-
-        .main {
+        table.main{
             border-collapse: separate;
             mso-table-lspace: 0pt;
             mso-table-rspace: 0pt;
-            background: white;
-            border-radius: 12px;
+            background: #ffffff;
+            border-radius: 3px;
             width: 100%;
         }
-
-        td.wrapper {
+        td.wrapper{
             font-family: sans-serif;
             font-size: 14px;
             vertical-align: top;
             box-sizing: border-box;
             padding: 20px;
         }
-
-        table.main2 {
+        table.main2{
             border-collapse: separate;
             mso-table-lspace: 0pt;
             mso-table-rspace: 0pt;
             width: 100%;
         }
-
-        td.td-second {
+        td.td-second{
             font-family: sans-serif;
             font-size: 14px;
             vertical-align: top;
+        }
+        .grid-container {
+            display: flex;
+        }
 
+        .logo-column {
+            margin-top: 10px;
+            flex: 0 0 auto; /* Set flex basis to auto to allow content to determine size */
+        }
+
+        .text-column {
+            margin-left: auto; /* Push text to the right */
+        }
+
+        /* Additional styling for better appearance */
+        .finansial-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-bottom {
+            background-color: white;
+            border-radius: 12px;
+            padding: 10px 25px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .card-regards {
+            display: flex;
+            grid-template-columns: auto auto auto; /* Satu fraksi untuk setiap kolom */
+            grid-gap: 10px; /* Sesuaikan dengan ruang antar kolom */
+            align-items: center; /* Untuk membuat isi kolom berada di tengah secara vertikal */
+        }
+
+        .card-regards img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .card-regards button {
+            width: 100%;
         }
 
         .content {
@@ -102,124 +116,86 @@
             padding: 10px;
         }
 
-
-        .numberOtp-wrapper {
-            padding: 12px 0px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-evenly;
-        }
-
-        .numberOtp {
-            color: #101828;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        p.text {
-            font-size: 12px;
-            font-weight: 400;
-            margin: 0;
-            margin-bottom: 40px;
-        }
-
-        span.text-greeting {
-            color: black;
-            font-weight: bold
-        }
-
-        .card {
+        .card{
             background-color: white;
             border-radius: 12px;
-            padding: 10px 25px;
+            padding:10px 25px;
         }
-
-        .card-title {
+        .card-title{
             font-weight: bold;
             font-size: 18px;
         }
-
-        .card-footer {
+        .card-footer{
             display: flex;
-            flex: row;
+            flex:row;
             align-items: center;
         }
-
-        .text-style {
+        .card-footer span{
+            padding-top:5px;
+        }
+        .text-style{
             line-height: 1.6;
         }
 
-        img.founder {
-            width: 24px;
+        img.founder{
+            width : 24px;
             height: 24px;
         }
-
-        .padding-right {
+        .padding-right{
             padding-right: 10px;
         }
-
-        .text-center {
+        .text-center{
             text-align: justify;
         }
-
-        .text12 {
+        .text12{
             font-size: 12px
         }
-
-        .text14 {
+        .text14{
             font-size: 14px
         }
-
-        .text18 {
+        .text18{
             font-size: 18px
         }
-
-        .bold {
+        .bold{
             font-weight: bold
         }
-
-        b {
+        b{
             color: gray;
         }
-
-        .margin-bottom {
-            margin-bottom: 25px;
+        .margin-bottom{
+            margin-bottom:25px;
         }
 
-        button {
+        .card-point {
+            display: flex;
+            grid-template-columns: auto auto;
+        }
+
+        .card-point img {
+            padding-right:15px;
+            padding-top:6px;
+            width: 24px;
+            height:24px;
+        }
+        button{
             background-color: #1041B7;
             color: white;
             border-radius: 12px;
-            padding: 12px;
-            border: 0;
+            padding: 10px;
+            border : 0;
         }
-
-        .point-number, .block {
+        .point-number{
             display: block;
             direction: column
         }
-
-        .justify-evenly {
-            justify-content: space-between
-        }
-
         .footer {
             clear: both;
             margin-top: 10px;
             text-align: center;
             width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        p.footer-help {
-            margin: 0;
-            padding-bottom: 6px;
-        }
-
-        span.footer-support {
-            color: rgb(78, 78, 250);
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
         }
 
         .footer-bg {
@@ -242,14 +218,18 @@
                             <table class="main2">
                                 <tr>
                                     <td class="td-second">
-                                        <div class="row">
-                                            <div class="column logo-column">
-                                                <img src="https://bluhabit.id/assets/img/logo-uwang.png" class="logo"/>
+                                        <div class="grid-container">
+                                            <div class="logo-column">
+                                                <img
+                                                        src="https://bluhabit.id/assets/img/logo-uwang.png"
+                                                        alt="Logo Uwang"
+                                                />
                                             </div>
-                                            <div class="column text-column">
-                                                <h3 class="finansial-text">#MELEKFINANSIAL</h3>
+                                            <div class="text-column">
+                                                <p class="finansial-text">#MELEKFINANSIAL</p>
                                             </div>
                                         </div>
+
                                         <div class="card margin-bottom">
                                             <h3 class="card-title text-18">
                                                 Selamat datang di Uwang! 🙌🏻
@@ -279,7 +259,7 @@
                                         </div>
                                         <div class="card margin-bottom">
                                             <h3 class="card-title text-18">Mengapa Uwang? 🤔</h3>
-                                            <p class="text-style text-12">
+                                            <p class="text-style text-center text-12">
                                                 Uwang lebih dari sekadar platform. ini adalah
                                                 gerbang bagi siapa pun yang ingin meningkatkan
                                                 literasi keuangan mereka dan mengambil kendali atas
@@ -296,17 +276,16 @@
                                                 berikut:
                                             </h3>
                                             <div class="point-number margin-bottom">
-                                                <div class="card-footer">
+                                                <div class="card-point">
                                                     <img
                                                             src="https://bluhabit.id/assets/img/1.png"
                                                             alt=""
-                                                            class="padding-right"
                                                     />
                                                     <p class="text-style bold text-14">
                                                         Lengkapi Personalisasi Akun
                                                     </p>
                                                 </div>
-                                                <p>
+                                                <p class="text-style text-point">
                                                     Sebelum mulai menjelajahi Uwang, lengkapi dulu
                                                     personalisasi akun kamu ya. Tenang saja, gak akan
                                                     lama kok.
@@ -314,34 +293,32 @@
                                                 <button>Lengkapi Profil</button>
                                             </div>
                                             <div class="point-number margin-bottom">
-                                                <div class="card-footer">
+                                                <div class="card-point">
                                                     <img
                                                             src="https://bluhabit.id/assets/img/2.png"
                                                             alt=""
-                                                            class="padding-right"
                                                     />
                                                     <p class="text-style bold text-14">
                                                         Jelajahi Uwang
                                                     </p>
                                                 </div>
-                                                <p>
+                                                <p class="text-style text-point">
                                                     Telusuri platform Uwang dan temukan berbagai
                                                     sumber pembelajaran yang menanti Kamu.
                                                 </p>
                                                 <button>Jelajahi Uwang</button>
                                             </div>
                                             <div class="point-number margin-bottom">
-                                                <div class="card-footer">
+                                                <div class="card-point">
                                                     <img
                                                             src="https://bluhabit.id/assets/img/3.png"
                                                             alt=""
-                                                            class="padding-right"
                                                     />
                                                     <p class="text-style bold text-14">
                                                         Tetap Terinformasi
                                                     </p>
                                                 </div>
-                                                <p>
+                                                <p class="text-style text-point">
                                                     Nyalakan notifikasi email untuk wawasan, tips, dan
                                                     pembaruan berharga dari Uwang.
                                                 </p>
@@ -349,18 +326,21 @@
                                             </div>
                                         </div>
 
-                                        <div class="card">
-                                            <p class="bold text-center text-style">
+                                        <div class="card-bottom">
+                                            <p class="bold text-style text-center">
                                                 Dengan ini, kamu bisa memaksimalkan pengalaman
                                                 belajar keuanganmu demi mencapai kebebasan finansial
                                                 yang kamu impikan!
                                             </p>
-                                            <p class="text-style text-center margin-bottom">
+                                            <p class="text-style">
                                                 Jangan ragu untuk bertanya kepada kami atau jika
                                                 kamu butuh bantuan dari Customer Service Uwang
                                             </p>
-                                            <div class="card-footer justify-evenly">
-                                                <img src="https://bluhabit.id/assets/img/logo-regards.png" alt=""/>
+                                            <div class="card-regards">
+                                                <img
+                                                        src="https://bluhabit.id/assets/img/logo-regards.png"
+                                                        alt=""
+                                                />
                                                 <button>Hubungi CS Sekarang</button>
                                             </div>
                                         </div>

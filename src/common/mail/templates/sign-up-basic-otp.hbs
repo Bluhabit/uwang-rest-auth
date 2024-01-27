@@ -1,18 +1,16 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>{{subject}}</title>
-    <style type="text/css">
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800&display=swap');
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
         @media only screen and (max-width: 620px) {
-            body {
+            * {
                 font-family: 'Inter', sans-serif;
             }
 
             .body-style {
                 background-color: #f6f6f6;
-                font-family: sans-serif;
                 -webkit-font-smoothing: antialiased;
                 font-size: 14px;
                 line-height: 1.4;
@@ -21,157 +19,245 @@
                 -ms-text-size-adjust: 100%;
                 -webkit-text-size-adjust: 100%;
             }
-
-            img .logo {
-                max-width: 100%;
-                height: auto;
-            }
         }
 
-        .numberOtp-wrapper {
-            display: flex;
-            align-items: left;
+
+
+        .logo {
+            margin-bottom: 20px;
         }
 
-        .title-otp {
-            padding-bottom: 10px;
-            font-weight: 600;
-            font-size: 24px;
+
+        table.table-body {
+            border: 0;
+            border-collapse: separate;
+            background-color: #F2F4F7;;
+            width: 100%;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
         }
 
-        .numberOtp {
-            color: #1041B7;
-            font-weight: 700;
-            font-size: 24px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        p.text {
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            font-weight: 400;
-            margin-bottom: 18px;
-            line-height: 1.5;
-        }
-
-        .footer-bg {
-            background-color: #1041B7;
-            padding: 2px 0;
-            color: #fff;
-            font-weight: 700;
-        }
-    </style>
-<body class="body-style">
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body" style="
-        border-collapse: separate;
-        background-color: #f6f6f6;
-        width: 100%;
-      " width="100%" bgcolor="#f6f6f6">
-    <tr>
-        <td style="
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        td.td-first {
             font-size: 14px;
             vertical-align: top;
-          " valign="top">
-            &nbsp;
-        </td>
-        <td class="container" style="
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 14px;
             display: block;
             max-width: 580px;
             padding: 10px;
             width: 580px;
             margin: 0 auto;
-          " width="580" valign="top">
-            <div class="content" style="
-              box-sizing: border-box;
-              display: block;
-              margin: 0 auto;
-              max-width: 580px;
-              padding: 10px;
-            ">
-                <table role="presentation" class="main" style="
-                border-collapse: separate;
-                background: #ffffff;
-                border-top-right-radius: 12px;
-                border-top-left-radius: 12px;
-                display: flex;
-                width: 500px ;
-              " >
+        }
+
+        .main {
+            border-collapse: separate;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+        }
+
+        td.wrapper {
+            font-family: sans-serif;
+            font-size: 14px;
+            vertical-align: top;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+
+        table.main2 {
+            border-collapse: separate;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+            width: 100%;
+        }
+
+        td.td-second {
+            font-family: sans-serif;
+            font-size: 14px;
+            vertical-align: top;
+
+        }
+
+        .content {
+            box-sizing: border-box;
+            display: block;
+            margin: 0 auto;
+            max-width: 580px;
+            padding: 10px;
+        }
+
+
+        .card {
+            background-color: white;
+            border-radius: 12px 12px 0 0;;
+            padding: 10px 25px;
+        }
+
+        .card1 {
+            background-color: #E7ECF8;
+            border-radius: 0 0 12px 12px;
+            padding: 10px 25px;
+        }
+
+        .card-title {
+            font-weight: bold;
+        }
+
+        .card-footer {
+            display: flex;
+            flex: row;
+            align-items: center;
+        }
+
+        .text-style {
+            line-height: 1.6;
+        }
+
+        .text-link {
+            color: #1041B7;
+        }
+
+        img.founder {
+            width: 24px;
+            height: 24px;
+        }
+
+        .padding-right {
+            padding-right: 10px;
+        }
+
+        .text-center {
+            text-align: justify;
+        }
+
+        .text12 {
+            font-size: 12px
+        }
+
+        .text14 {
+            font-size: 14px
+        }
+
+        .text18 {
+            font-size: 18px
+        }
+
+        .text24 {
+            font-size: 24px;
+        }
+
+        .bold {
+            font-weight: bold
+        }
+
+        b {
+            color: #1041B7;
+        }
+
+        .margin-bottom {
+            margin-bottom: 25px;
+        }
+
+        button {
+            background-color: #1041B7;
+            color: white;
+            border-radius: 12px;
+            padding: 12px;
+            border: 0;
+            width: 100%;
+        }
+
+        .footer {
+            clear: both;
+            margin-top: 10px;
+            text-align: center;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+        }
+
+        .footer-bg {
+            background-color: #1041B7;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            color: white;
+        }
+        .otp {
+            color: #1041B7;
+            font-size: 20px;
+        }
+        .bold {
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body class="body-style">
+<table cellpadding="0" cellspacing="0" class="table-body">
+    <tr>
+        <td class="td-first">
+            <div class="content">
+                <table>
                     <tr>
-                        <td class="wrapper" style="
-                    font-family: sans-serif;
-                    font-size: 14px;
-                    vertical-align: top;
-                    box-sizing: border-box;
-                    padding: 20px;
-                    margin-bottom: 0px;
-                  " valign="top">
-                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="
-                      border-collapse: separate;
-                      width: 100%;
-                    " width="100%">
+                        <td class="wrapper">
+                            <table class="main2">
                                 <tr>
-                                    <td style="
-                          font-family: sans-serif;
-                          font-size: 14px;
-                          vertical-align: top;
-                        " valign="top">
-                                        <div style="padding-bottom: 30px; padding-top: 20px; text-align: center;">
-                                            <img src="https://bluhabit.id/assets/img/logo-uwang.png" class="logo"
-                                                 alt="logo n'lingko" />
+                                    <td class="td-second">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td align="center">
+                                                    <div class="logo">
+                                                        <img
+                                                                src="https://bluhabit.id/assets/img/logo-uwang.png"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <div class="card">
+                                            <h3 class="card-title text-24 bold">
+                                                Konfirmasi Kode OTP
+                                            </h3>
+                                            <p class="text-style text-12">Halo Sobat Uwang,</p>
+                                            <p class="text-style">
+                                                Untuk melanjutkan proses pembuatan akun kamu, harap gunakan kode OTP berikut:
+                                            </p>
+                                            <p class="otp">{{otp}}</p>
+                                            <p class="text-style text-12">
+                                                Kode akan kedaluwarsa dalam 5 menit.
+                                            </p>
+                                            <p class="text-style text-12 bold">
+                                                Mohon jangan berikan kode ini kepada siapapun, termasuk tim kami.
+                                            </p>
+                                            <p>
+                                                Jika kamu tidak melakukan aktivitas login ini, segera ubah password demi
+                                                keamanan akun Anda. Untuk bantuan, hubungi
+                                                <a class="text-style text-link">support@uwang.id</a>.
+                                            </p>
+                                            <p>Salam hangat, <br/><b> Uwang </b></p>
                                         </div>
-                                        <h1 class="title-otp">Konfirmasi Kode OTP</h1>
-                                        <p class="text">Halo sobat Uwang,</p>
-                                        <p class="text">
-                                            Untuk melanjutkan proses pembuatan akun kamu, harap gunakan kode OTP
-                                            berikut:
-                                        </p>
-
-                                        <div class="numberOtp-wrapper">
-                                            <h3 class="numberOtp">4444</h3>
+                                        <div class="card1">
+                                            <p>
+                                                Ini adalah email otomatis. Mohon untuk tidak
+                                                membalas email ini.
+                                            </p>
                                         </div>
-                                        <p class="text">
-                                            Kode akan kedaluwarsa dalam 5 menit.
-                                        </p>
-                                        <p class="text">
-                                                <span style="font-weight: 500;">Mohon jangan berikan kode ini kepada
-                                                    siapapun, termasuk tim kami.</span>
-
-                                        </p>
-                                        <p class="text">
-                                            Jika kamu tidak melakukan pendaftaran ini, mohon abaikan emali ini demi
-                                            keamanan data diri Anda.
-                                            Untuk
-                                            bantuan, hubungi <a href="">support@uwang.id.</a>
-                                        </p>
-                                        <p class="text">
-                                            Salam hangat, <br />
-                                            <span style="color: black; font-weight: 500">Uwang</span>
-                                        </p>
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                 </table>
-                <div class="footer" style="
-                                                clear: both;
-                                                text-align: center;
-                                                width: 100%;
-                                              ">
-                    <p class="text" style="padding: 10px; background-color: #E7ECF8; margin: 0; width: 480px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
-                        Ini adalah email otomatis. Mohon untuk tidak membalas email ini.
-                    </p>
-                </div>
-                <div class="footer-bg">
-                    <p>Uwang &#169; 2024</p>
+
+                <div class="footer">
+                    <div class="footer-bg">
+                        <p>Uwang © 2023</p>
+                    </div>
                 </div>
             </div>
         </td>
     </tr>
 </table>
 </body>
-
 </html>
