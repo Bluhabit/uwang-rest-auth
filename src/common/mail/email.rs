@@ -22,6 +22,7 @@ const FORGOT_PASSWORD_OTP:&str = "forgot-password";
 const SIGN_IN_BASIC_OTP:&str="sign-in-basic-otp";
 const SIGN_UP_BASIC_OTP:&str="sign-up-basic-otp";
 const WELCOMING_USER:&str="welcoming-user";
+const FRAUD_ACTIVITY:&str="fraud-activity";
 impl Email {
     pub fn new(
         to: String,
@@ -95,8 +96,8 @@ impl Email {
     ) -> Result<String, ErrorResponse> {
 
         self.send_by_mail_send(
-            "Rahasia - OTP",
-            SIGN_IN_BASIC_OTP,
+            "Aktivitas Mencurigakan Pada Akun Anda",
+            FRAUD_ACTIVITY,
             data,
         ).await
     }
@@ -107,18 +108,18 @@ impl Email {
     ) -> Result<String, ErrorResponse> {
 
         self.send_by_mail_send(
-            "Rahasia - OTP",
+            "[Uwang] - Konfirmasi OTP",
             SIGN_IN_BASIC_OTP,
             data,
         ).await
     }
 
-    pub async fn send_otp_forgot_password_basic(
+    pub async fn send_otp_forgot_password(
         &self,
         data: serde_json::Value
     ) -> Result<String, ErrorResponse> {
         self.send_by_mail_send(
-            "Rahasia - OTP",
+            "[Uwang] - Konfirmasi OTP",
             FORGOT_PASSWORD_OTP,
             data,
         ).await
@@ -142,11 +143,11 @@ impl Email {
         data: serde_json::Value,
     ) -> Result<String, ErrorResponse> {
         let mut handlebars = Handlebars::new();
-        handlebars.register_template_string("forgot-password", include_str!("./templates/forgot-password.hbs")).expect("Panic forgot");
-        handlebars.register_template_string("fraud-activity", include_str!("./templates/fraud-activity.hbs")).expect("Panic fraud");
-        handlebars.register_template_string("sign-in-basic-otp", include_str!("./templates/sign-in-basic-otp.hbs")).expect("Panic sign in");
-        handlebars.register_template_string("welcoming-user", include_str!("./templates/welcoming-user.hbs")).expect("Panic welcoming");
-        handlebars.register_template_string("sign-up-basic-otp", include_str!("./templates/sign-up-basic-otp.hbs")).expect("Panic sign up");
+        handlebars.register_template_string(FORGOT_PASSWORD_OTP, include_str!("./templates/forgot-password.hbs")).expect("Panic forgot");
+        handlebars.register_template_string(FRAUD_ACTIVITY, include_str!("./templates/fraud-activity.hbs")).expect("Panic fraud");
+        handlebars.register_template_string(SIGN_IN_BASIC_OTP, include_str!("./templates/sign-in-basic-otp.hbs")).expect("Panic sign in");
+        handlebars.register_template_string(WELCOMING_USER, include_str!("./templates/welcoming-user.hbs")).expect("Panic welcoming");
+        handlebars.register_template_string(SIGN_UP_BASIC_OTP, include_str!("./templates/sign-up-basic-otp.hbs")).expect("Panic sign up");
         handlebars.register_template_string("styles", include_str!("./templates/partials/style.hbs")).expect("Panic style");
         handlebars.register_template_string("base", include_str!("./templates/layouts/base.hbs")).expect("Panic base");
 

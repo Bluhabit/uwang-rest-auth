@@ -32,7 +32,7 @@ pub async fn forgot_password(
         user.full_name.clone(),
     );
 
-    let _ = email.send_otp_forgot_password_basic(
+    let _ = email.send_otp_forgot_password(
         serde_json::json!({
 
         })

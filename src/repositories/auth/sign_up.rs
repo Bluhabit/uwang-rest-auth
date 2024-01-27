@@ -97,7 +97,7 @@ impl SignUpRepository {
         let _: Result<String, redis::RedisError> = redis_connection
             .unwrap()
             .hset_multiple(redis_key.clone(), &[
-                (common::constant::REDIS_KEY_OTP, generate_otp.as_str()),
+                (common::constant::REDIS_KEY_OTP, generate_otp.clone().as_str()),
                 (common::constant::REDIS_KEY_USER_ID, user.id.as_str()),
                 (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
             ]);
@@ -112,7 +112,7 @@ impl SignUpRepository {
 
         let _ = email.send_otp_sign_up_basic(
             serde_json::json!({
-
+                "otp":generate_otp
             })
         ).await;
 
@@ -185,10 +185,10 @@ impl SignUpRepository {
                 );
             return Err(ErrorResponse::unauthorized("Kode OTP Salah.".to_string()));
         }
-        let mut  credential = credential.into_active_model();
+        let mut credential = credential.into_active_model();
         credential.status = Set(UserStatus::Active);
         let credential = credential.update(&self.db).await;
-        if credential.is_err(){
+        if credential.is_err() {
             return Err(ErrorResponse::unauthorized("Gagal memverifikasi akun, code [1000].".to_string()));
         }
         let credential = credential.unwrap();
@@ -282,7 +282,7 @@ impl SignUpRepository {
             .unwrap()
             .hset_multiple(
                 redis_key, &[
-                    (common::constant::REDIS_KEY_OTP, generate_otp.as_str()),
+                    (common::constant::REDIS_KEY_OTP, generate_otp.clone().as_str()),
                     (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
                 ],
             );
@@ -294,7 +294,7 @@ impl SignUpRepository {
 
         let _ = email.send_otp_sign_in_basic(
             serde_json::json!({
-
+                "otp":generate_otp
             })
         ).await;
         Ok(session_id.to_string())
@@ -345,11 +345,11 @@ impl SignUpRepository {
             return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
         }
         let user = user.unwrap();
-        if user.status == UserStatus::WaitingConfirmation{
+        if user.status == UserStatus::WaitingConfirmation {
             return Err(ErrorResponse::unauthorized("Kamu belum melakukan verifikasi.".to_string()));
         }
         let mut user = user.into_active_model();
-        let date = NaiveDate::parse_from_str(date_of_birth,"%d-%m-%Y").unwrap();
+        let date = NaiveDate::parse_from_str(date_of_birth, "%d-%m-%Y").unwrap();
 
         user.date_of_birth = Set(Some(date));
         user.full_name = Set(full_name.to_string());
@@ -409,7 +409,7 @@ impl SignUpRepository {
             return Err(ErrorResponse::unauthorized("Akun tidak ditemukan".to_string()));
         }
         let user = user.unwrap();
-        if user.status == UserStatus::WaitingConfirmation{
+        if user.status == UserStatus::WaitingConfirmation {
             return Err(ErrorResponse::unauthorized("Kamu belum melakukan verifikasi.".to_string()));
         }
 
@@ -436,9 +436,9 @@ impl SignUpRepository {
             mail_data.email,
             mail_data.full_name,
         );
-        let _ = mail.send_welcoming_user(serde_json::json!({
-
-        })).await;
+        let _ = mail
+            .send_welcoming_user(serde_json::json!({}))
+            .await;
 
         let response = UserCredentialResponse::from_credential(updated_result);
 

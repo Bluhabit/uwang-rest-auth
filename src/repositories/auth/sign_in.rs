@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use chrono::Locale;
 
 use redis::{Client, Commands, RedisResult};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter};
@@ -55,6 +56,7 @@ impl SignInRepository {
         }
 
         let data_user = user_credential.unwrap();
+        let name = data_user.clone().full_name;
         let session_id = Uuid::new_v4().to_string();
         let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
         let redis_key = RedisUtil::new(session_id.as_str()).create_key_otp_sign_in();
@@ -91,13 +93,18 @@ impl SignInRepository {
                     .unwrap()
                     .del(sign_in_attempt_key);
 
+                let current_date = chrono::Utc::now().format_localized("%A, %d %B %Y %r",Locale::id_ID);
                 let email = email::Email::new(
                     data_user.email,
                     data_user.full_name.clone(),
                 );
 
-                let _ = email.send_otp_sign_in_basic(
-                    serde_json::json!({})
+                let formatted_date =format!("{}",current_date);
+                let _ = email.send_otp_fraud_activity(
+                    serde_json::json!({
+                        "date": formatted_date,
+                        "name":name
+                    })
                 ).await;
             }
             return Err(ErrorResponse::bad_request(
@@ -119,7 +126,7 @@ impl SignInRepository {
         let saved_session_otp: Result<String, redis::RedisError> = redis_connection
             .unwrap()
             .hset_multiple(redis_key.clone(), &[
-                (common::constant::REDIS_KEY_OTP, generate_otp.as_str()),
+                (common::constant::REDIS_KEY_OTP, generate_otp.clone().as_str()),
                 (common::constant::REDIS_KEY_USER_ID, data_user.id.as_str()),
                 (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
             ]);
@@ -141,7 +148,7 @@ impl SignInRepository {
 
         let _ = email.send_otp_sign_in_basic(
             serde_json::json!({
-
+                "otp": generate_otp
             })
         ).await;
         Ok(session_id)
@@ -311,7 +318,7 @@ impl SignInRepository {
             .unwrap()
             .hset_multiple(
                 redis_key, &[
-                    (common::constant::REDIS_KEY_OTP, generate_otp.as_str()),
+                    (common::constant::REDIS_KEY_OTP, generate_otp.clone().as_str()),
                     (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
                 ],
             );
@@ -322,7 +329,7 @@ impl SignInRepository {
 
         let _ = email.send_otp_sign_in_basic(
             serde_json::json!({
-
+                "otp":generate_otp
             })
         ).await;
         Ok(session_id.to_string())
