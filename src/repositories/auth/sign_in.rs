@@ -40,8 +40,14 @@ impl SignInRepository {
         email: &str,
         password: &str,
     ) -> Result<String, ErrorResponse> {
-        let redis_connection = self.cache
+        let redis_connection = &self.cache
             .get_connection();
+        if redis_connection.is_err() {
+            return Err(ErrorResponse::bad_request(
+                1001,
+                "Kami mengalami kendala menghubungi sumber data".to_string(),
+            ));
+        }
         let user_credential = user_credential::Entity::find()
             .filter(user_credential::Column::Email.eq(email))
             .one(&self.db)
@@ -61,6 +67,8 @@ impl SignInRepository {
         let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
         let redis_key = RedisUtil::new(session_id.as_str()).create_key_otp_sign_in();
 
+        let redis_connection = self.cache
+            .get_connection();
         let mut sign_in_attempt: i32 = redis_connection
             .unwrap()
             .get(&sign_in_attempt_key)

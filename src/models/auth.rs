@@ -96,6 +96,12 @@ pub struct VerifyOtpForgotPasswordRequest {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
+pub struct ResendOtpForgotPasswordRequest {
+    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
+    pub session_id: String
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct SetForgotPasswordRequest {
     #[validate(length(min = 6, message = "Password tidak boleh kosong, minimal 6 karakter."))]
     pub password: String,

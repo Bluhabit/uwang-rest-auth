@@ -1,7 +1,8 @@
-use redis::{Commands, Connection};
+use redis::{Commands, Connection, RedisResult};
 use validator::ValidationErrors;
 
 use crate::common;
+use crate::common::constant::TTL_OTP_FORGOT_PASSWORD;
 use crate::common::jwt::encode;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
@@ -17,12 +18,12 @@ pub fn get_readable_validation_message(
         Some(validation) => validation.field_errors().into_iter()
             .map(|(_field, b)| {
                 let message: String = b.into_iter().map(|er| {
-                    if er.code.eq("dob"){
-                        return "Format tanggal lahir belum sesuai.".to_string()
+                    if er.code.eq("dob") {
+                        return "Format tanggal lahir belum sesuai.".to_string();
                     }
 
-                    if er.code.eq("gender"){
-                        return "Gender tidak sesuai.".to_string()
+                    if er.code.eq("gender") {
+                        return "Gender tidak sesuai.".to_string();
                     }
 
                     let message = match er.clone().message {
@@ -50,7 +51,6 @@ pub fn check_account_user_status_active(
             }
             return Err(ErrorResponse::unauthorized("Akun Anda belum terkonfirmasi, silahkan cek email untuk mengkonfirmasi.".to_string()));
         }
-
     }
 }
 
@@ -80,8 +80,8 @@ pub fn create_session_from_user(
 }
 
 pub async fn save_user_session_to_redis(
-    mut connection:Connection,
-    user: &user_credential::Model
+    mut connection: Connection,
+    user: &user_credential::Model,
 ) -> Result<SessionRedisModel, ErrorResponse> {
     let redis_util = RedisUtil::new(&user.id.clone());
     let redis_key = redis_util.create_key_session_sign_in();
@@ -107,4 +107,3 @@ pub async fn save_user_session_to_redis(
         generate_token.unwrap(),
     ))
 }
-
