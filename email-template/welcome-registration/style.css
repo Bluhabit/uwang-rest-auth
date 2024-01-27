@@ -60,27 +60,24 @@ td.td-second{
   font-size: 14px;
   vertical-align: top;
 }
-.logo-column {
-  text-align: left; 
-}
-
-.text-column {
-  text-align: right;
-}
 .grid-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  grid-template-rows: 1fr; 
-  align-items: center;
+  display: flex;
 }
 
 .logo-column {
-  grid-column: 1;
+  margin-top: 10px;
+  flex: 0 0 auto; /* Set flex basis to auto to allow content to determine size */
 }
 
 .text-column {
-  grid-column: 2;
+  margin-left: auto; /* Push text to the right */
+}
+
+/* Additional styling for better appearance */
+.finansial-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
 }
 
 .card-bottom {
@@ -89,16 +86,23 @@ td.td-second{
   padding: 10px 25px;
   display: grid;
   grid-template-columns: 1fr; 
-  grid-template-rows: auto; 
   gap: 10px;
 }
 
 .card-regards {
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  gap: 20px;
-  justify-content: space-evenly;
-  align-items: center;
+  display: flex;
+  grid-template-columns: auto auto auto; /* Satu fraksi untuk setiap kolom */
+  grid-gap: 10px; /* Sesuaikan dengan ruang antar kolom */
+  align-items: center; /* Untuk membuat isi kolom berada di tengah secara vertikal */
+}
+
+.card-regards img {
+  max-width: 100%;
+  height: auto;
+}
+
+.card-regards button {
+  width: 100%;
 }
 
 .content {
@@ -123,7 +127,9 @@ td.td-second{
   flex:row;
   align-items: center;
 }
-
+.card-footer span{
+  padding-top:5px;
+}
 .text-style{
   line-height: 1.6;
 }
@@ -156,17 +162,18 @@ b{
 .margin-bottom{
   margin-bottom:25px;
 }
+
 .card-point {
   display: flex;
-  align-items: center;
+  grid-template-columns: auto auto;
 }
 
 .card-point img {
-  padding-right: 10px;
+  padding-right:15px;
+  padding-top:6px;
   width: 24px;
-  height: 24px;
+  height:24px;
 }
-
 button{
   background-color: #1041B7;
   color: white;
@@ -174,12 +181,9 @@ button{
   padding: 10px;
   border : 0;
 }
-.point-number,.block{
+.point-number{
   display: block;
   direction: column
-}
-.justify-evenly{
-  justify-content:space-between
 }
 .footer {
   clear: both;
