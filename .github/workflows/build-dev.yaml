@@ -30,11 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # Generate RELEASE_VERSION var (i.e. v12-63hef73)
-      - name: Create Release Version
+      - name: Create Dev Release Version
         run: echo "RELEASE_VERSION=${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       # Create but not yet push release tag before Gradle run
-      - name: Create Release Tag
+      - name: Create Dev Release Tag
         run: |
           git tag ${{env.RELEASE_VERSION}}
 
@@ -42,13 +42,13 @@ jobs:
         run: |
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build image
-        run: docker build -t registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}} . -f ./dockerfile/dev.Dockerfile --no-cache
+      - name: Build Dev Image
+        run: docker build -t registry.bluhabit.id/uwang-rest-auth:dev-${{env.RELEASE_VERSION}} . -f ./dockerfile/dev.Dockerfile --no-cache
 
-      - name: Push
-        run: docker push registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
+      - name: Push Dev Image
+        run: docker push registry.bluhabit.id/uwang-rest-auth:dev-${{env.RELEASE_VERSION}}
       # Pushing release tag only if everything before passed
-      - name: Push Release Tag
+      - name: Push Dev Release Tag
         run: git push origin ${{env.RELEASE_VERSION}}
   deploy:
     runs-on: ubuntu-latest
@@ -69,8 +69,8 @@ jobs:
           password: ${{secrets.SSH_PASSWORD}}
           port: ${{secrets.SSH_PORT}}
           script: |
-              cd vps-config/application/uwang-rest-api/dev
-              docker stop uwang-rest-api-dev
-              docker rm uwang-rest-api-dev
-              docker pull registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
-              docker run --env-file .env -v ./data:/data:rw --network app-net --add-host "host.docker.internal:host-gateway" --name uwang-rest-api-dev -p 7005:8000  -d registry.bluhabit.id/uwang-rest-api-dev:${{env.RELEASE_VERSION}}
+              cd vps-config/application/uwang-rest-auth/dev
+              docker stop uwang-rest-auth-dev
+              docker rm uwang-rest-auth-dev
+              docker pull registry.bluhabit.id/uwang-rest-auth:dev-${{env.RELEASE_VERSION}}
+              docker run --env-file .env -v ./data:/data:rw --network app-net --add-host "host.docker.internal:host-gateway" --name uwang-rest-auth-dev -p 7005:8000  -d registry.bluhabit.id/uwang-rest-auth:dev-${{env.RELEASE_VERSION}}
