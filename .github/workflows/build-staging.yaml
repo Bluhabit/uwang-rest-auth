@@ -20,7 +20,7 @@ concurrency: release
 
 jobs:
   pr-build:
-    name: Build Dev Release
+    name: Build Staging Release
     runs-on: ubuntu-latest
     # Required by 'git push'
     permissions:
@@ -30,11 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # Generate RELEASE_VERSION var (i.e. v12-63hef73)
-      - name: Create Release Version
+      - name: Create Staging Release Version
         run: echo "RELEASE_VERSION=${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       # Create but not yet push release tag before Gradle run
-      - name: Create Release Tag
+      - name: Create Staging Release Tag
         run: |
           git tag ${{env.RELEASE_VERSION}}
 
@@ -42,13 +42,13 @@ jobs:
         run: |
           docker login https://registry.bluhabit.id -u $DOCKER_USER -p $DOCKER_PASSWORD
 
-      - name: Build image
-        run: docker build -t registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}} . -f ./dockerfile/staging.Dockerfile --no-cache
+      - name: Build Staging Image
+        run: docker build -t registry.bluhabit.id/uwang-rest-auth:staging-${{env.RELEASE_VERSION}} . -f ./dockerfile/staging.Dockerfile --no-cache
 
-      - name: Push
-        run: docker push registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
+      - name: Push Staging
+        run: docker push registry.bluhabit.id/uwang-rest-auth:staging-${{env.RELEASE_VERSION}}
       # Pushing release tag only if everything before passed
-      - name: Push Release Tag
+      - name: Push Staging Release Tag
         run: git push origin ${{env.RELEASE_VERSION}}
   deploy:
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Get Release Version
+      - name: Get Staging Release Version
         run: echo "RELEASE_VERSION=${{github.run_number}}-${GITHUB_SHA::7}" >> $GITHUB_ENV
       - name: Connect with SSH and Deploy
         uses: appleboy/ssh-action@master
@@ -69,8 +69,8 @@ jobs:
           password: ${{secrets.SSH_PASSWORD}}
           port: ${{secrets.SSH_PORT}}
           script: |
-              cd vps-config/application/uwang-rest-api/stage
-              docker stop uwang-rest-api-staging
-              docker rm uwang-rest-api-staging
-              docker pull registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
-              docker run --env-file .env -v ./data:/data:rw --network app-net --add-host "host.docker.internal:host-gateway" --name uwang-rest-api-staging -p 7003:8000  -d registry.bluhabit.id/uwang-rest-api-staging:${{env.RELEASE_VERSION}}
+              cd vps-config/application/uwang-rest-auth/stage
+              docker stop uwang-rest-auth-staging
+              docker rm uwang-rest-auth-staging
+              docker pull registry.bluhabit.id/uwang-rest-auth:staging-${{env.RELEASE_VERSION}}
+              docker run --env-file .env -v ./data:/data:rw --network app-net --add-host "host.docker.internal:host-gateway" --name uwang-rest-auth-staging -p 7003:8000  -d registry.bluhabit.id/uwang-rest-auth:staging-${{env.RELEASE_VERSION}}

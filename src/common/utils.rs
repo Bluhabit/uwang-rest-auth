@@ -1,6 +1,10 @@
+use redis::{Commands, Connection, RedisResult};
 use validator::ValidationErrors;
 
 use crate::common;
+use crate::common::constant::TTL_OTP_FORGOT_PASSWORD;
+use crate::common::jwt::encode;
+use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential;
@@ -14,9 +18,17 @@ pub fn get_readable_validation_message(
         Some(validation) => validation.field_errors().into_iter()
             .map(|(_field, b)| {
                 let message: String = b.into_iter().map(|er| {
+                    if er.code.eq("dob") {
+                        return "Format tanggal lahir belum sesuai.".to_string();
+                    }
+
+                    if er.code.eq("gender") {
+                        return "Gender tidak sesuai.".to_string();
+                    }
+
                     let message = match er.clone().message {
                         Some(val) => val.to_string(),
-                        None => String::from("<no message>")
+                        None => er.code.to_string()
                     };
                     return format!("{} ", message);
                 }).collect();
@@ -25,18 +37,19 @@ pub fn get_readable_validation_message(
     }
 }
 
-pub fn check_account_status_active_user(
+pub fn check_account_user_status_active(
     credential: &user_credential::Model
 ) -> Result<user_credential::Model, ErrorResponse> {
     match credential.status {
         UserStatus::Active => Ok(credential.clone()),
-        UserStatus::Inactive => Err(ErrorResponse::unauthorized("Akun Anda tidak aktif".to_string())),
-        UserStatus::Suspended => Err(ErrorResponse::unauthorized("Akun Anda ditangguhkan, anda tidak dapat melanjutkan proses ini".to_string())),
+        UserStatus::Locked => Err(ErrorResponse::unauthorized("Akun Anda dibatasi untuk sementara.".to_string())),
+        UserStatus::Inactive => Err(ErrorResponse::unauthorized("Akun Anda tidak aktif.".to_string())),
+        UserStatus::Suspended => Err(ErrorResponse::unauthorized("Akun Anda ditangguhkan, anda tidak dapat melanjutkan proses ini.".to_string())),
         UserStatus::WaitingConfirmation => {
             if credential.auth_provider == AuthProvider::Google {
                 return Ok(credential.clone());
             }
-            return Err(ErrorResponse::unauthorized("Akun Anda belum terkonfirmasi, silahkan cek email untuk mengkonfirmasi".to_string()));
+            return Err(ErrorResponse::unauthorized("Akun Anda belum terkonfirmasi, silahkan cek email untuk mengkonfirmasi.".to_string()));
         }
     }
 }
@@ -64,4 +77,33 @@ pub fn create_session_from_user(
         email: user.email.to_string(),
         token,
     }
+}
+
+pub async fn save_user_session_to_redis(
+    mut connection: Connection,
+    user: &user_credential::Model,
+) -> Result<SessionRedisModel, ErrorResponse> {
+    let redis_util = RedisUtil::new(&user.id.clone());
+    let redis_key = redis_util.create_key_session_sign_in();
+
+    let generate_token = encode(user.id.clone());
+    if generate_token.is_none() {
+        return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
+    }
+
+    let _: Result<String, redis::RedisError> = connection
+        .hset_multiple(
+            redis_key,
+            &*create_session_redis_from_user(
+                user.clone(),
+                generate_token
+                    .clone()
+                    .unwrap(),
+            ),
+        );
+
+    Ok(create_session_from_user(
+        user.to_owned(),
+        generate_token.unwrap(),
+    ))
 }
