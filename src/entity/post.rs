@@ -13,6 +13,8 @@ pub struct Model {
     pub post_id: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
     pub body: Option<String>,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub location: Option<String>,
     pub likes_count: i64,
     pub comments_count: i64,
     pub post_type: PostType,

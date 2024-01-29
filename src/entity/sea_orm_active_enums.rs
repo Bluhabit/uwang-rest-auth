@@ -66,24 +66,24 @@ pub enum ReportType {
     User,
 }
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "user_gender")]
+pub enum UserGender {
+    #[sea_orm(string_value = "FEMALE")]
+    Female,
+    #[sea_orm(string_value = "MALE")]
+    Male,
+}
+#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "user_status")]
 pub enum UserStatus {
     #[sea_orm(string_value = "ACTIVE")]
     Active,
     #[sea_orm(string_value = "INACTIVE")]
     Inactive,
+    #[sea_orm(string_value = "LOCKED")]
+    Locked,
     #[sea_orm(string_value = "SUSPENDED")]
     Suspended,
     #[sea_orm(string_value = "WAITING_CONFIRMATION")]
     WaitingConfirmation,
-}
-#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "verification_type")]
-pub enum VerificationType {
-    #[sea_orm(string_value = "ACTIVATION")]
-    Activation,
-    #[sea_orm(string_value = "OTP")]
-    Otp,
-    #[sea_orm(string_value = "RESET")]
-    Reset,
 }

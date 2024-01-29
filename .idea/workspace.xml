@@ -7,10 +7,13 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: add sse">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/build-prod.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build-prod.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/build-staging.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build-staging.yaml" afterDir="false" />
+    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: create service sign in google [UWANG-46]">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+
+      <change beforePath="$PROJECT_DIR$/src/common/jwt.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/jwt.rs" afterDir="false" />
+    <list default="true" id="58d8fa1c-1074-43f0-a4ff-aebe4035b8a9" name="Changes" comment="feat: working on sign up basic [UWANG-65]">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +49,7 @@
         <option value="Record" />
         <option value="Rust File" />
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -73,48 +77,61 @@
     <option name="showMembers" value="true" />
     <option name="showVisibilityIcons" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Cargo.Run learn-actix.executor": "Run",
-    "Cargo.Run uwang-rest-api.executor": "Run",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Docker.dockerfile/dev.Dockerfile.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "android.gradle.sync.needed": "true",
-    "git-widget-placeholder": "development",
-    "last_opened_file_path": "/Users/triandamai/Projects/bluhabit/uwang-rest-api/src/models",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.disableDetachedFileInspection/Users/triandamai/Projects/bluhabit/uwang-rest-api/src/common/sse/sse_emitter.rs": "true",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Cargo.Run learn-actix.executor&quot;: &quot;Run&quot;,
+    &quot;Cargo.Run uwang-rest-api.executor&quot;: &quot;Run&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Docker.dockerfile/dev.Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
+
+    &quot;git-widget-placeholder&quot;: &quot;feature/UWANG-52&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/triandamai/Projects/bluhabit/uwang-rest-api/src/models&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.disableDetachedFileInspection/Users/triandamai/Projects/bluhabit/uwang-rest-api/src/common/sse/sse_emitter.rs&quot;: &quot;true&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+
+      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql",
+      "redis"
+    ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.bluehabit.eureka.component" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/templates" />
       <recent name="$PROJECT_DIR$/src/models" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/src/main/resources" />
       <recent name="$PROJECT_DIR$/.github/workflows" />
-      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/image" />
+      <recent name="$PROJECT_DIR$/assets" />
       <recent name="$PROJECT_DIR$/src/main/resources/templates/email/reset-password-request" />
       <recent name="$PROJECT_DIR$/src/main/resources/templates/email/reset-password-notification" />
       <recent name="$PROJECT_DIR$/src/main/resources/templates/email/otp" />
-      <recent name="$PROJECT_DIR$/src/main/resources/templates" />
-      <recent name="$PROJECT_DIR$/src/main/resources/templates/mail/html" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.bluehabit.eureka.services" />
@@ -243,30 +260,16 @@
       <workItem from="1701967557613" duration="3708000" />
       <workItem from="1702043866475" duration="2552000" />
       <workItem from="1702390836883" duration="1991000" />
-    </task>
-    <task id="LOCAL-00022" summary="feat: add email service&#10;refs : https://bluehabit.atlassian.net/browse/GAWE-70&#10;&#10;usage:&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  )&#10;);&#10;```&#10;&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  ),&#10;  (success)-&gt;{&#10;  &#10;    return success;&#10;  }&#10;);&#10;```">
-      <option name="closed" value="true" />
-      <created>1691672313139</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1691672313139</updated>
-    </task>
-    <task id="LOCAL-00023" summary="feat: sign in with Google&#10;&#10;jira refs: https://bluehabit.atlassian.net/browse/GAWE-41">
-      <option name="closed" value="true" />
-      <created>1691757655648</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1691757655648</updated>
-    </task>
-    <task id="LOCAL-00024" summary="refactor: move UserService.java dedicated feature service">
-      <option name="closed" value="true" />
-      <created>1691758468570</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1691758468570</updated>
+      <workItem from="1702476660571" duration="2152000" />
+      <workItem from="1702642079972" duration="25829000" />
+      <workItem from="1702738796374" duration="2253000" />
+      <workItem from="1702904445922" duration="2337000" />
+      <workItem from="1702919613945" duration="3749000" />
+      <workItem from="1703296721453" duration="9758000" />
+      <workItem from="1703339149814" duration="2820000" />
+      <workItem from="1703376465249" duration="6876000" />
+      <workItem from="1703396586367" duration="599000" />
+      <workItem from="1703400213062" duration="944000" />
     </task>
     <task id="LOCAL-00025" summary="feat: update sign in service with google">
       <option name="closed" value="true" />
@@ -636,7 +639,31 @@
       <option name="project" value="LOCAL" />
       <updated>1697599764345</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="feat: working on sign in basic [UWANG-65]">
+      <option name="closed" value="true" />
+      <created>1702741988060</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1702741988060</updated>
+    </task>
+    <task id="LOCAL-00072" summary="feat: create service sign in google [UWANG-46]">
+      <option name="closed" value="true" />
+      <created>1702903274684</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1702903274685</updated>
+    </task>
+    <task id="LOCAL-00073" summary="feat: create service sign in google [UWANG-46]">
+      <option name="closed" value="true" />
+      <created>1702905580135</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1702905580136</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -654,9 +681,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix: security config" />
-    <MESSAGE value="feat: create service email &#10;jira ref: GAWE-70" />
-    <MESSAGE value="fix: middleware not working" />
     <MESSAGE value="feat: add email service" />
     <MESSAGE value="feat: add email service&#10;refs : https://bluehabit.atlassian.net/browse/GAWE-70&#10;&#10;usage:&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  )&#10;);&#10;```&#10;&#10;&#10;```java&#10; mailUtil.sendEmail(&#10; &quot;triandamai@gmail.com&quot;, &#10; &quot;ini subject&quot;,&#10;  &quot;otp&quot;,&#10;   Map.of(&#10;       &quot;name&quot;, &quot;trian&quot;,&#10;       &quot;otp&quot;, &quot;132434&quot;&#10;  ),&#10;  (success)-&gt;{&#10;  &#10;    return success;&#10;  }&#10;);&#10;```" />
     <MESSAGE value="feat: sign in with Google&#10;&#10;jira refs: https://bluehabit.atlassian.net/browse/GAWE-41" />
@@ -679,10 +703,23 @@
     <MESSAGE value="feat: initial uwang" />
     <MESSAGE value="feat: add cors" />
     <MESSAGE value="feat: add sse" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add sse" />
+    <MESSAGE value="feat: working on sign up basic [UWANG-65]" />
+    <MESSAGE value="feat: working on sign in basic [UWANG-65]" />
+    <MESSAGE value="feat: create service sign in google [UWANG-46]" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: create service sign in google [UWANG-46]" />
   </component>
   <component name="VueSettings">
     <option name="innerServiceType" value="VOLAR" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/routes/user.rs</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

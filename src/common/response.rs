@@ -37,14 +37,6 @@ impl<T> BaseResponse<T> {
             Some(data),
         )
     }
-
-    pub fn not_found(code: u16, data: T, message: String) -> BaseResponse<T> {
-        BaseResponse::<T>::create(
-            code,
-            message,
-            Some(data),
-        )
-    }
 }
 
 #[derive(Debug, Serialize)]
@@ -73,14 +65,6 @@ impl ErrorResponse {
         }
     }
 
-    pub fn forbidden(error_code: u16, message: String) -> ErrorResponse {
-        ErrorResponse {
-            status_code: 403,
-            error_code,
-            message,
-            data: None,
-        }
-    }
     pub fn bad_request(error_code: u16, message: String) -> ErrorResponse {
         ErrorResponse {
             status_code: 400,
