@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use chrono::Locale;
+use chrono::{Duration, Locale};
 
 use redis::{Client, Commands, RedisResult};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter};
@@ -70,6 +70,13 @@ impl SignInRepository {
             return Err(ErrorResponse::bad_request(1003, "Email sudah digunakan akun lain".to_string()));
         }
 
+        if data_user.status == UserStatus::Locked {
+            return Err(ErrorResponse::bad_request(
+                1007,
+                "Akun kamu terkunci untuk sementara.".to_string(),
+            ));
+        }
+
         let name = data_user.clone().full_name;
         let session_id = Uuid::new_v4().to_string();
         let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
@@ -80,17 +87,20 @@ impl SignInRepository {
         let mut sign_in_attempt: i32 = redis_connection
             .unwrap()
             .get(&sign_in_attempt_key)
-            .unwrap_or("0".to_string())
+            .unwrap_or("1".to_string())
             .as_str()
             .parse()
-            .unwrap_or(0);
+            .unwrap_or(1);
 
-        if data_user.status == UserStatus::Locked {
-            return Err(ErrorResponse::bad_request(
-                1007,
-                "Akun kamu terkunci untuk sementara.".to_string(),
-            ));
+        if sign_in_attempt == 1 {
+            let redis_connection = self.cache.get_connection();
+            let _: RedisResult<String> = redis_connection
+                .unwrap()
+                .set(sign_in_attempt_key.clone(), format!("{}", sign_in_attempt).as_str());
+            let _: RedisResult<_> = self.cache
+                .expire::<String, String>(sign_in_attempt_key.clone(), common::constant::TTL_OTP_SIGN_IN);
         }
+
         let verify_password = bcrypt::verify(password, &data_user.password);
         if verify_password.is_err() {
             return Err(ErrorResponse::bad_request(401, "Username atau password salah.".to_string()));
@@ -132,6 +142,7 @@ impl SignInRepository {
             ));
         }
 
+        let current_date = chrono::Utc::now().naive_local().timestamp();
         let generate_otp = generate_otp();
         let redis_connection = self.cache.get_connection();
         let saved_session_otp: Result<String, redis::RedisError> = redis_connection
@@ -139,7 +150,8 @@ impl SignInRepository {
             .hset_multiple(redis_key.clone(), &[
                 (common::constant::REDIS_KEY_OTP, generate_otp.clone().as_str()),
                 (common::constant::REDIS_KEY_USER_ID, data_user.id.as_str()),
-                (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
+                (common::constant::REDIS_KEY_OTP_ATTEMPT, "1"),
+                (common::constant::REDIS_KEY_VALID_AT, format!("{}", current_date).as_str())
             ]);
 
         let _: RedisResult<_> = self.cache
@@ -202,9 +214,9 @@ impl SignInRepository {
             .unwrap_or(&default_string)
             .as_str();
         let mut attempt: i16 = redis.get(common::constant::REDIS_KEY_OTP_ATTEMPT)
-            .unwrap_or(&"0".to_string())
+            .unwrap_or(&"1".to_string())
             .parse()
-            .unwrap_or(0);
+            .unwrap_or(1);
 
         let user = user_credential::Entity::find_by_id(user_id)
             .one(&self.db)
@@ -225,18 +237,23 @@ impl SignInRepository {
 
         if !request_otp.eq(otp) {
             attempt = attempt + 1;
+            let current_date = chrono::Utc::now().naive_local();
+            let mut valid_at = current_date.timestamp();
+            if attempt >= 4 {
+                let _: RedisResult<_> = self.cache
+                    .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_IN_ATTEMPT);
+                valid_at = (current_date + Duration::hours(1)).timestamp();
+            }
+
             let redis_connection = self.cache.get_connection();
             let _: RedisResult<String> = redis_connection
                 .unwrap()
                 .hset_multiple(
                     redis_key.clone(), &[
-                        (common::constant::REDIS_KEY_OTP_ATTEMPT, attempt)
+                        (common::constant::REDIS_KEY_OTP_ATTEMPT, format!("{}", attempt)),
+                        (common::constant::REDIS_KEY_VALID_AT, format!("{}", valid_at))
                     ],
                 );
-            if attempt >= 4 {
-                let _: RedisResult<_> = self.cache
-                    .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_IN);
-            }
             return Err(ErrorResponse::unauthorized("Kode OTP Salah.".to_string()));
         }
 
@@ -301,10 +318,22 @@ impl SignInRepository {
                 "Gagal membuat ulang otp, sesi tidak valid.".to_string(),
             ));
         }
+        let current_date = chrono::Utc::now().naive_local();
+        let next_timestamp = (current_date + Duration::hours(1)).timestamp();
+
         let default_string = String::from("");
         let get_session = get_session.unwrap();
         let user_id = get_session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
+        let valid_at: i64 = get_session.get(common::constant::REDIS_KEY_VALID_AT)
+            .unwrap_or(&next_timestamp.to_string())
+            .parse()
+            .unwrap_or(next_timestamp);
+
+        if valid_at > current_date.timestamp() {
+            return Err(ErrorResponse::bad_request(400, "Akun kamu dikunci untuk sementara.".to_string()));
+        }
+
         let find_user = user_credential::Entity::find_by_id(user_id)
             .one(&self.db)
             .await;
