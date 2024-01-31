@@ -92,8 +92,8 @@ impl SignInRepository {
             ));
         }
         let verify_password = bcrypt::verify(password, &data_user.password);
-        if verify_password.is_err(){
-            return Err(ErrorResponse::bad_request(401,"Username atau password salah.".to_string()))
+        if verify_password.is_err() {
+            return Err(ErrorResponse::bad_request(401, "Username atau password salah.".to_string()));
         }
 
         if !verify_password.unwrap() {
@@ -112,13 +112,13 @@ impl SignInRepository {
                     .unwrap()
                     .del(sign_in_attempt_key);
 
-                let current_date = chrono::Utc::now().format_localized("%A, %d %B %Y %r",Locale::id_ID);
+                let current_date = chrono::Utc::now().format_localized("%A, %d %B %Y %r", Locale::id_ID);
                 let email = email::Email::new(
                     data_user.email,
                     data_user.full_name.clone(),
                 );
 
-                let formatted_date =format!("{}",current_date);
+                let formatted_date = format!("{}", current_date);
                 let _ = email.send_otp_fraud_activity(
                     serde_json::json!({
                         "date": formatted_date,
@@ -167,7 +167,7 @@ impl SignInRepository {
     /// == end sign in email & password
     /// == verify otp sign in
     pub async fn verify_otp_sign_in(
-        &self,
+        &mut self,
         session_id: &str,
         request_otp: &str,
     ) -> Result<Option<Value>, ErrorResponse> {
@@ -220,9 +220,6 @@ impl SignInRepository {
         let credential = credential.unwrap();
 
         if attempt >= 4 {
-            let mut model = credential.into_active_model();
-            model.status = Set(UserStatus::Locked);
-            let _ = model.update(&self.db).await;
             return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba sebanyak otp 3 kali.".to_string()));
         }
 
@@ -232,10 +229,14 @@ impl SignInRepository {
             let _: RedisResult<String> = redis_connection
                 .unwrap()
                 .hset_multiple(
-                    redis_key, &[
+                    redis_key.clone(), &[
                         (common::constant::REDIS_KEY_OTP_ATTEMPT, attempt)
                     ],
                 );
+            if attempt >= 4 {
+                let _: RedisResult<_> = self.cache
+                    .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_IN);
+            }
             return Err(ErrorResponse::unauthorized("Kode OTP Salah.".to_string()));
         }
 
