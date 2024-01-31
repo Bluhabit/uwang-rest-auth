@@ -62,6 +62,14 @@ impl SignInRepository {
         }
 
         let data_user = user_credential.unwrap();
+        let check_user_status = check_account_user_status_active(&data_user);
+        if check_user_status.is_err() {
+            return Err(check_user_status.unwrap_err());
+        }
+        if data_user.auth_provider != AuthProvider::Basic {
+            return Err(ErrorResponse::bad_request(1003, "Email sudah digunakan akun lain".to_string()));
+        }
+
         let name = data_user.clone().full_name;
         let session_id = Uuid::new_v4().to_string();
         let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
@@ -84,6 +92,9 @@ impl SignInRepository {
             ));
         }
         let verify_password = bcrypt::verify(password, &data_user.password);
+        if verify_password.is_err(){
+            return Err(ErrorResponse::bad_request(401,"Username atau password salah.".to_string()))
+        }
 
         if !verify_password.unwrap() {
             sign_in_attempt = sign_in_attempt + 1;
@@ -119,14 +130,6 @@ impl SignInRepository {
                 1007,
                 "Email atau password salah atau tidak sesuai".to_string(),
             ));
-        }
-
-        let check_user_status = check_account_user_status_active(&data_user);
-        if check_user_status.is_err() {
-            return Err(check_user_status.unwrap_err());
-        }
-        if data_user.auth_provider != AuthProvider::Basic {
-            return Err(ErrorResponse::bad_request(1003, "Email sudah digunakan akun lain".to_string()));
         }
 
         let generate_otp = generate_otp();
