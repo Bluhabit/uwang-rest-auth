@@ -409,7 +409,7 @@ impl SignInRepository {
                 };
                 let saved_data = prepare_data.insert(&self.db).await;
                 if saved_data.is_err() {
-                    return Err(ErrorResponse::unauthorized("".to_string()));
+                    return Err(ErrorResponse::unauthorized(saved_data.unwrap_err().to_string()));
                 }
                 let data = saved_data.unwrap();
                 Ok(data)
