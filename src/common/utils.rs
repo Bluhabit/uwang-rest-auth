@@ -1,8 +1,7 @@
-use redis::{Commands, Connection, RedisResult};
+use redis::{Commands, Connection};
 use validator::ValidationErrors;
 
 use crate::common;
-use crate::common::constant::TTL_OTP_FORGOT_PASSWORD;
 use crate::common::jwt::encode;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;

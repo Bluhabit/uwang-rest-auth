@@ -87,19 +87,10 @@ impl SignInRepository {
         let mut sign_in_attempt: i32 = redis_connection
             .unwrap()
             .get(&sign_in_attempt_key)
-            .unwrap_or("1".to_string())
+            .unwrap_or("0".to_string())
             .as_str()
             .parse()
-            .unwrap_or(1);
-
-        if sign_in_attempt == 1 {
-            let redis_connection = self.cache.get_connection();
-            let _: RedisResult<String> = redis_connection
-                .unwrap()
-                .set(sign_in_attempt_key.clone(), format!("{}", sign_in_attempt).as_str());
-            let _: RedisResult<_> = self.cache
-                .expire::<String, String>(sign_in_attempt_key.clone(), common::constant::TTL_OTP_SIGN_IN);
-        }
+            .unwrap_or(0);
 
         let verify_password = bcrypt::verify(password, &data_user.password);
         if verify_password.is_err() {
@@ -113,7 +104,7 @@ impl SignInRepository {
                 .unwrap()
                 .set(sign_in_attempt_key.clone(), format!("{}", sign_in_attempt).as_str());
 
-            if sign_in_attempt >= 3 {
+            if sign_in_attempt >= 4 {
                 let mut user_active_model = data_user.clone().into_active_model();
                 user_active_model.status = Set(UserStatus::Locked);
                 let _ = user_active_model.update(&self.db).await;
@@ -155,7 +146,7 @@ impl SignInRepository {
             ]);
 
         let _: RedisResult<_> = self.cache
-            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_IN);
+            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP);
 
         if saved_session_otp.is_err() {
             return Err(ErrorResponse::unauthorized(
@@ -241,7 +232,7 @@ impl SignInRepository {
             let mut valid_at = current_date.timestamp();
             if attempt >= 4 {
                 let _: RedisResult<_> = self.cache
-                    .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_IN_ATTEMPT);
+                    .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP);
                 valid_at = (current_date + Duration::hours(1)).timestamp();
             }
 
@@ -319,24 +310,25 @@ impl SignInRepository {
             ));
         }
         let current_date = chrono::Utc::now().naive_local();
-        let next_timestamp = (current_date + Duration::hours(1)).timestamp();
+        let _next_timestamp = (current_date + Duration::hours(1)).timestamp();
 
         let default_string = String::from("");
         let get_session = get_session.unwrap();
         let user_id = get_session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
-        let valid_at: i64 = get_session.get(common::constant::REDIS_KEY_VALID_AT)
-            .unwrap_or(&next_timestamp.to_string())
+        let attempt: i16 = get_session.get(common::constant::REDIS_KEY_OTP_ATTEMPT)
+            .unwrap_or(&"1".to_string())
             .parse()
-            .unwrap_or(next_timestamp);
+            .unwrap_or(1);
 
-        if valid_at > current_date.timestamp() {
-            return Err(ErrorResponse::bad_request(400, "Akun kamu dikunci untuk sementara.".to_string()));
+        if attempt >= 4{
+            return Err(ErrorResponse::bad_request(401,"Kamu sudah mencoba otp sebanyak 3 kali, coba lagi dalam waktu 1 jam".to_string()))
         }
 
         let find_user = user_credential::Entity::find_by_id(user_id)
             .one(&self.db)
             .await;
+
         if find_user.is_err() {
             return Err(ErrorResponse::bad_request(
                 1001,
@@ -456,7 +448,7 @@ impl SignInRepository {
             .await
             .unwrap_or(vec![]);
         let uuid = uuid::Uuid::new_v4();
-        let redis_key = RedisUtil::new(uuid.clone().to_string().as_str())
+        let _redis_key = RedisUtil::new(uuid.clone().to_string().as_str())
             .create_key_session_sign_in();
         let save_session = common::utils::save_user_session_to_redis(
             self.cache.get_connection().unwrap(),

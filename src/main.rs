@@ -14,11 +14,10 @@ use sea_orm::{Database, DatabaseConnection};
 use crate::common::mail::email::Email;
 use crate::common::response::ErrorResponse;
 use crate::common::sse::sse_emitter::SseBroadcaster;
-use crate::routes::auth::forgot_password::{forgot_password, set_new_password, verify_otp_forgot_password};
+use crate::routes::auth::forgot_password::{forgot_password, resend_otp_forgot_password, set_new_password, verify_otp_forgot_password};
 use crate::routes::auth::sign_in::{resend_otp_sign_in_basic, sign_in_basic, sign_in_google, verify_otp_sign_in_basic};
 use crate::routes::auth::sign_up::{complete_profile_sign_up, resend_otp_sign_up_basic, set_password_sign_up, sign_up_basic, verify_otp_sign_up_basic};
 use crate::routes::index::hello;
-use crate::routes::user::user::complete_profile;
 
 mod common;
 
@@ -130,6 +129,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 
             .route("/forgot-password", web::post().to(forgot_password))
             .route("/forgot-password/verify-otp", web::post().to(verify_otp_forgot_password))
+            .route("/forgot-password/resend-otp", web::post().to(resend_otp_forgot_password))
             .route("/forgot-password/set-password", web::post().to(set_new_password))
     );
 
@@ -139,10 +139,9 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 pub async fn index(
     _: Data<AppState>
 ) -> HttpResponse {
-    let mut mail = Email::new("triandamai@gmail.com".to_string(), "Trian".to_string());
+    let mail = Email::new("triandamai@gmail.com".to_string(), "Trian".to_string());
 
     let current_date = chrono::Utc::now().format_localized("%A, %d %B %Y %r",Locale::id_ID);
-    let formatted_date = format!("{}",current_date);
     // mail.send_otp_sign_up_basic(serde_json::json!({
     //     "otp":"1234"
     // })).await.unwrap();

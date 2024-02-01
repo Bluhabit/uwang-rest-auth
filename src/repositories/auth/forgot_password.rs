@@ -12,10 +12,8 @@ use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
 use crate::common::utils::{check_account_user_status_active, create_session_redis_from_user};
-use crate::entity::{user_credential, user_profile};
 use crate::entity::sea_orm_active_enums::UserStatus;
-use crate::models::auth::OtpRedisModel;
-use crate::models::user::UserCredentialResponse;
+use crate::entity::user_credential;
 
 #[derive(Debug, Clone)]
 pub struct ForgotPasswordRepository {
@@ -189,7 +187,7 @@ impl ForgotPasswordRepository {
                 ),
             );
         let _: RedisResult<_> = self.cache
-            .expire::<String, String>(redis_key_session.clone(), common::constant::TTL_OTP_FORGOT_PASSWORD);
+            .expire::<String, String>(redis_key_session.clone(), common::constant::TTL_SESSION_FORGOT_PASSWORD);
 
 
         let _: RedisResult<String> = self.cache.get_connection()
@@ -288,9 +286,8 @@ impl ForgotPasswordRepository {
                 "Kami mengalami kendala menghubungi sumber data".to_string(),
             ));
         }
-        let redis_util = RedisUtil::new(session_id.clone());
+        let redis_util = RedisUtil::new(session_id);
         let redis_key = redis_util.create_key_session_forgot_password();
-
 
         let redis_session:RedisResult<HashMap<String, String>> = redis_connection
             .unwrap()
