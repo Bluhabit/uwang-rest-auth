@@ -120,11 +120,15 @@ impl Email {
             .implicit_tls(true)
             .credentials(Creds::new(&self.config.smtp_user, &self.config.smtp_pass))
             .connect()
-            .await
-            .unwrap();
+            .await;
+        if connection.is_err(){
+            println!("{:?}",connection.unwrap_err());
+            return Err(ErrorResponse::bad_request(400,"Cannot send Email".to_string()))
+        }
 
 
         let _ = connection
+            .unwrap()
             .send(message)
             .await
             .unwrap();
