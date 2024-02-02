@@ -122,7 +122,6 @@ impl Email {
             .connect()
             .await;
         if connection.is_err(){
-            println!("{:?}",connection.unwrap_err());
             return Err(ErrorResponse::bad_request(400,"Cannot send Email".to_string()))
         }
 
