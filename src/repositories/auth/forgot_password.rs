@@ -322,6 +322,9 @@ impl ForgotPasswordRepository {
         if updated_data.is_err() {
             return Err(ErrorResponse::bad_request(400, "Gagal merubah password [2]".to_string()));
         }
+        let _: RedisResult<String> = self.cache.get_connection()
+            .unwrap()
+            .del(redis_key);
 
         Ok(session_id.to_string())
     }
