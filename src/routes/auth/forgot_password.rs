@@ -35,35 +35,6 @@ pub async fn forgot_password(
     )))
 }
 
-pub async fn resend_otp_forgot_password(
-    state: web::Data<AppState>,
-    body: web::Json<ResendOtpForgotPasswordRequest>,
-) -> Result<impl Responder, ErrorResponse> {
-    let validate_body = body.validate();
-    if validate_body.is_err() {
-        let validate_body = body.validate();
-        if validate_body.is_err() {
-            let message = get_readable_validation_message(validate_body.err());
-            return Err(ErrorResponse::bad_request(400, message));
-        }
-    }
-
-    let forgot_password_repository = ForgotPasswordRepository::init(&state);
-    let verify_otp = forgot_password_repository
-        .resend_otp_forgot_password(&body.session_id)
-        .await;
-    if verify_otp.is_err() {
-        return Err(verify_otp.unwrap_err());
-    }
-
-    Ok(web::Json(BaseResponse::success(
-        200,
-        Some(verify_otp.unwrap()),
-        "Otp sudah dikirim ke email kamu.".to_string(),
-    )))
-}
-
-
 pub async fn verify_otp_forgot_password(
     state: web::Data<AppState>,
     body: web::Json<VerifyOtpForgotPasswordRequest>,
@@ -89,6 +60,34 @@ pub async fn verify_otp_forgot_password(
         200,
         Some(verify_otp.unwrap()),
         "Berhasil, silahkan ubah password Anda".to_string(),
+    )))
+}
+
+pub async fn resend_otp_forgot_password(
+    state: web::Data<AppState>,
+    body: web::Json<ResendOtpForgotPasswordRequest>,
+) -> Result<impl Responder, ErrorResponse> {
+    let validate_body = body.validate();
+    if validate_body.is_err() {
+        let validate_body = body.validate();
+        if validate_body.is_err() {
+            let message = get_readable_validation_message(validate_body.err());
+            return Err(ErrorResponse::bad_request(400, message));
+        }
+    }
+
+    let forgot_password_repository = ForgotPasswordRepository::init(&state);
+    let verify_otp = forgot_password_repository
+        .resend_otp_forgot_password(&body.session_id)
+        .await;
+    if verify_otp.is_err() {
+        return Err(verify_otp.unwrap_err());
+    }
+
+    Ok(web::Json(BaseResponse::success(
+        200,
+        Some(verify_otp.unwrap()),
+        "Otp sudah dikirim ke email kamu.".to_string(),
     )))
 }
 

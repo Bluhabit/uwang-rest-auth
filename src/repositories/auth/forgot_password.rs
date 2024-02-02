@@ -117,7 +117,7 @@ impl ForgotPasswordRepository {
         }
 
         let redis_key = RedisUtil::new(session_id)
-            .create_key_otp_sign_up();
+            .create_key_otp_forgot_password();
 
         let redis_connection = self.cache.get_connection();
         let session_redis: RedisResult<HashMap<String, String>> = redis_connection
@@ -140,6 +140,7 @@ impl ForgotPasswordRepository {
         let user = user_credential::Entity::find_by_id(user_id)
             .one(&self.db)
             .await;
+        println!("err {:?}",redis);
 
         if user.is_err() {
             return Err(ErrorResponse::unauthorized("Otp tidak valid atau sudah kadaluarsa.".to_string()));
@@ -150,21 +151,17 @@ impl ForgotPasswordRepository {
         }
         let credential = credential.unwrap();
 
-        if credential.status != UserStatus::WaitingConfirmation {
-            return Err(ErrorResponse::unauthorized("Akun sudah terverifikasi, silahkan masuk menggunakan akun Kamu.".to_string()));
+        let check_user = credential.clone();
+        let check_status = check_account_user_status_active(&check_user);
+        if check_status.is_err() {
+            return Err(check_status.unwrap_err());
         }
 
         if !request_otp.eq(otp) {
             return Err(ErrorResponse::unauthorized("Kode OTP Salah.".to_string()));
         }
-        let mut credential = credential.into_active_model();
-        credential.status = Set(UserStatus::Active);
-        let credential = credential.update(&self.db).await;
-        if credential.is_err() {
-            return Err(ErrorResponse::unauthorized("Gagal memverifikasi akun, code [1000].".to_string()));
-        }
-        let credential = credential.unwrap();
 
+        let credential = credential;
         let uuid = uuid::Uuid::new_v4();
         let redis_util = RedisUtil::new(uuid.clone().to_string().as_str());
         let redis_key_session = redis_util.create_key_session_forgot_password();
