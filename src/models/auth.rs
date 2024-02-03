@@ -68,7 +68,7 @@ fn validate_date_of_birth(date_of_birth: &str) -> Result<(), ValidationError> {
 }
 
 fn validate_gender(gender: &str) -> Result<(), ValidationError> {
-    if gender.eq("M") || gender.eq("F") {
+    if gender.eq("M") || gender.eq("F") || gender.eq("N/A") {
         return Ok(());
     }
     Err(ValidationError::new("gender"))
