@@ -35,14 +35,14 @@ pub struct ErrorResponse {
 }
 
 impl ErrorResponse {
-    pub fn create(status_code: u16, message: String) -> ErrorResponse {
+    pub fn create(status_code: u16, message: String) -> Self {
         ErrorResponse {
             status_code,
             message,
             data: None,
         }
     }
-    pub fn unauthorized(message: String) -> ErrorResponse {
+    pub fn unauthorized(message: String) -> Self {
         ErrorResponse {
             status_code: 401,
             message,
@@ -50,9 +50,9 @@ impl ErrorResponse {
         }
     }
 
-    pub fn bad_request(message: String) -> ErrorResponse {
+    pub fn bad_request(status_code: u16, message: String) -> Self {
         ErrorResponse {
-            status_code: 400,
+            status_code,
             message,
             data: None,
         }
