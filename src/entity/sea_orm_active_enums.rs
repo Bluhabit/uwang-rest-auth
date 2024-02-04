@@ -72,6 +72,10 @@ pub enum UserGender {
     Female,
     #[sea_orm(string_value = "MALE")]
     Male,
+    #[sea_orm(string_value = "N/A")]
+    NA,
+    #[sea_orm(string_value = "UNKNOWN")]
+    Unknown,
 }
 #[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "user_status")]
