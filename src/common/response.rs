@@ -50,7 +50,7 @@ impl ErrorResponse {
         }
     }
 
-    pub fn bad_request(error_code: u16, message: String) -> ErrorResponse {
+    pub fn bad_request(message: String) -> ErrorResponse {
         ErrorResponse {
             status_code: 400,
             message,
@@ -67,10 +67,14 @@ impl fmt::Display for ErrorResponse {
 
 impl ResponseError for ErrorResponse {
     fn status_code(&self) -> StatusCode {
-        return StatusCode::from_u16(self.status_code).unwrap();
+        if self.status_code == 401 {
+            return StatusCode::UNAUTHORIZED;
+        }
+        //return StatusCode::from_u16(self.status_code).unwrap();
+        return StatusCode::OK;
     }
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(StatusCode::OK).json(BaseResponse::create(
+        HttpResponse::build(self.status_code()).json(BaseResponse::create(
             self.status_code.clone(),
             self.message.clone(),
             self.data.clone(),
