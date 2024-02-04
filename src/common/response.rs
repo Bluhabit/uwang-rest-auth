@@ -11,11 +11,7 @@ pub struct BaseResponse<T> {
 }
 
 impl<T> BaseResponse<T> {
-    fn create(
-        status_code: u16,
-        message: String,
-        data: Option<T>,
-    ) -> BaseResponse<T> {
+    fn create(status_code: u16, message: String, data: Option<T>) -> BaseResponse<T> {
         BaseResponse {
             status_code,
             message,
@@ -23,26 +19,17 @@ impl<T> BaseResponse<T> {
         }
     }
     pub fn created(code: u16, data: T, message: String) -> BaseResponse<T> {
-        BaseResponse::<T>::create(
-            code,
-            message,
-            Some(data),
-        )
+        BaseResponse::<T>::create(code, message, Some(data))
     }
 
     pub fn success(code: u16, data: T, message: String) -> BaseResponse<T> {
-        BaseResponse::<T>::create(
-            code,
-            message,
-            Some(data),
-        )
+        BaseResponse::<T>::create(code, message, Some(data))
     }
 }
 
 #[derive(Debug, Serialize)]
 pub struct ErrorResponse {
     pub status_code: u16,
-    pub error_code: u16,
     pub data: Option<String>,
     pub message: String,
 }
@@ -51,7 +38,6 @@ impl ErrorResponse {
     pub fn create(status_code: u16, message: String) -> ErrorResponse {
         ErrorResponse {
             status_code,
-            error_code: status_code,
             message,
             data: None,
         }
@@ -59,7 +45,6 @@ impl ErrorResponse {
     pub fn unauthorized(message: String) -> ErrorResponse {
         ErrorResponse {
             status_code: 401,
-            error_code: 401,
             message,
             data: None,
         }
@@ -68,7 +53,6 @@ impl ErrorResponse {
     pub fn bad_request(error_code: u16, message: String) -> ErrorResponse {
         ErrorResponse {
             status_code: 400,
-            error_code,
             message,
             data: None,
         }
@@ -86,7 +70,7 @@ impl ResponseError for ErrorResponse {
         return StatusCode::from_u16(self.status_code).unwrap();
     }
     fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code()).json(BaseResponse::create(
+        HttpResponse::build(StatusCode::OK).json(BaseResponse::create(
             self.status_code.clone(),
             self.message.clone(),
             self.data.clone(),
