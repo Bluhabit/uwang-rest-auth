@@ -1370,7 +1370,7 @@ pub enum UserGender {
     MALE,
     #[iden = "FEMALE"]
     FEMALE,
-    #[iden = "N/A"]
+    #[iden = "HIDDEN"]
     HIDDEN,
     #[iden = "UNKNOWN"]
     UNKNOWN,
