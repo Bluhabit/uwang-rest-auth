@@ -70,10 +70,10 @@ pub enum ReportType {
 pub enum UserGender {
     #[sea_orm(string_value = "FEMALE")]
     Female,
+    #[sea_orm(string_value = "HIDDEN")]
+    Hidden,
     #[sea_orm(string_value = "MALE")]
     Male,
-    #[sea_orm(string_value = "N/A")]
-    NA,
     #[sea_orm(string_value = "UNKNOWN")]
     Unknown,
 }
