@@ -1,7 +1,7 @@
 use actix_web::{Responder, web};
 use validator::Validate;
+
 use crate::AppState;
-use crate::common::mail::email;
 use crate::common::response::{BaseResponse, ErrorResponse};
 use crate::common::utils::get_readable_validation_message;
 use crate::models::auth::{ForgotPasswordRequest, ResendOtpForgotPasswordRequest, SetForgotPasswordRequest, VerifyOtpForgotPasswordRequest};
@@ -69,23 +69,25 @@ pub async fn resend_otp_forgot_password(
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
     if validate_body.is_err() {
-        let message = get_readable_validation_message(validate_body.err());
-        return Err(ErrorResponse::bad_request(400, message));
+        let validate_body = body.validate();
+        if validate_body.is_err() {
+            let message = get_readable_validation_message(validate_body.err());
+            return Err(ErrorResponse::bad_request(400, message));
+        }
     }
 
     let forgot_password_repository = ForgotPasswordRepository::init(&state);
-    let resend_otp = forgot_password_repository
+    let verify_otp = forgot_password_repository
         .resend_otp_forgot_password(&body.session_id)
         .await;
-
-    if resend_otp.is_err() {
-        return Err(resend_otp.unwrap_err());
+    if verify_otp.is_err() {
+        return Err(verify_otp.unwrap_err());
     }
 
     Ok(web::Json(BaseResponse::success(
         200,
-        Some(resend_otp.unwrap()),
-        "Berhasil, silahkan verifikasi ulang otp Anda".to_string(),
+        Some(verify_otp.unwrap()),
+        "Otp sudah dikirim ke email kamu.".to_string(),
     )))
 }
 

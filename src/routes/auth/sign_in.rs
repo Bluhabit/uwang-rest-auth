@@ -48,7 +48,7 @@ pub async fn verify_otp_sign_in_basic(
         return Err(ErrorResponse::bad_request(400, message));
     }
 
-    let sign_in_repository = SignInRepository::init(&state);
+    let mut sign_in_repository = SignInRepository::init(&state);
     let verify_otp = sign_in_repository
         .verify_otp_sign_in(
             &body.session_id,

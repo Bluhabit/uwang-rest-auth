@@ -11,11 +11,7 @@ pub struct BaseResponse<T> {
 }
 
 impl<T> BaseResponse<T> {
-    fn create(
-        status_code: u16,
-        message: String,
-        data: Option<T>,
-    ) -> BaseResponse<T> {
+    fn create(status_code: u16, message: String, data: Option<T>) -> BaseResponse<T> {
         BaseResponse {
             status_code,
             message,
@@ -23,52 +19,40 @@ impl<T> BaseResponse<T> {
         }
     }
     pub fn created(code: u16, data: T, message: String) -> BaseResponse<T> {
-        BaseResponse::<T>::create(
-            code,
-            message,
-            Some(data),
-        )
+        BaseResponse::<T>::create(code, message, Some(data))
     }
 
     pub fn success(code: u16, data: T, message: String) -> BaseResponse<T> {
-        BaseResponse::<T>::create(
-            code,
-            message,
-            Some(data),
-        )
+        BaseResponse::<T>::create(code, message, Some(data))
     }
 }
 
 #[derive(Debug, Serialize)]
 pub struct ErrorResponse {
     pub status_code: u16,
-    pub error_code: u16,
     pub data: Option<String>,
     pub message: String,
 }
 
 impl ErrorResponse {
-    pub fn create(status_code: u16, message: String) -> ErrorResponse {
+    pub fn create(status_code: u16, message: String) -> Self {
         ErrorResponse {
             status_code,
-            error_code: status_code,
             message,
             data: None,
         }
     }
-    pub fn unauthorized(message: String) -> ErrorResponse {
+    pub fn unauthorized(message: String) -> Self {
         ErrorResponse {
             status_code: 401,
-            error_code: 401,
             message,
             data: None,
         }
     }
 
-    pub fn bad_request(error_code: u16, message: String) -> ErrorResponse {
+    pub fn bad_request(status_code: u16, message: String) -> Self {
         ErrorResponse {
-            status_code: 400,
-            error_code,
+            status_code,
             message,
             data: None,
         }
@@ -83,7 +67,11 @@ impl fmt::Display for ErrorResponse {
 
 impl ResponseError for ErrorResponse {
     fn status_code(&self) -> StatusCode {
-        return StatusCode::from_u16(self.status_code).unwrap();
+        if self.status_code == 401 {
+            return StatusCode::UNAUTHORIZED;
+        }
+        //return StatusCode::from_u16(self.status_code).unwrap();
+        return StatusCode::OK;
     }
     fn error_response(&self) -> HttpResponse {
         HttpResponse::build(self.status_code()).json(BaseResponse::create(

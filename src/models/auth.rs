@@ -11,7 +11,10 @@ pub struct SignInBasicRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct VerifyOtpSignInBasicRequest {
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
+    #[validate(length(
+        min = 10,
+        message = "Session Id tidak boleh kosong, minimal 10 karakter."
+    ))]
     pub session_id: String,
     #[validate(length(min = 4, message = "Otp tidak boleh kosong, minimal 4 karakter."))]
     pub otp: String,
@@ -19,7 +22,10 @@ pub struct VerifyOtpSignInBasicRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct ResendOtpSignInBasicRequest {
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
+    #[validate(length(
+        min = 10,
+        message = "Session Id tidak boleh kosong, minimal 10 karakter."
+    ))]
     pub session_id: String,
 }
 
@@ -37,7 +43,10 @@ pub struct SignUpBasicRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct VerifyOtpSignUpBasicRequest {
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
+    #[validate(length(
+        min = 10,
+        message = "Session Id tidak boleh kosong, minimal 10 karakter."
+    ))]
     pub session_id: String,
     #[validate(length(min = 4))]
     pub otp: String,
@@ -45,17 +54,29 @@ pub struct VerifyOtpSignUpBasicRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct ResendOtpSignUpBasicRequest {
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
+    #[validate(length(
+        min = 10,
+        message = "Session Id tidak boleh kosong, minimal 10 karakter."
+    ))]
     pub session_id: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct CompleteProfileSignUpBasicRequest {
-    #[validate(length(min = 1, message = "Gender tidak boleh kosong."), custom(function = "validate_gender"))]
+    #[validate(
+        length(min = 1, message = "Gender tidak boleh kosong."),
+        custom(function = "validate_gender")
+    )]
     pub gender: String,
-    #[validate(length(min = 3, message = "Nama lengkap tidak boleh kosong, minimal 3 karakter."))]
+    #[validate(length(
+        min = 3,
+        message = "Nama lengkap tidak boleh kosong, minimal 3 karakter."
+    ))]
     pub full_name: String,
-    #[validate(length(min = 2, message = "Tanggal lahir tidak boleh kosong."), custom(function = "validate_date_of_birth"))]
+    #[validate(
+        length(min = 2, message = "Tanggal lahir tidak boleh kosong."),
+        custom(function = "validate_date_of_birth")
+    )]
     pub date_of_birth: String,
 }
 
@@ -68,7 +89,7 @@ fn validate_date_of_birth(date_of_birth: &str) -> Result<(), ValidationError> {
 }
 
 fn validate_gender(gender: &str) -> Result<(), ValidationError> {
-    if gender.eq("M") || gender.eq("F") {
+    if gender.eq("MALE") || gender.eq("FEMALE") || gender.eq("HIDDEN") {
         return Ok(());
     }
     Err(ValidationError::new("gender"))
@@ -80,7 +101,6 @@ pub struct SetPasswordSignUpBasicRequest {
     pub new_password: String,
 }
 
-
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct ForgotPasswordRequest {
     #[validate(email(code = "regex", message = "Email tidak valid"))]
@@ -89,7 +109,10 @@ pub struct ForgotPasswordRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct VerifyOtpForgotPasswordRequest {
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
+    #[validate(length(
+        min = 10,
+        message = "Session Id tidak boleh kosong, minimal 10 karakter."
+    ))]
     pub session_id: String,
     #[validate(length(min = 4, message = "Otp tidak boleh kosong, minimal 4 karakter."))]
     pub otp: String,
@@ -97,15 +120,21 @@ pub struct VerifyOtpForgotPasswordRequest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct ResendOtpForgotPasswordRequest {
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
-    pub session_id: String
+    #[validate(length(
+        min = 10,
+        message = "Session Id tidak boleh kosong, minimal 10 karakter."
+    ))]
+    pub session_id: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
 pub struct SetForgotPasswordRequest {
     #[validate(length(min = 6, message = "Password tidak boleh kosong, minimal 6 karakter."))]
     pub password: String,
-    #[validate(length(min = 10, message = "Session Id tidak boleh kosong, minimal 10 karakter."))]
+    #[validate(length(
+        min = 10,
+        message = "Session Id tidak boleh kosong, minimal 10 karakter."
+    ))]
     pub session_id: String,
 }
 

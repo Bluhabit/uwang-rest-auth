@@ -103,9 +103,9 @@ impl SignUpRepository {
             ]);
 
         let _: RedisResult<_> = self.cache
-            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP_SIGN_IN);
+            .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP);
 
-        let email = email::Email::new(
+        let email = Email::new(
             user.email.clone(),
             user.full_name.clone(),
         );
@@ -119,6 +119,7 @@ impl SignUpRepository {
         Ok(session_id.to_string())
     }
     /// == end send otp
+    /// == verify otp
     pub async fn verify_otp_sign_up(&self, session_id: &str, request_otp: &str) -> Result<Option<Value>, ErrorResponse> {
         let redis_connection = &self.cache
             .get_connection();

@@ -15,7 +15,7 @@ impl MigrationTrait for Migration {
                 Type::create()
                     .as_enum(UserStatus::Table)
                     .values(UserStatus::iter().skip(1))
-                    .to_owned()
+                    .to_owned(),
             )
             .await?;
 
@@ -24,7 +24,7 @@ impl MigrationTrait for Migration {
                 Type::create()
                     .as_enum(UserGender::Table)
                     .values(UserGender::iter().skip(1))
-                    .to_owned()
+                    .to_owned(),
             )
             .await?;
 
@@ -33,16 +33,16 @@ impl MigrationTrait for Migration {
                 Type::create()
                     .as_enum(AuthProvider::Table)
                     .values(AuthProvider::iter().skip(1))
-                    .to_owned()
+                    .to_owned(),
             )
             .await?;
-
 
         manager
             .create_type(
                 Type::create()
                     .as_enum(PostType::Table)
-                    .values(PostType::iter().skip(1)).to_owned()
+                    .values(PostType::iter().skip(1))
+                    .to_owned(),
             )
             .await?;
 
@@ -50,7 +50,8 @@ impl MigrationTrait for Migration {
             .create_type(
                 Type::create()
                     .as_enum(CommentType::Table)
-                    .values(CommentType::iter().skip(1)).to_owned()
+                    .values(CommentType::iter().skip(1))
+                    .to_owned(),
             )
             .await?;
 
@@ -58,21 +59,24 @@ impl MigrationTrait for Migration {
             .create_type(
                 Type::create()
                     .as_enum(AttachmentType::Table)
-                    .values(AttachmentType::iter().skip(1)).to_owned()
+                    .values(AttachmentType::iter().skip(1))
+                    .to_owned(),
             )
             .await?;
         manager
             .create_type(
                 Type::create()
                     .as_enum(ReportStatus::Table)
-                    .values(ReportStatus::iter().skip(1)).to_owned()
+                    .values(ReportStatus::iter().skip(1))
+                    .to_owned(),
             )
             .await?;
         manager
             .create_type(
                 Type::create()
                     .as_enum(ReportType::Table)
-                    .values(ReportType::iter().skip(1)).to_owned()
+                    .values(ReportType::iter().skip(1))
+                    .to_owned(),
             )
             .await?;
 
@@ -80,7 +84,8 @@ impl MigrationTrait for Migration {
             .create_type(
                 Type::create()
                     .as_enum(GroupRole::Table)
-                    .values(GroupRole::iter().skip(1)).to_owned()
+                    .values(GroupRole::iter().skip(1))
+                    .to_owned(),
             )
             .await?;
 
@@ -88,7 +93,8 @@ impl MigrationTrait for Migration {
             .create_type(
                 Type::create()
                     .as_enum(NotificationType::Table)
-                    .values(NotificationType::iter().skip(1)).to_owned()
+                    .values(NotificationType::iter().skip(1))
+                    .to_owned(),
             )
             .await?;
 
@@ -112,13 +118,12 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(UserCredential::Password).string().not_null())
                     .col(ColumnDef::new(UserCredential::Username).string().not_null())
                     .col(ColumnDef::new(UserCredential::FullName).string().not_null())
-                    .col(ColumnDef::new(UserCredential::DateOfBirth)
-                        .date()
-                        .null()
+                    .col(ColumnDef::new(UserCredential::DateOfBirth).date().null())
+                    .col(
+                        ColumnDef::new(UserCredential::Gender)
+                            .enumeration(UserGender::Table, UserGender::iter().skip(1))
+                            .null(),
                     )
-                    .col(ColumnDef::new(UserCredential::Gender)
-                        .enumeration(UserGender::Table, UserGender::iter().skip(1))
-                        .null())
                     .col(
                         ColumnDef::new(UserCredential::Status)
                             .enumeration(UserStatus::Table, UserStatus::iter().skip(1))
@@ -141,7 +146,12 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
-                    .col(ColumnDef::new(UserCredential::Deleted).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(UserCredential::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -151,7 +161,12 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(UserProfile::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(UserProfile::Id).string().primary_key().not_null())
+                    .col(
+                        ColumnDef::new(UserProfile::Id)
+                            .string()
+                            .primary_key()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(UserProfile::Key).string().not_null())
                     .col(ColumnDef::new(UserProfile::Value).string().not_null())
                     .col(ColumnDef::new(UserProfile::UserId).string())
@@ -167,7 +182,12 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
-                    .col(ColumnDef::new(UserProfile::Deleted).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(UserProfile::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -179,9 +199,24 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(ColumnDef::new(Admin::Id).string().primary_key().not_null())
                     .col(ColumnDef::new(Admin::UserId).string())
-                    .col(ColumnDef::new(Admin::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Admin::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Admin::Deleted).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(Admin::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Admin::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Admin::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -209,9 +244,15 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(SystemAccess::UpdatedAt)
                             .timestamp()
-                            .not_null().default(Expr::current_timestamp()),
+                            .not_null()
+                            .default(Expr::current_timestamp()),
                     )
-                    .col(ColumnDef::new(SystemAccess::Deleted).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(SystemAccess::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -232,52 +273,98 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(AdminAccess::CreatedAt)
                             .timestamp()
-                            .not_null().default(Expr::current_timestamp()),
+                            .not_null()
+                            .default(Expr::current_timestamp()),
                     )
                     .col(
                         ColumnDef::new(AdminAccess::UpdatedAt)
                             .timestamp()
-                            .not_null().default(Expr::current_timestamp()),
+                            .not_null()
+                            .default(Expr::current_timestamp()),
                     )
-                    .col(ColumnDef::new(AdminAccess::Deleted).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(AdminAccess::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
 
-        manager.create_table(
-            Table::create()
-                .table(Hashtag::Table)
-                .if_not_exists()
-                .col(ColumnDef::new(Hashtag::Table).string())
-                .col(ColumnDef::new(Hashtag::Id).string().not_null().primary_key())
-                .col(ColumnDef::new(Hashtag::Value).string())
-                .col(ColumnDef::new(Hashtag::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                .col(ColumnDef::new(Hashtag::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                .col(ColumnDef::new(Hashtag::Deleted).boolean().not_null().default(false))
-                .to_owned()
-        ).await?;
+        manager
+            .create_table(
+                Table::create()
+                    .table(Hashtag::Table)
+                    .if_not_exists()
+                    .col(ColumnDef::new(Hashtag::Table).string())
+                    .col(
+                        ColumnDef::new(Hashtag::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
+                    .col(ColumnDef::new(Hashtag::Value).string())
+                    .col(
+                        ColumnDef::new(Hashtag::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Hashtag::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Hashtag::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_table(
-            Table::create()
-                .table(Post::Table)
-                .if_not_exists()
-                .col(ColumnDef::new(Post::Id).string().primary_key().not_null())
-                .col(ColumnDef::new(Post::CreatedBy).string())
-                .col(ColumnDef::new(Post::PostId).string())
-                .col(ColumnDef::new(Post::Body).text())
-                .col(ColumnDef::new(Post::Location).text())
-                .col(ColumnDef::new(Post::LikesCount).big_integer().not_null())
-                .col(ColumnDef::new(Post::CommentsCount).big_integer().not_null())
-                .col(
-                    ColumnDef::new(Post::PostType)
-                        .enumeration(PostType::Table, PostType::iter().skip(1))
-                        .not_null()
-                )
-                .col(ColumnDef::new(Post::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                .col(ColumnDef::new(Post::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                .col(ColumnDef::new(Post::Deleted).boolean().not_null().default(false))
-                .to_owned()
-        ).await?;
+        manager
+            .create_table(
+                Table::create()
+                    .table(Post::Table)
+                    .if_not_exists()
+                    .col(ColumnDef::new(Post::Id).string().primary_key().not_null())
+                    .col(ColumnDef::new(Post::CreatedBy).string())
+                    .col(ColumnDef::new(Post::PostId).string())
+                    .col(ColumnDef::new(Post::Body).text())
+                    .col(ColumnDef::new(Post::Location).text())
+                    .col(ColumnDef::new(Post::LikesCount).big_integer().not_null())
+                    .col(ColumnDef::new(Post::CommentsCount).big_integer().not_null())
+                    .col(
+                        ColumnDef::new(Post::PostType)
+                            .enumeration(PostType::Table, PostType::iter().skip(1))
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Post::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Post::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Post::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
+            )
+            .await?;
 
         manager
             .create_table(
@@ -288,10 +375,25 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(PostComment::Body).string())
                     .col(ColumnDef::new(PostComment::UserId).string())
                     .col(ColumnDef::new(PostComment::ReplyTo).string())
-                    .col(ColumnDef::new(PostComment::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(PostComment::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(PostComment::Deleted).boolean().not_null().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(PostComment::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(PostComment::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(PostComment::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -303,10 +405,25 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(PostMention::Id).string().primary_key())
                     .col(ColumnDef::new(PostMention::PostId).string())
                     .col(ColumnDef::new(PostMention::UserId).string())
-                    .col(ColumnDef::new(PostMention::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(PostMention::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(PostMention::Deleted).boolean().not_null().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(PostMention::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(PostMention::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(PostMention::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -318,10 +435,25 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(PostHashtag::Id).string().primary_key())
                     .col(ColumnDef::new(PostHashtag::PostId).string())
                     .col(ColumnDef::new(PostHashtag::HashtagId).string())
-                    .col(ColumnDef::new(PostHashtag::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(PostHashtag::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(PostHashtag::Deleted).boolean().not_null().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(PostHashtag::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(PostHashtag::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(PostHashtag::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -336,10 +468,25 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Group::GroupName).string())
                     .col(ColumnDef::new(Group::GroupDescription).text())
                     .col(ColumnDef::new(Group::GroupMemberCount).big_integer())
-                    .col(ColumnDef::new(Group::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Group::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Group::Deleted).boolean().not_null().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(Group::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Group::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Group::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -348,17 +495,36 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(GroupMember::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(GroupMember::Id).string().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(GroupMember::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
                     .col(ColumnDef::new(GroupMember::GroupId).string())
                     .col(ColumnDef::new(GroupMember::UserId).string())
-                    .col(ColumnDef::new(GroupMember::Role).enumeration(
-                        GroupRole::Table,
-                        GroupRole::iter().skip(1),
-                    ))
-                    .col(ColumnDef::new(GroupMember::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(GroupMember::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(GroupMember::Deleted).boolean().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(GroupMember::Role)
+                            .enumeration(GroupRole::Table, GroupRole::iter().skip(1)),
+                    )
+                    .col(
+                        ColumnDef::new(GroupMember::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(GroupMember::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(GroupMember::Deleted)
+                            .boolean()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -367,17 +533,47 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Threads::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(Threads::Id).string().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(Threads::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
                     .col(ColumnDef::new(Threads::ThreadId).string())
                     .col(ColumnDef::new(Threads::GroupId).string())
                     .col(ColumnDef::new(Threads::Title).string())
                     .col(ColumnDef::new(Threads::Description).text())
-                    .col(ColumnDef::new(Threads::Upvote).big_integer().not_null().default(0))
-                    .col(ColumnDef::new(Threads::DownVote).big_integer().not_null().default(0))
-                    .col(ColumnDef::new(Threads::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Threads::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Threads::Deleted).boolean().not_null().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(Threads::Upvote)
+                            .big_integer()
+                            .not_null()
+                            .default(0),
+                    )
+                    .col(
+                        ColumnDef::new(Threads::DownVote)
+                            .big_integer()
+                            .not_null()
+                            .default(0),
+                    )
+                    .col(
+                        ColumnDef::new(Threads::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Threads::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Threads::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -386,16 +582,46 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(ThreadsComment::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(ThreadsComment::Id).string().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(ThreadsComment::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
                     .col(ColumnDef::new(ThreadsComment::ThreadId).string())
                     .col(ColumnDef::new(ThreadsComment::ReplyTo).string())
                     .col(ColumnDef::new(ThreadsComment::Body).text())
-                    .col(ColumnDef::new(ThreadsComment::Upvote).big_integer().not_null().default(0))
-                    .col(ColumnDef::new(ThreadsComment::DownVote).big_integer().not_null().default(0))
-                    .col(ColumnDef::new(ThreadsComment::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(ThreadsComment::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(ThreadsComment::Deleted).boolean().not_null().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(ThreadsComment::Upvote)
+                            .big_integer()
+                            .not_null()
+                            .default(0),
+                    )
+                    .col(
+                        ColumnDef::new(ThreadsComment::DownVote)
+                            .big_integer()
+                            .not_null()
+                            .default(0),
+                    )
+                    .col(
+                        ColumnDef::new(ThreadsComment::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(ThreadsComment::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(ThreadsComment::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -404,19 +630,39 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Attachment::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(Attachment::Id).string()
-                        .primary_key()
-                        .not_null())
+                    .col(
+                        ColumnDef::new(Attachment::Id)
+                            .string()
+                            .primary_key()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(Attachment::PostId).string())
-                    .col(ColumnDef::new(Attachment::AttachmentType)
-                        .enumeration(AttachmentType::Table, AttachmentType::iter().skip(1)))
+                    .col(
+                        ColumnDef::new(Attachment::AttachmentType)
+                            .enumeration(AttachmentType::Table, AttachmentType::iter().skip(1)),
+                    )
                     .col(ColumnDef::new(Attachment::MimeType).string().not_null())
                     .col(ColumnDef::new(Attachment::Ext).string().not_null())
                     .col(ColumnDef::new(Attachment::Value).string())
-                    .col(ColumnDef::new(Attachment::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Attachment::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Attachment::Deleted).boolean().not_null().default(false))
-                    .to_owned()
+                    .col(
+                        ColumnDef::new(Attachment::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Attachment::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Attachment::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
             )
             .await?;
 
@@ -425,23 +671,37 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Report::Table)
                     .if_not_exists()
-                    .col(
-                        ColumnDef::new(Report::Id)
-                            .string()
-                            .primary_key()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Report::Id).string().primary_key().not_null())
                     .col(ColumnDef::new(Report::Context).string().not_null())
                     .col(ColumnDef::new(Report::Note).string().not_null())
                     .col(ColumnDef::new(Report::ReferenceId).string())
                     .col(ColumnDef::new(Report::ReportedBy).string())
-                    .col(ColumnDef::new(Report::Status)
-                        .enumeration(ReportStatus::Table, ReportStatus::iter().skip(1)))
-                    .col(ColumnDef::new(Report::ReportType)
-                        .enumeration(ReportType::Table, ReportType::iter().skip(1)))
-                    .col(ColumnDef::new(Report::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Report::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Report::Deleted).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(Report::Status)
+                            .enumeration(ReportStatus::Table, ReportStatus::iter().skip(1)),
+                    )
+                    .col(
+                        ColumnDef::new(Report::ReportType)
+                            .enumeration(ReportType::Table, ReportType::iter().skip(1)),
+                    )
+                    .col(
+                        ColumnDef::new(Report::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Report::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Report::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -451,256 +711,389 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table(Notification::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(Notification::Id).string().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(Notification::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
                     .col(ColumnDef::new(Notification::UserId).string())
                     .col(ColumnDef::new(Notification::Title).string())
                     .col(ColumnDef::new(Notification::Body).text())
                     .col(ColumnDef::new(Notification::Assets).string())
-                    .col(ColumnDef::new(Notification::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Notification::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Notification::Deleted).boolean().not_null().default(false))
-                    .to_owned()
-            ).await?;
+                    .col(
+                        ColumnDef::new(Notification::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Notification::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Notification::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
+            )
+            .await?;
 
         manager
             .create_table(
                 Table::create()
                     .table(Notification::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(Notification::Id).string().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(Notification::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
                     .col(ColumnDef::new(Notification::UserId).string())
                     .col(ColumnDef::new(Notification::Title).string())
                     .col(ColumnDef::new(Notification::Body).text())
-                    .col(ColumnDef::new(Notification::NotificationType).enumeration(
-                        NotificationType::Table, NotificationType::iter().skip(1),
-                    ))
-                    .col(ColumnDef::new(Notification::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Notification::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Notification::Deleted).boolean().not_null().default(false))
-                    .to_owned()
-            ).await?;
+                    .col(
+                        ColumnDef::new(Notification::NotificationType)
+                            .enumeration(NotificationType::Table, NotificationType::iter().skip(1)),
+                    )
+                    .col(
+                        ColumnDef::new(Notification::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Notification::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Notification::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
+            )
+            .await?;
 
         manager
             .create_table(
                 Table::create()
                     .table(UserNotification::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(UserNotification::Id).string().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(UserNotification::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
                     .col(ColumnDef::new(UserNotification::UserId).string())
                     .col(ColumnDef::new(UserNotification::NotificationId).string())
                     .col(ColumnDef::new(UserNotification::Body).string())
                     .col(ColumnDef::new(UserNotification::IsRead).text())
-                    .col(ColumnDef::new(UserNotification::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserNotification::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserNotification::Deleted).boolean().not_null().default(false))
-                    .to_owned()
-            ).await?;
+                    .col(
+                        ColumnDef::new(UserNotification::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(UserNotification::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(UserNotification::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
+            )
+            .await?;
 
         manager
             .create_table(
                 Table::create()
                     .table(UserPushToken::Table)
                     .if_not_exists()
-                    .col(ColumnDef::new(UserPushToken::Id).string().not_null().primary_key())
+                    .col(
+                        ColumnDef::new(UserPushToken::Id)
+                            .string()
+                            .not_null()
+                            .primary_key(),
+                    )
                     .col(ColumnDef::new(UserPushToken::UserId).string().not_null())
                     .col(ColumnDef::new(UserPushToken::Token).string().not_null())
-                    .col(ColumnDef::new(UserPushToken::CreatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserPushToken::UpdatedAt).timestamp_with_time_zone().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserPushToken::Deleted).boolean().not_null().default(false))
-                    .to_owned()
-            ).await?;
+                    .col(
+                        ColumnDef::new(UserPushToken::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(UserPushToken::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(UserPushToken::Deleted)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-profile")
-                .from(UserProfile::Table, UserProfile::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-user-profile")
+                    .from(UserProfile::Table, UserProfile::UserId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-report")
-                .from(Report::Table, Report::ReferenceId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-user-report")
+                    .from(Report::Table, Report::ReferenceId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-report-by")
-                .from(Report::Table, Report::ReportedBy)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-user-report-by")
+                    .from(Report::Table, Report::ReportedBy)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-admin")
-                .from(Admin::Table, Admin::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-user-admin")
+                    .from(Admin::Table, Admin::UserId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-admin-user")
-                .from(AdminAccess::Table, AdminAccess::AdminId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-admin-user")
+                    .from(AdminAccess::Table, AdminAccess::AdminId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-admin-access")
-                .from(AdminAccess::Table, AdminAccess::AccessId)
-                .to(SystemAccess::Table, SystemAccess::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-admin-access")
+                    .from(AdminAccess::Table, AdminAccess::AccessId)
+                    .to(SystemAccess::Table, SystemAccess::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-post-created-by")
-                .from(Post::Table, Post::CreatedBy)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-post-created-by")
+                    .from(Post::Table, Post::CreatedBy)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-post-attachment")
-                .from(Attachment::Table, Attachment::PostId)
-                .to(Post::Table, Post::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-post-attachment")
+                    .from(Attachment::Table, Attachment::PostId)
+                    .to(Post::Table, Post::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-post-repost-from")
-                .from(Post::Table, Post::PostId)
-                .to(Post::Table, Post::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-post-repost-from")
+                    .from(Post::Table, Post::PostId)
+                    .to(Post::Table, Post::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-post-comment-reply-to")
-                .from(PostComment::Table, PostComment::ReplyTo)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-post-comment-reply-to")
+                    .from(PostComment::Table, PostComment::ReplyTo)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-post-mention-to")
-                .from(PostMention::Table, PostMention::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-post-mention-to")
+                    .from(PostMention::Table, PostMention::UserId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-post-report")
-                .from(Report::Table, Report::ReferenceId)
-                .to(Post::Table, Post::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-post-report")
+                    .from(Report::Table, Report::ReferenceId)
+                    .to(Post::Table, Post::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-hashtag-post")
-                .from(PostHashtag::Table, PostHashtag::PostId)
-                .to(Post::Table, Post::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-hashtag-post")
+                    .from(PostHashtag::Table, PostHashtag::PostId)
+                    .to(Post::Table, Post::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-hashtag-id")
-                .from(PostHashtag::Table, PostHashtag::HashtagId)
-                .to(Hashtag::Table, Hashtag::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-hashtag-id")
+                    .from(PostHashtag::Table, PostHashtag::HashtagId)
+                    .to(Hashtag::Table, Hashtag::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-group-owner")
-                .from(Group::Table, Group::GroupOwner)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-group-owner")
+                    .from(Group::Table, Group::GroupOwner)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-group-member")
-                .from(GroupMember::Table, GroupMember::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-group-member")
+                    .from(GroupMember::Table, GroupMember::UserId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-group-member-of")
-                .from(GroupMember::Table, GroupMember::GroupId)
-                .to(Group::Table, Group::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-group-member-of")
+                    .from(GroupMember::Table, GroupMember::GroupId)
+                    .to(Group::Table, Group::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-thread-repost-from")
-                .from(Threads::Table, Threads::ThreadId)
-                .to(Threads::Table, Threads::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-thread-repost-from")
+                    .from(Threads::Table, Threads::ThreadId)
+                    .to(Threads::Table, Threads::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-thread-comment-attachment")
-                .from(Attachment::Table, Attachment::Id)
-                .to(ThreadsComment::Table, ThreadsComment::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-thread-comment-attachment")
+                    .from(Attachment::Table, Attachment::Id)
+                    .to(ThreadsComment::Table, ThreadsComment::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-notification-user")
-                .from(Notification::Table, Notification::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-notification-user")
+                    .from(Notification::Table, Notification::UserId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-notification-for")
-                .from(UserNotification::Table, UserNotification::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-user-notification-for")
+                    .from(UserNotification::Table, UserNotification::UserId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-notification-from")
-                .from(UserNotification::Table, UserNotification::NotificationId)
-                .to(Notification::Table, Notification::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-user-notification-from")
+                    .from(UserNotification::Table, UserNotification::NotificationId)
+                    .to(Notification::Table, Notification::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_foreign_key(
-            ForeignKey::create()
-                .name("fk-user-push-token")
-                .from(UserPushToken::Table, UserPushToken::UserId)
-                .to(UserCredential::Table, UserCredential::Id)
-                .to_owned()
-        ).await?;
+        manager
+            .create_foreign_key(
+                ForeignKey::create()
+                    .name("fk-user-push-token")
+                    .from(UserPushToken::Table, UserPushToken::UserId)
+                    .to(UserCredential::Table, UserCredential::Id)
+                    .to_owned(),
+            )
+            .await?;
 
-        manager.create_index(
-            Index::create()
-                .name("index-admin-email")
-                .table(UserCredential::Table)
-                .col(UserCredential::Email)
-                .to_owned()
-        ).await?;
+        manager
+            .create_index(
+                Index::create()
+                    .name("index-admin-email")
+                    .table(UserCredential::Table)
+                    .col(UserCredential::Email)
+                    .to_owned(),
+            )
+            .await?;
 
         Ok(())
     }
@@ -977,6 +1370,10 @@ pub enum UserGender {
     MALE,
     #[iden = "FEMALE"]
     FEMALE,
+    #[iden = "HIDDEN"]
+    HIDDEN,
+    #[iden = "UNKNOWN"]
+    UNKNOWN,
 }
 
 #[derive(Iden, EnumIter)]
@@ -1062,4 +1459,3 @@ pub enum NotificationType {
     #[iden = "NEW_FOLLOWER"]
     NewFollower,
 }
-

@@ -63,7 +63,7 @@ impl RedisUtil {
         &self
     ) -> String {
         return format!(
-            "{}:sign-in:{}",
+            "{}:forgot-password:{}",
             self.environment,
             self.value
         );
