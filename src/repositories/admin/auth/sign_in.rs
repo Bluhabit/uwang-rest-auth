@@ -61,8 +61,7 @@ impl SignInAdminRepository {
   let data_user = user_credential.unwrap();
   let user_id = data_user.id;
 
-  let admin = admin::Entity::find()
-    .filter(admin::Column::UserId.eq(user_id))
+  let admin = data_user.find_related(admin::Entity)
     .one(&self.db)
     .await;
 
@@ -71,6 +70,7 @@ impl SignInAdminRepository {
           "Akun Anda tidak terdaftar sebagai admin".to_string(),
       ));
   }
+
   let data_admin = admin.unwrap();
   let verify_password = bcrypt::verify(password, &data_admin.password);
   if verify_password.is_err() {
@@ -79,6 +79,6 @@ impl SignInAdminRepository {
         "Email atau password salah.".to_string(),
     ));
   }
-  
+
 }
 /// == end sign in email & password
