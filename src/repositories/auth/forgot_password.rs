@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::str::FromStr;
 
 use bcrypt::{DEFAULT_COST, hash};
 use redis::{Client, Commands, RedisResult};
@@ -73,7 +74,7 @@ impl ForgotPasswordRepository {
             .unwrap()
             .hset_multiple(redis_key.clone(), &[
                 (common::constant::REDIS_KEY_OTP, generate_otp.clone().as_str()),
-                (common::constant::REDIS_KEY_USER_ID, user.clone().id.as_str()),
+                (common::constant::REDIS_KEY_USER_ID, user.clone().id.to_string().as_str()),
                 (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
             ]);
 
@@ -137,7 +138,7 @@ impl ForgotPasswordRepository {
             .unwrap_or(&default_string)
             .as_str();
 
-        let user = user_credential::Entity::find_by_id(user_id)
+        let user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
         println!("err {:?}",redis);
@@ -166,7 +167,7 @@ impl ForgotPasswordRepository {
         let redis_util = RedisUtil::new(uuid.clone().to_string().as_str());
         let redis_key_session = redis_util.create_key_session_forgot_password();
 
-        let generate_token = encode(credential.id.clone());
+        let generate_token = encode(credential.id.to_string());
         if generate_token.is_none() {
             return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
         }
@@ -227,7 +228,7 @@ impl ForgotPasswordRepository {
         let get_session = get_session.unwrap();
         let user_id = get_session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
-        let find_user = user_credential::Entity::find_by_id(user_id)
+        let find_user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
         if find_user.is_err() {
@@ -297,7 +298,7 @@ impl ForgotPasswordRepository {
         let user_id = redis_session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
 
-        let find_user = user_credential::Entity::find_by_id(user_id)
+        let find_user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
         if find_user.is_err(){

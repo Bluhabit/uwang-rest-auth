@@ -3,22 +3,11 @@
 pub mod prelude;
 
 pub mod admin;
-pub mod admin_access;
+pub mod admin_role;
 pub mod attachment;
-pub mod group;
-pub mod group_member;
-pub mod hashtag;
-pub mod notification;
 pub mod post;
-pub mod post_comment;
-pub mod post_hashtag;
-pub mod post_mention;
-pub mod report;
 pub mod sea_orm_active_enums;
 pub mod system_access;
-pub mod threads;
-pub mod threads_comment;
 pub mod user_credential;
-pub mod user_notification;
+pub mod user_log;
 pub mod user_profile;
-pub mod user_push_token;

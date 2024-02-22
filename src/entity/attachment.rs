@@ -8,8 +8,8 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "attachment")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    pub post_id: Option<String>,
+    pub id: Uuid,
+    pub post_id: Option<Uuid>,
     pub attachment_type: Option<AttachmentType>,
     pub mime_type: String,
     pub ext: String,
@@ -29,25 +29,11 @@ pub enum Relation {
         on_delete = "NoAction"
     )]
     Post,
-    #[sea_orm(
-        belongs_to = "super::threads_comment::Entity",
-        from = "Column::Id",
-        to = "super::threads_comment::Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    ThreadsComment,
 }
 
 impl Related<super::post::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Post.def()
-    }
-}
-
-impl Related<super::threads_comment::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::ThreadsComment.def()
     }
 }
 

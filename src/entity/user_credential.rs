@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "user_credential")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
+    pub id: Uuid,
     #[sea_orm(unique)]
     pub email: String,
     pub password: String,
@@ -29,26 +29,14 @@ pub struct Model {
 pub enum Relation {
     #[sea_orm(has_many = "super::admin::Entity")]
     Admin,
-    #[sea_orm(has_many = "super::admin_access::Entity")]
-    AdminAccess,
-    #[sea_orm(has_many = "super::group::Entity")]
-    Group,
-    #[sea_orm(has_many = "super::group_member::Entity")]
-    GroupMember,
-    #[sea_orm(has_many = "super::notification::Entity")]
-    Notification,
+    #[sea_orm(has_many = "super::admin_role::Entity")]
+    AdminRole,
     #[sea_orm(has_many = "super::post::Entity")]
     Post,
-    #[sea_orm(has_many = "super::post_comment::Entity")]
-    PostComment,
-    #[sea_orm(has_many = "super::post_mention::Entity")]
-    PostMention,
-    #[sea_orm(has_many = "super::user_notification::Entity")]
-    UserNotification,
+    #[sea_orm(has_many = "super::user_log::Entity")]
+    UserLog,
     #[sea_orm(has_many = "super::user_profile::Entity")]
     UserProfile,
-    #[sea_orm(has_many = "super::user_push_token::Entity")]
-    UserPushToken,
 }
 
 impl Related<super::admin::Entity> for Entity {
@@ -57,27 +45,9 @@ impl Related<super::admin::Entity> for Entity {
     }
 }
 
-impl Related<super::admin_access::Entity> for Entity {
+impl Related<super::admin_role::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::AdminAccess.def()
-    }
-}
-
-impl Related<super::group::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Group.def()
-    }
-}
-
-impl Related<super::group_member::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::GroupMember.def()
-    }
-}
-
-impl Related<super::notification::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Notification.def()
+        Relation::AdminRole.def()
     }
 }
 
@@ -87,33 +57,15 @@ impl Related<super::post::Entity> for Entity {
     }
 }
 
-impl Related<super::post_comment::Entity> for Entity {
+impl Related<super::user_log::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::PostComment.def()
-    }
-}
-
-impl Related<super::post_mention::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::PostMention.def()
-    }
-}
-
-impl Related<super::user_notification::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserNotification.def()
+        Relation::UserLog.def()
     }
 }
 
 impl Related<super::user_profile::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::UserProfile.def()
-    }
-}
-
-impl Related<super::user_push_token::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserPushToken.def()
     }
 }
 

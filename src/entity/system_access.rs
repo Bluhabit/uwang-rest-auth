@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "system_access")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
+    pub id: Uuid,
     pub name: String,
     pub permission: String,
     pub group: String,
@@ -18,13 +18,13 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::admin_access::Entity")]
-    AdminAccess,
+    #[sea_orm(has_many = "super::admin_role::Entity")]
+    AdminRole,
 }
 
-impl Related<super::admin_access::Entity> for Entity {
+impl Related<super::admin_role::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::AdminAccess.def()
+        Relation::AdminRole.def()
     }
 }
 

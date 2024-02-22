@@ -7,10 +7,10 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "user_profile")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
+    pub id: Uuid,
     pub key: String,
     pub value: String,
-    pub user_id: Option<String>,
+    pub user_id: Option<Uuid>,
     pub created_at: DateTime,
     pub updated_at: DateTime,
     pub deleted: bool,

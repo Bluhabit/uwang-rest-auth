@@ -59,7 +59,7 @@ pub fn create_session_redis_from_user(
     token: String,
 ) -> Vec<(String, String)> {
     return vec![
-        (common::constant::REDIS_KEY_USER_ID.to_string(), user.id),
+        (common::constant::REDIS_KEY_USER_ID.to_string(), user.id.to_string()),
         (common::constant::REDIS_KEY_EMAIL.to_string(), user.email),
         (common::constant::REDIS_KEY_FULL_NAME.to_string(), user.full_name),
         (common::constant::REDIS_KEY_TOKEN.to_string(), token),
@@ -82,10 +82,10 @@ pub async fn save_user_session_to_redis(
     mut connection: Connection,
     user: &user_credential::Model,
 ) -> Result<SessionRedisModel, ErrorResponse> {
-    let redis_util = RedisUtil::new(&user.id.clone());
+    let redis_util = RedisUtil::new(&user.id.clone().to_string());
     let redis_key = redis_util.create_key_session_sign_in();
 
-    let generate_token = encode(user.id.clone());
+    let generate_token = encode(user.id.clone().to_string());
     if generate_token.is_none() {
         return Err(ErrorResponse::bad_request(400, "Gagal membuat sesi".to_string()));
     }

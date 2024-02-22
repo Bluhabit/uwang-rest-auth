@@ -8,9 +8,9 @@ use serde::{Deserialize, Serialize};
 #[sea_orm(table_name = "post")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    pub created_by: Option<String>,
-    pub post_id: Option<String>,
+    pub id: Uuid,
+    pub created_by: Option<Uuid>,
+    pub post_id: Option<Uuid>,
     #[sea_orm(column_type = "Text", nullable)]
     pub body: Option<String>,
     #[sea_orm(column_type = "Text", nullable)]
@@ -28,18 +28,6 @@ pub enum Relation {
     #[sea_orm(has_many = "super::attachment::Entity")]
     Attachment,
     #[sea_orm(
-        belongs_to = "Entity",
-        from = "Column::PostId",
-        to = "Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    SelfRef,
-    #[sea_orm(has_many = "super::post_hashtag::Entity")]
-    PostHashtag,
-    #[sea_orm(has_many = "super::report::Entity")]
-    Report,
-    #[sea_orm(
         belongs_to = "super::user_credential::Entity",
         from = "Column::CreatedBy",
         to = "super::user_credential::Column::Id",
@@ -52,18 +40,6 @@ pub enum Relation {
 impl Related<super::attachment::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Attachment.def()
-    }
-}
-
-impl Related<super::post_hashtag::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::PostHashtag.def()
-    }
-}
-
-impl Related<super::report::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Report.def()
     }
 }
 

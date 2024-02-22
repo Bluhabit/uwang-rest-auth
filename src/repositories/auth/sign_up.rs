@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::str::FromStr;
 
 use bcrypt::DEFAULT_COST;
 use chrono::NaiveDate;
@@ -59,7 +60,7 @@ impl SignUpRepository {
 
         let uuid = Uuid::new_v4();
         let prepare_data = user_credential::ActiveModel {
-            id: Set(uuid.to_string()),
+            id: Set(uuid),
             email: Set(email.to_string()),
             username: Set("n/a".to_string()),
             password: Set("n/a".to_string()),
@@ -98,7 +99,7 @@ impl SignUpRepository {
             .unwrap()
             .hset_multiple(redis_key.clone(), &[
                 (common::constant::REDIS_KEY_OTP, generate_otp.clone().as_str()),
-                (common::constant::REDIS_KEY_USER_ID, user.id.as_str()),
+                (common::constant::REDIS_KEY_USER_ID, user.id.to_string().as_str()),
                 (common::constant::REDIS_KEY_OTP_ATTEMPT, "0")
             ]);
 
@@ -155,7 +156,7 @@ impl SignUpRepository {
             .parse()
             .unwrap_or(0);
 
-        let user = user_credential::Entity::find_by_id(user_id)
+        let user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
 
@@ -258,7 +259,7 @@ impl SignUpRepository {
         let get_session = get_session.unwrap();
         let user_id = get_session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
-        let find_user = user_credential::Entity::find_by_id(user_id)
+        let find_user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
         if find_user.is_err() {
@@ -334,7 +335,7 @@ impl SignUpRepository {
         let user_id = session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
 
-        let find_user = user_credential::Entity::find_by_id(user_id)
+        let find_user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
 
@@ -398,7 +399,7 @@ impl SignUpRepository {
         let user_id = session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
 
-        let find_user = user_credential::Entity::find_by_id(user_id)
+        let find_user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
 
