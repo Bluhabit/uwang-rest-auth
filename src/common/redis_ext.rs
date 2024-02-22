@@ -68,4 +68,14 @@ impl RedisUtil {
             self.value
         );
     }
+
+    pub fn create_key_session_sign_in_admin(
+        &self
+    ) -> String {
+        return format!(
+            "{}:sign-admin:{}",
+            self.environment,
+            self.value
+        );
+    }
 }
