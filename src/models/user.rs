@@ -39,7 +39,6 @@ pub struct UserCredentialResponse {
 
 impl UserCredentialResponse {
     pub fn from_credential(user_credential: UserCredential) -> Self {
-        let dob = user_credential.date_of_birth;
         let dob = match user_credential.date_of_birth {
             Some(value) => value.format("%d-%m-%Y").to_string(),
             None => "".to_string(),
@@ -50,7 +49,7 @@ impl UserCredentialResponse {
         };
 
         UserCredentialResponse {
-            id: user_credential.id,
+            id: user_credential.id.to_string(),
             email: user_credential.email,
             full_name: user_credential.full_name,
             username: user_credential.username,
@@ -77,7 +76,7 @@ impl UserCredentialResponse {
             None => "".to_string(),
         };
         UserCredentialResponse {
-            id: user_credential.id,
+            id: user_credential.id.to_string(),
             email: user_credential.email,
             full_name: user_credential.full_name,
             status: user_credential.status,

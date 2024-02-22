@@ -1,25 +1,27 @@
-use chrono::{Duration, Locale};
 use std::collections::HashMap;
+use std::fmt::format;
+use std::str::FromStr;
 
+use chrono::{Duration, Locale};
 use redis::{Client, Commands, RedisResult};
-use sea_orm::ActiveValue::Set;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter,
 };
+use sea_orm::ActiveValue::Set;
 use serde_json::Value;
 use uuid::Uuid;
 
+use crate::{AppState, common};
 use crate::common::mail::email;
 use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
 use crate::common::response::ErrorResponse;
 use crate::common::utils::check_account_user_status_active;
+use crate::entity::{user_credential, user_profile};
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential::Model;
-use crate::entity::{user_credential, user_profile};
 use crate::models::auth::SignInGoogleRequest;
 use crate::models::user::UserCredentialResponse;
-use crate::{common, AppState};
 
 #[derive(Debug, Clone)]
 pub struct SignInRepository {
@@ -87,7 +89,7 @@ impl SignInRepository {
 
         let name = data_user.clone().full_name;
         let session_id = Uuid::new_v4().to_string();
-        let sign_in_attempt_key = RedisUtil::new(&data_user.id).create_sign_in_attempt();
+        let sign_in_attempt_key = RedisUtil::new(&data_user.id.to_string()).create_sign_in_attempt();
         let redis_key = RedisUtil::new(session_id.as_str()).create_key_otp_sign_in();
 
         let redis_connection = self.cache.get_connection();
@@ -106,6 +108,7 @@ impl SignInRepository {
                 "Username atau password salah.".to_string(),
             ));
         }
+
 
         if !verify_password.unwrap() {
             sign_in_attempt = sign_in_attempt + 1;
@@ -151,7 +154,7 @@ impl SignInRepository {
                         common::constant::REDIS_KEY_OTP,
                         generate_otp.clone().as_str(),
                     ),
-                    (common::constant::REDIS_KEY_USER_ID, data_user.id.as_str()),
+                    (common::constant::REDIS_KEY_USER_ID, data_user.id.to_string().as_str()),
                     (common::constant::REDIS_KEY_OTP_ATTEMPT, "1"),
                     (
                         common::constant::REDIS_KEY_VALID_AT,
@@ -224,7 +227,7 @@ impl SignInRepository {
             .parse()
             .unwrap_or(1);
 
-        let user = user_credential::Entity::find_by_id(user_id)
+        let user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
 
@@ -348,7 +351,7 @@ impl SignInRepository {
             ));
         }
 
-        let find_user = user_credential::Entity::find_by_id(user_id)
+        let find_user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
             .one(&self.db)
             .await;
 
@@ -420,7 +423,7 @@ impl SignInRepository {
                 let uuid = Uuid::new_v4();
                 let current_date = chrono::Utc::now().naive_local();
                 let prepare_data = user_credential::ActiveModel {
-                    id: Set(uuid.to_string()),
+                    id: Set(uuid),
                     email: Set(google_account.email.to_string()),
                     full_name: Set(google_account.given_name.to_string()),
                     username: Set("n/a".to_string()),

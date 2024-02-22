@@ -10,6 +10,7 @@ use chrono::Locale;
 use dotenv::dotenv;
 use redis::Client;
 use sea_orm::{Database, DatabaseConnection};
+use migration::{Migrator, MigratorTrait};
 
 use crate::common::mail::email::Email;
 use crate::common::response::ErrorResponse;
@@ -71,6 +72,8 @@ async fn main() -> std::io::Result<()> {
         sse_emitter: sse_emitter.clone(),
     };
 
+    let _ = Migrator::up(&db, None).await;
+    let _ = Migrator::down(&db, None).await;
 
     HttpServer::new(move || {
         let cors = Cors::default()
@@ -132,6 +135,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             .route("/forgot-password/resend-otp", web::post().to(resend_otp_forgot_password))
             .route("/forgot-password/set-password", web::post().to(set_new_password))
     );
+
 
     routes::event_stream::event_stream_handler(cfg)
 }

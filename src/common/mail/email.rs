@@ -116,7 +116,7 @@ impl Email {
             .html_body(content_template)
             .text_body(subject);
 
-        let mut connection = SmtpClientBuilder::new(&self.config.smtp_host, self.config.smtp_port)
+        let connection = SmtpClientBuilder::new(&self.config.smtp_host, self.config.smtp_port)
             .implicit_tls(true)
             .credentials(Creds::new(&self.config.smtp_user, &self.config.smtp_pass))
             .connect()

@@ -9,7 +9,7 @@ authors = ["Trian triandamai@gmail.com"]
 members = ["migration"]
 
 [profile.release]
-debug=true
+debug = true
 
 
 [dependencies]
@@ -19,7 +19,7 @@ actix-cors = "0.6.4"
 serde = { version = "1.0", features = ["derive"] }
 dotenv = "0.15.0"
 tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread"] }
-chrono = { version = "0.4.31", features = ["serde","unstable-locales"] }
+chrono = { version = "0.4.31", features = ["serde", "unstable-locales"] }
 migration = { path = "migration" }
 uuid = { version = "1.4.1", features = ["v4", "fast-rng", "macro-diagnostics"] }
 validator = { version = "0.16.1", features = ["derive"] }
@@ -39,7 +39,7 @@ mail-send = "0.4.3"
 
 [dependencies.sea-orm]
 version = "0.12.4"
-features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-chrono"]
+features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-chrono", "with-uuid", "with-json"]
 default-features = false
 
 
