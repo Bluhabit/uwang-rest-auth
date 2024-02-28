@@ -27,7 +27,6 @@ pub async fn sign_in_basic(
 
     if sign_in.is_err() { return Err(sign_in.unwrap_err()); }
 
-
     Ok(web::Json(BaseResponse::success(
         200,
         Some(sign_in.unwrap()),

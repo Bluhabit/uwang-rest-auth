@@ -23,8 +23,9 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(UserLog::UserId).uuid())
                     .col(ColumnDef::new(UserLog::LogType).string())
-                    .col(ColumnDef::new(UserLog::Title).string())
-                    .col(ColumnDef::new(UserLog::Body).string())
+                    .col(ColumnDef::new(UserLog::Content).string())
+                    .col(ColumnDef::new(UserLog::Device).string())
+                    .col(ColumnDef::new(UserLog::Activity).string())
                     .col(
                         ColumnDef::new(UserLog::CreatedAt)
                             .timestamp()
