@@ -22,6 +22,7 @@ impl MigrationTrait for Migration {
                             .default(uuid::Uuid::new_v4()),
                     )
                     .col(ColumnDef::new(UserLog::UserId).uuid())
+                    .col(ColumnDef::new(UserLog::IpAddress).string())
                     .col(ColumnDef::new(UserLog::LogType).string())
                     .col(ColumnDef::new(UserLog::Content).string())
                     .col(ColumnDef::new(UserLog::Device).string())

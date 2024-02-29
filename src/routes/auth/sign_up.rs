@@ -9,10 +9,12 @@ use crate::common::utils::get_readable_validation_message;
 use crate::entity::sea_orm_active_enums::UserGender;
 use crate::models::auth::{CompleteProfileSignUpBasicRequest, ResendOtpSignUpBasicRequest, SetPasswordSignUpBasicRequest, SignUpBasicRequest, VerifyOtpSignUpBasicRequest};
 use crate::repositories::auth::sign_up::SignUpRepository;
+use crate::request_filter::client_middleware::ClientMiddleware;
 use crate::request_filter::jwt_middleware::JwtMiddleware;
 
 pub async fn sign_up_basic(
     state: web::Data<AppState>,
+    client: ClientMiddleware,
     body: web::Json<SignUpBasicRequest>,
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
@@ -24,7 +26,7 @@ pub async fn sign_up_basic(
     let mut sign_up_repository = SignUpRepository::init(&state);
 
     let sign_up = sign_up_repository
-        .sign_up_by_email(&body.email)
+        .sign_up_by_email(&body.email, &client)
         .await;
 
     if sign_up.is_err() {
@@ -41,6 +43,7 @@ pub async fn sign_up_basic(
 
 pub async fn verify_otp_sign_up_basic(
     state: web::Data<AppState>,
+    client: ClientMiddleware,
     body: web::Json<VerifyOtpSignUpBasicRequest>,
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
@@ -51,7 +54,7 @@ pub async fn verify_otp_sign_up_basic(
 
     let sign_up_repository = SignUpRepository::init(&state);
     let redis_otp = sign_up_repository
-        .verify_otp_sign_up(&body.session_id, &body.otp)
+        .verify_otp_sign_up(&body.session_id, &body.otp, &client)
         .await;
     if redis_otp.is_err() {
         return Err(redis_otp.unwrap_err());
@@ -66,6 +69,7 @@ pub async fn verify_otp_sign_up_basic(
 
 pub async fn resend_otp_sign_up_basic(
     state: web::Data<AppState>,
+    client: ClientMiddleware,
     body: web::Json<ResendOtpSignUpBasicRequest>,
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
@@ -77,7 +81,8 @@ pub async fn resend_otp_sign_up_basic(
     let sign_up_repository = SignUpRepository::init(&state);
 
     let resend_otp = sign_up_repository.resend_otp_sign_up_basic(
-        &body.session_id
+        &body.session_id,
+        &client,
     ).await;
 
     if resend_otp.is_err() {
@@ -94,6 +99,7 @@ pub async fn resend_otp_sign_up_basic(
 pub async fn complete_profile_sign_up(
     state: web::Data<AppState>,
     jwt: JwtMiddleware,
+    client: ClientMiddleware,
     body: web::Json<CompleteProfileSignUpBasicRequest>,
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
@@ -107,7 +113,7 @@ pub async fn complete_profile_sign_up(
     }
     let mut sign_up_repository = SignUpRepository::init(&state);
     let complete_profile = sign_up_repository
-        .complete_profile_sign_up(&jwt.session_id, &body.full_name, &body.date_of_birth, &gender)
+        .complete_profile_sign_up(&jwt.session_id, &body.full_name, &body.date_of_birth, &gender, &client)
         .await;
 
     if complete_profile.is_err() {
@@ -123,6 +129,7 @@ pub async fn complete_profile_sign_up(
 pub async fn set_password_sign_up(
     state: web::Data<AppState>,
     jwt: JwtMiddleware,
+    client:ClientMiddleware,
     body: web::Json<SetPasswordSignUpBasicRequest>,
 ) -> Result<impl Responder, ErrorResponse> {
     let validate_body = body.validate();
@@ -132,7 +139,7 @@ pub async fn set_password_sign_up(
     }
     let mut sign_up_repository = SignUpRepository::init(&state);
     let set_password = sign_up_repository
-        .set_password_sign_up(&jwt.session_id, &body.new_password)
+        .set_password_sign_up(&jwt.session_id, &body.new_password,&client)
         .await;
     if set_password.is_err() {
         return Err(set_password.unwrap_err());

@@ -1,6 +1,5 @@
-use sea_orm::{EnumIter, Iterable};
+use sea_orm::Iterable;
 use sea_orm_migration::prelude::*;
-use uuid::uuid;
 
 use crate::entity::*;
 use crate::extension::postgres::Type;

@@ -26,6 +26,7 @@ pub enum UserLog {
     Id,
     LogType,
     UserId,
+    IpAddress,
     Content,
     Device,
     Activity,
