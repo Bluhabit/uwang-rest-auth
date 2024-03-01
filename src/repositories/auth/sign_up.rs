@@ -9,7 +9,7 @@ use sea_orm::ActiveValue::Set;
 use serde_json::Value;
 use uuid::Uuid;
 
-use crate::{AppState, common};
+use crate::{AppState, common, entity};
 use crate::common::mail::email;
 use crate::common::mail::email::Email;
 use crate::common::otp_generator::generate_otp;
@@ -19,6 +19,7 @@ use crate::entity::{user_credential, user_profile};
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserGender, UserStatus};
 use crate::entity::user_credential::Model;
 use crate::models::user::UserCredentialResponse;
+use crate::request_filter::client_middleware::ClientMiddleware;
 
 #[derive(Debug, Clone)]
 pub struct SignUpRepository {
@@ -35,7 +36,7 @@ impl SignUpRepository {
         }
     }
     /// == sign up email & password
-    pub async fn sign_up_by_email(&mut self, email: &str) -> Result<String, ErrorResponse> {
+    pub async fn sign_up_by_email(&mut self, email: &str, client: &ClientMiddleware) -> Result<String, ErrorResponse> {
         let data = user_credential::Entity::find()
             .filter(user_credential::Column::Email.eq(email))
             .one(&self.db).await;
@@ -78,10 +79,28 @@ impl SignUpRepository {
         if saved_data.is_err() {
             return Err(ErrorResponse::unauthorized("".to_string()));
         }
-        let send_otp = self.create_and_save_otp(saved_data.unwrap()).await;
+        let saved_data = saved_data.unwrap();
+        let send_otp = self.create_and_save_otp(saved_data.clone()).await;
         if send_otp.is_err() {
             return Err(send_otp.unwrap_err());
         }
+
+        //prepare for log
+        let log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(saved_data.id)),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("verify-otp-sign-up".to_string())),
+            content: Set(Some("Registrasi berhasil, otp telah dikirim".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("Barhasil regitrasi".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
+
+        let _ = log.insert(&self.db)
+            .await;
         Ok(send_otp.unwrap())
     }
     /// == end sign up email & password
@@ -121,7 +140,7 @@ impl SignUpRepository {
     }
     /// == end send otp
     /// == verify otp
-    pub async fn verify_otp_sign_up(&self, session_id: &str, request_otp: &str) -> Result<Option<Value>, ErrorResponse> {
+    pub async fn verify_otp_sign_up(&self, session_id: &str, request_otp: &str, client: &ClientMiddleware) -> Result<Option<Value>, ErrorResponse> {
         let redis_connection = &self.cache
             .get_connection();
         if redis_connection.is_err() {
@@ -169,11 +188,31 @@ impl SignUpRepository {
         }
         let credential = credential.unwrap();
 
+        //prepare for log
+        let mut log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(credential.id.clone())),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("verify-otp-sign-up".to_string())),
+            content: Set(Some("".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
+
         if credential.status != UserStatus::WaitingConfirmation {
             return Err(ErrorResponse::unauthorized("Akun sudah terverifikasi, silahkan masuk menggunakan akun Kamu.".to_string()));
         }
 
-        if attempt_otp_sign_up >= 4 {
+        if attempt_otp_sign_up >= 3 {
+            log.id = Set(Uuid::new_v4());
+            log.activity = Set(Some("3x Gagal Otp".to_string()));
+            log.content = Set(Some("Percobaan otp 3x".to_string()));
+
+            let _ = log.insert(&self.db)
+                .await;
             return Err(ErrorResponse::bad_request(1001, "Kamu sudah mencoba otp sebanyak 3 kali.".to_string()));
         }
 
@@ -218,6 +257,13 @@ impl SignUpRepository {
 
         let token = save_session.token;
 
+        log.id = Set(Uuid::new_v4());
+        log.activity = Set(Some("Verifikasi OTP berhasil".to_string()));
+        log.content = Set(Some("OTP berhasil terverifikasi".to_string()));
+
+        let _ = log.insert(&self.db)
+            .await;
+
         Ok(Some(
             serde_json::json!({
                 "token":token,
@@ -230,6 +276,7 @@ impl SignUpRepository {
     pub async fn resend_otp_sign_up_basic(
         &self,
         session_id: &str,
+        client: &ClientMiddleware,
     ) -> Result<String, ErrorResponse> {
         let redis_connection = &self.cache
             .get_connection();
@@ -259,7 +306,10 @@ impl SignUpRepository {
         let get_session = get_session.unwrap();
         let user_id = get_session.get(common::constant::REDIS_KEY_USER_ID)
             .unwrap_or(&default_string);
-        let find_user = user_credential::Entity::find_by_id(uuid::Uuid::from_str(user_id).unwrap())
+        let find_user = user_credential::Entity::find_by_id(
+            Uuid::from_str(user_id)
+                .unwrap()
+        )
             .one(&self.db)
             .await;
         if find_user.is_err() {
@@ -299,6 +349,26 @@ impl SignUpRepository {
                 "otp":generate_otp
             })
         ).await;
+
+        //prepare for log
+        let mut log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(user.id)),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("resend-otp-sign-up".to_string())),
+            content: Set(Some("Berhasil membuat ulang OTP".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("Membuat ulang OTP".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
+
+        let _ = log
+            .insert(&self.db)
+            .await;
+
+
         Ok(session_id.to_string())
     }
     /// == end resend otp
@@ -309,6 +379,7 @@ impl SignUpRepository {
         full_name: &str,
         date_of_birth: &str,
         gender: &UserGender,
+        client: &ClientMiddleware,
     ) -> Result<UserCredentialResponse, ErrorResponse> {
         let redis_connection = &self.cache
             .get_connection();
@@ -350,6 +421,21 @@ impl SignUpRepository {
         if user.status == UserStatus::WaitingConfirmation {
             return Err(ErrorResponse::unauthorized("Kamu belum melakukan verifikasi.".to_string()));
         }
+
+        //user log
+        let mut log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(user.id.clone())),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("complete-profile-sign-up".to_string())),
+            content: Set(Some("Registrasi berhasil, otp telah dikirim".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("Barhasil regitrasi".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
+
         let mut user = user.into_active_model();
         let date = NaiveDate::parse_from_str(date_of_birth, "%d-%m-%Y").unwrap();
 
@@ -359,6 +445,11 @@ impl SignUpRepository {
 
         let updated_result = user.update(&self.db).await;
         if updated_result.is_err() {
+            log.content = Set(Some("Gagal melengkapi profil".to_string()));
+            log.activity = Set(Some("Gagal melengkapi profil".to_string()));
+
+            let _ = log.insert(&self.db)
+                .await;
             return Err(ErrorResponse::bad_request(1000, "Gagal melengkapi profil.".to_string()));
         }
         let updated_result = updated_result.unwrap();
@@ -373,6 +464,7 @@ impl SignUpRepository {
         &mut self,
         session_id: &str,
         new_password: &str,
+        client: &ClientMiddleware,
     ) -> Result<UserCredentialResponse, ErrorResponse> {
         let redis_connection = &self.cache
             .get_connection();
@@ -415,12 +507,34 @@ impl SignUpRepository {
             return Err(ErrorResponse::unauthorized("Kamu belum melakukan verifikasi.".to_string()));
         }
 
+        //user log
+        let mut log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(user.id.clone())),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("verify-otp-sign-up".to_string())),
+            content: Set(Some("Registrasi berhasil, otp telah dikirim".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("Barhasil regitrasi".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
+
         let mut user = user.into_active_model();
         let hash_password = bcrypt::hash(new_password, DEFAULT_COST);
         if hash_password.is_err() {
+            log.content = Set(Some("Gagal membuat password".to_string()));
+            log.activity = Set(Some("Gagal membuat password".to_string()));
+            let _ = log.insert(&self.db)
+                .await;
             return Err(ErrorResponse::bad_request(1000, "Gagal membuat password.".to_string()));
         }
         if !hash_password.is_ok() {
+            log.content = Set(Some("Gagal membuat password".to_string()));
+            log.activity = Set(Some("Gagal membuat password".to_string()));
+            let _ = log.insert(&self.db)
+                .await;
             return Err(ErrorResponse::bad_request(1000, "Gagal membuat password.".to_string()));
         }
         let password = hash_password.unwrap();
@@ -428,7 +542,11 @@ impl SignUpRepository {
 
         let updated_result = user.update(&self.db).await;
         if updated_result.is_err() {
-            return Err(ErrorResponse::bad_request(1000, "Gagal melengkapi profil.".to_string()));
+            log.content = Set(Some("Gagal membuat password".to_string()));
+            log.activity = Set(Some("Gagal membuat password".to_string()));
+            let _ = log.insert(&self.db)
+                .await;
+            return Err(ErrorResponse::bad_request(1000, "Gagal membuat password.".to_string()));
         }
 
 
@@ -443,6 +561,11 @@ impl SignUpRepository {
             .await;
 
         let response = UserCredentialResponse::from_credential(updated_result);
+
+        log.content = Set(Some("Berhasil membuat password".to_string()));
+        log.activity = Set(Some("Berhasil membuat password".to_string()));
+        let _ = log.insert(&self.db)
+            .await;
 
         Ok(response)
     }

@@ -11,7 +11,7 @@ use sea_orm::ActiveValue::Set;
 use serde_json::Value;
 use uuid::Uuid;
 
-use crate::{AppState, common};
+use crate::{AppState, common, entity};
 use crate::common::mail::email;
 use crate::common::otp_generator::generate_otp;
 use crate::common::redis_ext::RedisUtil;
@@ -22,6 +22,7 @@ use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
 use crate::entity::user_credential::Model;
 use crate::models::auth::SignInGoogleRequest;
 use crate::models::user::UserCredentialResponse;
+use crate::request_filter::client_middleware::ClientMiddleware;
 
 #[derive(Debug, Clone)]
 pub struct SignInRepository {
@@ -43,6 +44,7 @@ impl SignInRepository {
         &mut self,
         email: &str,
         password: &str,
+        client: &ClientMiddleware,
     ) -> Result<String, ErrorResponse> {
         let redis_connection = &self.cache.get_connection();
         if redis_connection.is_err() {
@@ -87,6 +89,20 @@ impl SignInRepository {
             ));
         }
 
+        //user log
+        let mut log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(data_user.id.clone())),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("sign-in-basic".to_string())),
+            content: Set(Some("Registrasi berhasil, otp telah dikirim".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("Barhasil regitrasi".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
+
         let name = data_user.clone().full_name;
         let session_id = Uuid::new_v4().to_string();
         let sign_in_attempt_key = RedisUtil::new(&data_user.id.to_string()).create_sign_in_attempt();
@@ -118,7 +134,14 @@ impl SignInRepository {
                 format!("{}", sign_in_attempt).as_str(),
             );
 
-            if sign_in_attempt >= 4 {
+            if sign_in_attempt >= 3 {
+                log.content = Set(Some("Percobaan Login Gagal".to_string()));
+                log.activity = Set(Some("3x Gagal Login".to_string()));
+
+                let _ = log
+                    .insert(&self.db)
+                    .await;
+
                 let mut user_active_model = data_user.clone().into_active_model();
                 user_active_model.status = Set(UserStatus::Locked);
                 let _ = user_active_model.update(&self.db).await;
@@ -175,12 +198,19 @@ impl SignInRepository {
 
         //sending email
         let email = email::Email::new(data_user.email.clone(), data_user.full_name.clone());
-
         let _ = email
             .send_otp_sign_in_basic(serde_json::json!({
                 "otp": generate_otp
             }))
             .await;
+
+        log.content = Set(Some("Login berhasil".to_string()));
+        log.activity = Set(Some("Login berhasil".to_string()));
+
+        let _ = log
+            .insert(&self.db)
+            .await;
+
         Ok(session_id)
     }
     /// == end sign in email & password
@@ -189,6 +219,7 @@ impl SignInRepository {
         &mut self,
         session_id: &str,
         request_otp: &str,
+        client: &ClientMiddleware,
     ) -> Result<Option<Value>, ErrorResponse> {
         let redis_connection = &self.cache.get_connection();
         if redis_connection.is_err() {
@@ -251,11 +282,32 @@ impl SignInRepository {
             ));
         }
 
+        //user log
+        let mut log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(credential.id.clone())),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("verify-otp-sign-in".to_string())),
+            content: Set(Some("Registrasi berhasil, otp telah dikirim".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("Barhasil regitrasi".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
+
         if !request_otp.eq(otp) {
             attempt = attempt + 1;
             let current_date = chrono::Utc::now().naive_local();
             let mut valid_at = current_date.timestamp();
-            if attempt >= 4 {
+            if attempt >= 3 {
+                log.content = Set(Some("Percobaan masuk gagal".to_string()));
+                log.activity = Set(Some("Percobaan masuk 3x gagal".to_string()));
+
+                let _ = log
+                    .insert(&self.db)
+                    .await;
+
                 let _: RedisResult<_> = self
                     .cache
                     .expire::<String, String>(redis_key.clone(), common::constant::TTL_OTP);
@@ -289,15 +341,24 @@ impl SignInRepository {
             self.cache.get_connection().unwrap(),
             &credential,
         )
-        .await;
+            .await;
 
         let credential_response =
-            UserCredentialResponse::from_credential_with_profile(credential, profile);
+            UserCredentialResponse::from_credential_with_profile(credential.clone(), profile);
         let save_session = save_session.unwrap();
 
         let _: RedisResult<String> = self.cache.get_connection().unwrap().del(redis_key);
 
         let token = save_session.token;
+
+        //user log
+        log.content = Set(Some("Verifikasi otp berhasil".to_string()));
+        log.activity = Set(Some("Verifikasi Otp".to_string()));
+
+        let _ = log
+            .insert(&self.db)
+            .await;
+
         Ok(Some(serde_json::json!({
             "token":token,
             "user":credential_response
@@ -308,6 +369,7 @@ impl SignInRepository {
     pub async fn resend_otp_sign_in_basic(
         &self,
         session_id: &str,
+        client: &ClientMiddleware,
     ) -> Result<String, ErrorResponse> {
         let redis_connection = &self.cache.get_connection();
         if redis_connection.is_err() {
@@ -363,6 +425,7 @@ impl SignInRepository {
         }
         let user = find_user.unwrap();
 
+
         if user.is_none() {
             return Err(ErrorResponse::bad_request(
                 1001,
@@ -370,6 +433,19 @@ impl SignInRepository {
             ));
         }
         let user = user.unwrap();
+        //user log
+        let mut log = entity::user_log::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            user_id: Set(Some(user.id.clone())),
+            ip_address: Set(Some(client.ip_address.clone())),
+            log_type: Set(Some("resend-otp-sign-in".to_string())),
+            content: Set(Some("Resend otp".to_string())),
+            device: Set(Some(client.device.clone())),
+            activity: Set(Some("Berhasil membuat ulang otp".to_string())),
+            created_at: Set(chrono::Utc::now().naive_local()),
+            updated_at: Set(chrono::Utc::now().naive_local()),
+            deleted: Set(false),
+        };
 
         let redis_connection = self.cache.get_connection();
         let _: RedisResult<String> = redis_connection.unwrap().hset_multiple(
@@ -389,6 +465,9 @@ impl SignInRepository {
                 "otp":generate_otp
             }))
             .await;
+
+        let _ = log.insert(&self.db)
+            .await;
         Ok(session_id.to_string())
     }
     /// == end resend otp
@@ -396,6 +475,7 @@ impl SignInRepository {
     pub async fn sign_in_google(
         &self,
         google_credential: &SignInGoogleRequest,
+        client:&ClientMiddleware
     ) -> Result<Option<Value>, ErrorResponse> {
         let google_credential = common::jwt::decode_google_token(google_credential.token.clone());
         if google_credential.is_err() {
@@ -479,7 +559,7 @@ impl SignInRepository {
             self.cache.get_connection().unwrap(),
             &user_credential,
         )
-        .await;
+            .await;
 
         if save_session.is_err() {
             let err = save_session;
