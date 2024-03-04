@@ -1,6 +1,7 @@
 use sea_orm::prelude::DateTime;
 use sea_orm::ActiveEnum;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 use validator::Validate;
 
 use crate::entity::sea_orm_active_enums::{AuthProvider, UserStatus};
