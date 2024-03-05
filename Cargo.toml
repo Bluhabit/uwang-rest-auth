@@ -15,16 +15,16 @@ debug = true
 [dependencies]
 actix-web = "4.4.0"
 actix-web-lab = "0.20.1"
-actix-cors = "0.6.4"
+actix-cors = "0.7.0"
 serde = { version = "1.0", features = ["derive"] }
 dotenv = "0.15.0"
 tokio = { version = "1.33.0", features = ["macros", "rt-multi-thread"] }
 chrono = { version = "0.4.31", features = ["serde", "unstable-locales"] }
 migration = { path = "migration" }
 uuid = { version = "1.4.1", features = ["v4", "fast-rng", "macro-diagnostics"] }
-validator = { version = "0.16.1", features = ["derive"] }
+validator = { version = "0.17.0", features = ["derive"] }
 lazy_static = "1.4.0"
-env_logger = "0.10.1"
+env_logger = "0.11.3"
 jsonwebtoken = "9.1.0"
 serde_json = "1.0.108"
 bcrypt = "0.15.0"
@@ -34,8 +34,9 @@ redis = { version = "0.24.0", features = ["json", "script", "serde_json"] }
 http = { version = "1.0.0", features = [] }
 rand = "0.8.5"
 lettre = { version = "0.11.2", features = ["tokio1", "tokio1-native-tls"] }
-handlebars = { version = "4.5.0", features = ["dir_source"] }
+handlebars = { version = "5.1.0", features = ["dir_source"] }
 mail-send = "0.4.3"
+ahash = "0.8.11"
 
 [dependencies.sea-orm]
 version = "0.12.4"
