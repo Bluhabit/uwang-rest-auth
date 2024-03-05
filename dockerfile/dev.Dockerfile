@@ -1,4 +1,4 @@
-FROM rustlang/rust:nightly AS builder
+FROM rustlang/rust:nightly-slim AS builder
 WORKDIR /workdir
 COPY ./Cargo.toml ./Cargo.lock ./
 COPY ./migration ./migration
