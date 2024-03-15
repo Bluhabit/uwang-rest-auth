@@ -7,7 +7,6 @@ RUN cargo +nightly build --release
 
 FROM debian:stable-slim
 RUN apt update \
-    && apt upgrade -y \
     && apt install libssl-dev \
     && apt install -y openssl ca-certificates \
     && apt clean \
