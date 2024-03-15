@@ -5,7 +5,7 @@ COPY ./migration ./migration
 COPY ./src ./src
 RUN cargo +nightly build --release
 
-FROM debian:bullseye-slim
+FROM debian:stable-slim
 RUN apt update \
     && apt install -y openssl ca-certificates \
     && apt clean \
