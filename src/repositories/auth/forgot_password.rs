@@ -50,11 +50,11 @@ impl ForgotPasswordRepository {
             .await;
 
         if find_user.is_err() {
-            return Err(ErrorResponse::bad_request(200, "Email tidak ditemukan.".to_string()));
+            return Err(ErrorResponse::bad_request(400, "Email tidak ditemukan.".to_string()));
         }
         let user = find_user.unwrap();
         if user.is_none() {
-            return Err(ErrorResponse::bad_request(200, "Email tidak ditemukan.".to_string()));
+            return Err(ErrorResponse::bad_request(400, "Email tidak ditemukan.".to_string()));
         }
         let check_user = user.clone().unwrap();
         let check_status = check_account_user_status_active(&check_user);
