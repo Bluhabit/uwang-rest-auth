@@ -9,9 +9,11 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub user_id: Option<Uuid>,
+    pub ip_address: Option<String>,
     pub log_type: Option<String>,
-    pub title: Option<String>,
-    pub body: Option<String>,
+    pub content: Option<String>,
+    pub device: Option<String>,
+    pub activity: Option<String>,
     pub created_at: DateTime,
     pub updated_at: DateTime,
     pub deleted: bool,

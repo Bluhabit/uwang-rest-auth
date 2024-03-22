@@ -20,6 +20,7 @@ impl RedisUtil {
             self.value
         );
     }
+
     pub fn create_key_otp_sign_in(
         &self
     ) -> String {
@@ -78,4 +79,6 @@ impl RedisUtil {
             self.value
         );
     }
+
+    
 }
