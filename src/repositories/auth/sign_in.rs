@@ -385,7 +385,7 @@ impl SignInRepository {
         let redis_connection = self.cache.get_connection();
         let get_session: RedisResult<HashMap<String, String>> =
             redis_connection.unwrap().hgetall(redis_key.clone());
-
+        
         if get_session.is_err() {
             return Err(ErrorResponse::bad_request(
                 1001,
